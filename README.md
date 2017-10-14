@@ -33,12 +33,29 @@ brew update
 brew install vapor
 ```
 
+#### Install MySQL
+
+```
+brew install mysql
+```
+Start mysql server
+
+```
+mysql.server start
+
+```
+Create database
+
+```
+mysql -u root
+CREATE DATABASE cocoaheads
+```
+
 #### Create project
 
 ```
 vapor new server --template=cocoaheadsru/server
 ```
-
 
 #### Build project
 
