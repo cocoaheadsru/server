@@ -6,7 +6,6 @@ final class Place: Model {
     
     // MARK: Properties and database keys
     
-    var id: Node?
     var title: String
     var address: String
     var description: String
@@ -17,7 +16,7 @@ final class Place: Model {
     /// The column names for `id`, `title`, `address`, `description`,
     /// `latitude`, `longitude` and 'city_id' in the database
     struct Keys {
-        static let id = "place_id"
+        static let id = "id"
         static let title = "title"
         static let address = "address"
         static let description = "description"

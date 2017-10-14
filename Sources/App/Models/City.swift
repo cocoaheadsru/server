@@ -6,12 +6,11 @@ final class City: Model {
     
     // MARK: Properties and database keys
     
-    var id: Node?
     var cityName: String
     
     /// The column names for `id` and `cityName` in the database
     struct Keys {
-        static let id = "city_id"
+        static let id = "id"
         static let cityName = "city_name"
     }
     
