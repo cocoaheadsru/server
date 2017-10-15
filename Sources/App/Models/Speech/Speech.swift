@@ -8,6 +8,10 @@ final class Speech: Model {
     
     // MARK: Fluent Serialization
     
+    struct Keys {
+        static let id = "id"
+    }
+    
     /// Initializes the Speech from the
     /// database row
     init(row: Row) throws {
