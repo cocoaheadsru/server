@@ -2,9 +2,8 @@ import Vapor
 import FluentProvider
 
 final class Place: Model {
-    let storage = Storage()
     
-    // MARK: Properties and database keys
+    let storage = Storage()
     
     var title: String
     var address: String
@@ -13,8 +12,6 @@ final class Place: Model {
     var longitude: Double
     var cityId: Node
     
-    /// The column names for `id`, `title`, `address`, `description`,
-    /// `latitude`, `longitude` and 'city_id' in the database
     struct Keys {
         static let id = "id"
         static let title = "title"
@@ -25,7 +22,6 @@ final class Place: Model {
         static let cityId = "city_id"
     }
     
-    /// Creates a new Place
     init(title: String, address: String, description: String, latitude: Double, longitude: Double, cityId: Node) {
         self.title = title
         self.address = address
@@ -37,8 +33,6 @@ final class Place: Model {
     
     // MARK: Fluent Serialization
     
-    /// Initializes the Place from the
-    /// database row
     init(row: Row) throws {
         title = try row.get(Place.Keys.title)
         address = try row.get(Place.Keys.address)
@@ -48,7 +42,6 @@ final class Place: Model {
         cityId = try row.get(Place.Keys.cityId)
     }
     
-    // Serializes the Place to the database
     func makeRow() throws -> Row {
         var row = Row()
         try row.set(Place.Keys.title, title)
@@ -64,8 +57,7 @@ final class Place: Model {
 // MARK: Fluent Preparation
 
 extension Place: Preparation {
-    /// Prepares a table/collection in the database
-    /// for storing Places
+
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()
@@ -78,27 +70,14 @@ extension Place: Preparation {
         }
     }
     
-    /// Undoes what was done in `prepare`
     static func revert(_ database: Database) throws {
         try database.delete(self)
     }
 }
 
 // MARK: JSON
-// How the model converts from / to JSON.
-//
-extension Place: JSONConvertible {
-    
-    convenience init(json: JSON) throws {
-        self.init(
-            title: try json.get(Place.Keys.title),
-            address: try json.get(Place.Keys.address),
-            description: try json.get(Place.Keys.description),
-            latitude: try json.get(Place.Keys.latitude),
-            longitude: try json.get(Place.Keys.longitude),
-            cityId: try json.get(Place.Keys.cityId)
-        )
-    }
+
+extension Place: JSONRepresentable {
     
     func makeJSON() throws -> JSON {
         var json = JSON()
@@ -115,6 +94,4 @@ extension Place: JSONConvertible {
 
 // MARK: HTTP
 
-// This allows Place models to be returned
-// directly in route closures
 extension Place: ResponseRepresentable { }
