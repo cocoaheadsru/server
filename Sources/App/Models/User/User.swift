@@ -14,8 +14,6 @@ final class User: Model {
   var email: String
   var phone: String
 
-
-  /// The column names for `id` and `content` in the database
   struct Keys {
     static let id = "id"
     static let name = "name"
@@ -48,10 +46,16 @@ final class User: Model {
     phone = try row.get(Post.Keys.phone)
   }
 
-  // Serializes the Post to the database
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(User.Keys.id, id)
+    try row.set(User.Keys.name, name)
+    try row.set(User.Keys.lastname, lastname)
+    try row.set(User.Keys.company, company)
+    try row.set(User.Keys.position, position)
+    try row.set(User.Keys.photo, photo)
+    try row.set(User.Keys.email, email)
+    try row.set(User.Keys.phone, phone)
     return row
   }
 }
@@ -59,16 +63,21 @@ final class User: Model {
 // MARK: Fluent Preparation
 
 extension User: Preparation {
-  /// Prepares a table/collection in the database
-  /// for storing Posts
+
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
       builder.string(User.Keys.name)
+      builder.string(User.Keys.lastname)
+      builder.string(User.Keys.company)
+      builder.string(User.Keys.position)
+      builder.string(User.Keys.photo)
+      builder.string(User.Keys.email)
+      builder.string(User.Keys.phone)
+      
     }
   }
 
-  /// Undoes what was done in `prepare`
   static func revert(_ database: Database) throws {
     try database.delete(self)
   }
@@ -77,34 +86,34 @@ extension User: Preparation {
 // MARK: JSON
 
 extension User: JSONConvertible {
-  convenience init(json: JSON) throws {
-    self.init(
-      name: try json.get(Post.Keys.name)
-    )
-  }
 
   func makeJSON() throws -> JSON {
     var json = JSON()
-    try json.set(Post.Keys.id, id)
-    try json.set(Post.Keys.name, name)
+    try json.set(User.Keys.id, id)
+    try json.set(User.Keys.name, name)
+    try json.set(User.Keys.lastname, lastname)
+    try json.set(User.Keys.company, company)
+    try json.set(User.Keys.position, position)
+    try json.set(User.Keys.photo, photo)
+    try json.set(User.Keys.email, email)
+    try json.set(User.Keys.phone, phone)
     return json
   }
 }
-
-// MARK: HTTP
-
-extension User: ResponseRepresentable { }
 
 // MARK: Update
 
 extension User: Updateable {
 
-  public static var updateableKeys: [UpdateableKey<Post>] {
+  public static var updateableKeys: [UpdateableKey<User>] {
     return [
-      UpdateableKey(User.Keys.name, String.self) { user, name in
-        user.name = name
-      }
+      UpdateableKey(Keys.name, String.self) { $0.name = $1 },
+      UpdateableKey(Keys.lastname, String.self) { $0.lastname = $1 },
+      UpdateableKey(Keys.company, String.self) { $0.company = $1 },
+      UpdateableKey(Keys.position, String.self) { $0.position = $1 },
+      UpdateableKey(Keys.photo, String.self) { $0.photo = $1 },
+      UpdateableKey(Keys.email, String.self) { $0.email = $1 },
+      UpdateableKey(Keys.phone, String.self) { $0.phone = $1 },
     ]
   }
 }
-
