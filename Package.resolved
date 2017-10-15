@@ -20,6 +20,15 @@
         }
       },
       {
+        "package": "CMySQL",
+        "repositoryURL": "https://github.com/vapor/cmysql.git",
+        "state": {
+          "branch": null,
+          "revision": "d931ed6ce52e772cd364fc0da59312440d6eee43",
+          "version": "2.0.2"
+        }
+      },
+      {
         "package": "CTLS",
         "repositoryURL": "https://github.com/vapor/ctls.git",
         "state": {
@@ -96,8 +105,8 @@
         "repositoryURL": "https://github.com/vapor/json.git",
         "state": {
           "branch": null,
-          "revision": "5c2a62771cefdb04b1f96f4ccc52b581fe20cfb1",
-          "version": "2.2.0"
+          "revision": "735800d8f2e75ebe3be25559eb6a781f4666dcfc",
+          "version": "2.2.1"
         }
       },
       {
@@ -107,6 +116,33 @@
           "branch": null,
           "revision": "f32d0952b8d4dfcef5ea194e85c1968d90f97bf0",
           "version": "2.1.0"
+        }
+      },
+      {
+        "package": "MySQL",
+        "repositoryURL": "https://github.com/vapor/mysql.git",
+        "state": {
+          "branch": null,
+          "revision": "45d6c07a1715a2a1f52e27be918b860dfda5a198",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "MySQLDriver",
+        "repositoryURL": "https://github.com/vapor/mysql-driver.git",
+        "state": {
+          "branch": null,
+          "revision": "bf16cc056a57a1d8c4fb25add22666112c1206e4",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "MySQLProvider",
+        "repositoryURL": "https://github.com/vapor/mysql-provider.git",
+        "state": {
+          "branch": null,
+          "revision": "b32b3ccce7cbe6f76a63dd9cab493ed458a31222",
+          "version": "2.0.0"
         }
       },
       {
@@ -132,8 +168,8 @@
         "repositoryURL": "https://github.com/vapor/routing.git",
         "state": {
           "branch": null,
-          "revision": "66750975f5e5abaacf4bfa4d37ec85dd20c89312",
-          "version": "2.1.0"
+          "revision": "cb9d78aca2540c1a6b45b0ab43e5b0c50f29d216",
+          "version": "2.2.0"
         }
       },
       {
