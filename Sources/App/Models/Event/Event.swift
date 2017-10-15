@@ -64,6 +64,25 @@ final class Event: Model {
     }
 }
 
+extension Event {
+
+    func place() throws -> Place? {
+        return try children(type: Place.self).first()
+    }
+    
+    func speeches() -> [Speech] {
+        return []
+    }
+    
+    func status() -> String {
+        return ""
+    }
+    
+    func registrationForm() /*-> EventRegistrationForm*/ {
+        //
+    }
+}
+
 // MARK: Fluent Preparation
 
 extension Event: Preparation {

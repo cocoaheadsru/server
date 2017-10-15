@@ -54,6 +54,13 @@ final class Place: Model {
     }
 }
 
+extension Place {
+    
+    func city() throws -> City? {
+        return try children(type: City.self).first()
+    }
+}
+
 // MARK: Fluent Preparation
 
 extension Place: Preparation {

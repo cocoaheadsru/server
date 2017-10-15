@@ -39,6 +39,13 @@ final class GiveSpeech: Model {
     }
 }
 
+extension GiveSpeech {
+//    Uncomment when User model is created
+//    func user() throws -> User? {
+//        return try children(type: User.self).first()
+//    }
+}
+
 // MARK: Fluent Preparation
 
 extension GiveSpeech: Preparation {

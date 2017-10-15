@@ -54,6 +54,13 @@ final class Creator: Model {
     }
 }
 
+extension Creator {
+//    Uncomment when User model is created
+//    func user() throws -> User? {
+//        return try children(type: User.self).first()
+//    }
+}
+
 // MARK: Fluent Preparation
 
 extension Creator: Preparation {

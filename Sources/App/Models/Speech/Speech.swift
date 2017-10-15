@@ -49,6 +49,17 @@ final class Speech: Model {
     }
 }
 
+extension Speech {
+    
+    func event() throws -> Event? {
+        return try children(type: Event.self).first()
+    }
+
+    func speaker() throws -> Speaker? {
+        return try children(type: Speaker.self).first()
+    }
+}
+
 // MARK: Fluent Preparation
 
 extension Speech: Preparation {
