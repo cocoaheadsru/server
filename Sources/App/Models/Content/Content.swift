@@ -70,7 +70,7 @@ final class Content: Model {
 extension Content {
 
     func speech() throws -> Speech? {
-        return try children(type: Speech.self).first()
+        return try children().first()
     }
 }
 

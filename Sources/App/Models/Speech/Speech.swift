@@ -52,11 +52,11 @@ final class Speech: Model {
 extension Speech {
     
     func event() throws -> Event? {
-        return try children(type: Event.self).first()
+        return try children().first()
     }
 
     func speaker() throws -> Speaker? {
-        return try children(type: Speaker.self).first()
+        return try children().first()
     }
 }
 

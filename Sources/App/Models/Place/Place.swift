@@ -57,7 +57,7 @@ final class Place: Model {
 extension Place {
     
     func city() throws -> City? {
-        return try children(type: City.self).first()
+        return try children().first()
     }
 }
 

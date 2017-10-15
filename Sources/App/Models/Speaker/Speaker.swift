@@ -37,11 +37,11 @@ final class Speaker: Model {
 extension Speech {
 //    Uncomment when User model is created
 //    func user() throws -> User? {
-//        return try children(type: User.self).first()
+//        return try children().first()
 //    }
     
     func event() throws -> Speech? {
-        return try children(type: Speech.self).first()
+        return try children().first()
     }
 }
 
