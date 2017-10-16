@@ -1,7 +1,7 @@
 import Vapor
 import FluentProvider
 
-final class RegField: Model {
+final class RegFieldAnswer: Model {
     
     let storage = Storage()
     

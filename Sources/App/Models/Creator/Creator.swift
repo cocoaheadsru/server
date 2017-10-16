@@ -5,7 +5,7 @@ final class Creator: Model {
     
     let storage = Storage()
     
-    var userId: Node
+    var userId: Identifier
     var position: Int
     var photoUrl: String
     var info: String
@@ -22,7 +22,7 @@ final class Creator: Model {
         static let isActive = "active"
     }
     
-    init(userId: Node, position: Int, photoUrl: String, info: String, url: String, isActive: Bool) {
+    init(userId: Identifier, position: Int, photoUrl: String, info: String, url: String, isActive: Bool) {
         self.userId = userId
         self.position = position
         self.photoUrl = photoUrl

@@ -7,7 +7,7 @@ final class GiveSpeech: Model {
     
     var title: String
     var description: String
-    var userId: Node
+    var userId: Identifier
     
     struct Keys {
         static let id = "id"
@@ -16,7 +16,7 @@ final class GiveSpeech: Model {
         static let userId = "user_id"
     }
     
-    init(title: String, description: String, userId: Node) {
+    init(title: String, description: String, userId: Identifier) {
         self.title = title
         self.description = description
         self.userId = userId

@@ -8,7 +8,7 @@ final class Event: Model {
     var title: String
     var description: String
     var photoUrl: String
-    var placeId: Node
+    var placeId: Identifier
     var isRegistrationOpen: Bool = true
     var startDate: Int
     var endDate: Int
@@ -26,7 +26,7 @@ final class Event: Model {
         static let isHidden = "hide"
     }
     
-    init(title: String, description: String, photoUrl: String, placeId: Node, isRegistrationOpen: Bool = true, startDate: Int, endDate: Int, isHidden: Bool = false) {
+    init(title: String, description: String, photoUrl: String, placeId: Identifier, isRegistrationOpen: Bool = true, startDate: Int, endDate: Int, isHidden: Bool = false) {
         self.title = title
         self.description = description
         self.photoUrl = photoUrl

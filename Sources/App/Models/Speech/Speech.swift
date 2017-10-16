@@ -5,10 +5,10 @@ final class Speech: Model {
     
     let storage = Storage()
     
-    var eventId: Node
+    var eventId: Identifier
     var title: String
     var description: String
-    var speakerId: Node
+    var speakerId: Identifier
     var photoUrl: String
     
     struct Keys {
@@ -20,7 +20,7 @@ final class Speech: Model {
         static let photoUrl = "photo_url"
     }
     
-    init(eventId: Node, title: String, description: String, speakerId: Node, photoUrl: String) {
+    init(eventId: Identifier, title: String, description: String, speakerId: Identifier, photoUrl: String) {
         self.eventId = eventId
         self.title = title
         self.description = description

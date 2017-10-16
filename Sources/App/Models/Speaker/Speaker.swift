@@ -5,8 +5,8 @@ final class Speaker: Model {
     
     let storage = Storage()
     
-    var userId: Node
-    var eventId: Node
+    var userId: Identifier
+    var eventId: Identifier
     
     struct Keys {
         static let id = "id"
@@ -14,7 +14,7 @@ final class Speaker: Model {
         static let eventId = "event_id"
     }
     
-    init(userId: Node, eventId: Node) {
+    init(userId: Identifier, eventId: Identifier) {
         self.userId = userId
         self.eventId = eventId
     }

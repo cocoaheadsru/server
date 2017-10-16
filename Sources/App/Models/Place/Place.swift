@@ -10,7 +10,7 @@ final class Place: Model {
     var description: String
     var latitude: Double
     var longitude: Double
-    var cityId: Node
+    var cityId: Identifier
     
     struct Keys {
         static let id = "id"
@@ -22,7 +22,7 @@ final class Place: Model {
         static let cityId = "city_id"
     }
     
-    init(title: String, address: String, description: String, latitude: Double, longitude: Double, cityId: Node) {
+    init(title: String, address: String, description: String, latitude: Double, longitude: Double, cityId: Identifier) {
         self.title = title
         self.address = address
         self.description = description

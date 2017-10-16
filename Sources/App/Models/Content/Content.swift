@@ -5,7 +5,7 @@ final class Content: Model {
     
     let storage = Storage()
     
-    var speechId: Node
+    var speechId: Identifier
     var title: String
     var description: String
     var link: String
@@ -37,7 +37,7 @@ final class Content: Model {
         static let type = "type"
     }
     
-    init(speechId: Node, title: String, description: String, link: String, type: ContentType) {
+    init(speechId: Identifier, title: String, description: String, link: String, type: ContentType) {
         self.speechId = speechId
         self.title = title
         self.description = description
