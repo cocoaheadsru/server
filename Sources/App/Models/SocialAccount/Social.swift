@@ -38,11 +38,17 @@ final class Social: Model {
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Social.Keys.socialId, socialId)
-    try row.set(Social.Keys.id, name)
-    try row.set(v.Keys.socialUserId, appId)
-    try row.set(Social.Keys.userId, secureKey)
-    try row.set(Social.Keys.userId, serviceToken)
+    try row.set(Social.Keys.name, name)
+    try row.set(Social.Keys.appId, appId)
+    try row.set(Social.Keys.secureKey, secureKey)
+    try row.set(Social.Keys.serviceToken, serviceToken)
     return row
+  }
+}
+
+extension Social {
+  var accounts: Children<Social, SocialAccount> {
+    return children()
   }
 }
 
@@ -76,10 +82,10 @@ extension Social: JSONConvertible {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Social.Keys.socialId, socialId)
-    try json.set(Social.Keys.id, name)
-    try json.set(Social.Keys.socialUserId, appId)
-    try json.set(Social.Keys.userId, secureKey)
-    try json.set(Social.Keys.userId, serviceToken)
+    try json.set(Social.Keys.name, name)
+    try json.set(Social.Keys.appId, appId)
+    try json.set(Social.Keys.secureKey, secureKey)
+    try json.set(Social.Keys.serviceToken, serviceToken)
     return json
   }
 }

@@ -28,7 +28,7 @@ final class SocialAccount: Model {
     userId = try row.get(SocialAccount.Keys.userId)
     id = try row.get(SocialAccount.Keys.id)
   }
-
+  
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(SocialAccount.Keys.id, id)
@@ -43,7 +43,7 @@ extension SocialAccount: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.string(SocialAccount.Keys.id)
+      builder.foreignKey(SocialAccount.Keys.socialId, references: Social.Keys.socialId, on: Social.self, named: "social")
       builder.string(SocialAccount.Keys.socialId)
       builder.string(SocialAccount.Keys.socialUserId)
       builder.string(SocialAccount.Keys.userId)
@@ -56,13 +56,13 @@ extension SocialAccount: Preparation {
 }
 
 extension SocialAccount: JSONConvertible {
-    convenience init(json: JSON) throws {
-      try self.init(
-        socialId: json.get(SocialAccount.Keys.socialId),
-        socialUserId: json.get(SocialAccount.Keys.socialUserId),
-        userId: json.get(SocialAccount.Keys.userId))
-    }
-    
+  convenience init(json: JSON) throws {
+    try self.init(
+      socialId: json.get(SocialAccount.Keys.socialId),
+      socialUserId: json.get(SocialAccount.Keys.socialUserId),
+      userId: json.get(SocialAccount.Keys.userId))
+  }
+  
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(SocialAccount.Keys.id, id)
