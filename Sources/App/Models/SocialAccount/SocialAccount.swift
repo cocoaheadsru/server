@@ -39,11 +39,13 @@ final class SocialAccount: Model {
   }
 }
 
+// MARK: Fluent Preparation
+
 extension SocialAccount: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(SocialAccount.Keys.socialId, references: Social.Keys.socialId, on: Social.self, named: "social")
+      builder.foreignKey(SocialAccount.Keys.socialId, references: Social.Keys.id, on: Social.self, named: "social")
       builder.string(SocialAccount.Keys.socialId)
       builder.string(SocialAccount.Keys.socialUserId)
       builder.string(SocialAccount.Keys.userId)
@@ -54,6 +56,8 @@ extension SocialAccount: Preparation {
     try database.delete(self)
   }
 }
+
+// MARK: JSON
 
 extension SocialAccount: JSONConvertible {
   convenience init(json: JSON) throws {
