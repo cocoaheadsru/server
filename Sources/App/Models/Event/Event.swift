@@ -1,32 +1,25 @@
 import Vapor
 import FluentProvider
 
+// sourcery: AutoModelGeneratable
+// sourcery: toJSON, Preparation
 final class Event: Model {
+  
+  static var entity: String = "event"
   
   let storage = Storage()
   
+  // sourcery: relatedModel = Place
+  var placeId: Identifier
   var title: String
   var description: String
   var photoUrl: String
-  var placeId: Identifier
   var isRegistrationOpen: Bool = true
   var startDate: Int
   var endDate: Int
-  var isHidden: Bool = false
+  var hide: Bool = false
   
-  struct Keys {
-    static let id = "id"
-    static let title = "title"
-    static let description = "description"
-    static let photoUrl = "photo_url"
-    static let placeId = "place_id"
-    static let isRegistrationOpen = "is_registration_open"
-    static let startDate = "start_date"
-    static let endDate = "end_date"
-    static let isHidden = "hide"
-  }
-  
-  init(title: String, description: String, photoUrl: String, placeId: Identifier, isRegistrationOpen: Bool = true, startDate: Int, endDate: Int, isHidden: Bool = false) {
+  init(title: String, description: String, photoUrl: String, placeId: Identifier, isRegistrationOpen: Bool = true, startDate: Int, endDate: Int, hide: Bool = false) {
     self.title = title
     self.description = description
     self.photoUrl = photoUrl
@@ -34,34 +27,34 @@ final class Event: Model {
     self.isRegistrationOpen = isRegistrationOpen
     self.startDate = startDate
     self.endDate = endDate
-    self.isHidden = isHidden
+    self.hide = hide
   }
   
-  // MARK: Fluent Serialization
-  
+  // sourcery:inline:auto:Event.AutoModelGeneratable
   init(row: Row) throws {
-    title = try row.get(Event.Keys.title)
-    description = try row.get(Event.Keys.description)
-    photoUrl = try row.get(Event.Keys.photoUrl)
-    placeId = try row.get(Event.Keys.placeId)
-    isRegistrationOpen = try row.get(Event.Keys.isRegistrationOpen)
-    startDate = try row.get(Event.Keys.startDate)
-    endDate = try row.get(Event.Keys.endDate)
-    isHidden = try row.get(Event.Keys.isHidden)
+    placeId = try row.get(Keys.placeId)
+    title = try row.get(Keys.title)
+    description = try row.get(Keys.description)
+    photoUrl = try row.get(Keys.photoUrl)
+    isRegistrationOpen = try row.get(Keys.isRegistrationOpen)
+    startDate = try row.get(Keys.startDate)
+    endDate = try row.get(Keys.endDate)
+    hide = try row.get(Keys.hide)
   }
-  
+
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Event.Keys.title, title)
-    try row.set(Event.Keys.description, description)
-    try row.set(Event.Keys.photoUrl, photoUrl)
-    try row.set(Event.Keys.placeId, placeId)
-    try row.set(Event.Keys.isRegistrationOpen, isRegistrationOpen)
-    try row.set(Event.Keys.startDate, startDate)
-    try row.set(Event.Keys.endDate, endDate)
-    try row.set(Event.Keys.isHidden, isHidden)
+    try row.set(Keys.placeId, placeId)
+    try row.set(Keys.title, title)
+    try row.set(Keys.description, description)
+    try row.set(Keys.photoUrl, photoUrl)
+    try row.set(Keys.isRegistrationOpen, isRegistrationOpen)
+    try row.set(Keys.startDate, startDate)
+    try row.set(Keys.endDate, endDate)
+    try row.set(Keys.hide, hide)
     return row
   }
+  // sourcery:end
 }
 
 extension Event {
@@ -82,49 +75,3 @@ extension Event {
     //
   }
 }
-
-// MARK: Fluent Preparation
-
-extension Event: Preparation {
-  
-  static func prepare(_ database: Database) throws {
-    try database.create(self) { builder in
-      builder.id()
-      builder.string(Event.Keys.title)
-      builder.string(Event.Keys.description)
-      builder.string(Event.Keys.photoUrl)
-      builder.foreignKey(Event.Keys.placeId, references: Place.Keys.id, on: Place.self, named: "place")
-      builder.bool(Event.Keys.isRegistrationOpen)
-      builder.int(Event.Keys.startDate)
-      builder.int(Event.Keys.endDate)
-      builder.bool(Event.Keys.isHidden)
-    }
-  }
-  
-  static func revert(_ database: Database) throws {
-    try database.delete(self)
-  }
-}
-
-// MARK: JSON
-
-extension Event: JSONRepresentable {
-  
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Event.Keys.id, id)
-    try json.set(Event.Keys.title, title)
-    try json.set(Event.Keys.description, description)
-    try json.set(Event.Keys.photoUrl, photoUrl)
-    try json.set(Event.Keys.placeId, placeId)
-    try json.set(Event.Keys.isRegistrationOpen, isRegistrationOpen)
-    try json.set(Event.Keys.startDate, startDate)
-    try json.set(Event.Keys.endDate, endDate)
-    try json.set(Event.Keys.isHidden, isHidden)
-    return json
-  }
-}
-
-// MARK: HTTP
-
-extension Event: ResponseRepresentable { }

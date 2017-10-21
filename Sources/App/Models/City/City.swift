@@ -1,62 +1,29 @@
 import Vapor
 import FluentProvider
 
+// sourcery: AutoModelGeneratable
+// sourcery: toJSON, Preparation
 final class City: Model {
+  
+  static var entity: String = "city"
   
   let storage = Storage()
   
   var cityName: String
   
-  struct Keys {
-    static let id = "id"
-    static let cityName = "city_name"
-  }
-  
   init(cityName: String) {
     self.cityName = cityName
   }
   
-  // MARK: Fluent Serialization
-  
+  // sourcery:inline:auto:City.AutoModelGeneratable
   init(row: Row) throws {
-    cityName = try row.get(City.Keys.cityName)
+    cityName = try row.get(Keys.cityName)
   }
-  
+
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(City.Keys.cityName, cityName)
+    try row.set(Keys.cityName, cityName)
     return row
   }
+  // sourcery:end
 }
-
-// MARK: Fluent Preparation
-
-extension City: Preparation {
-  
-  static func prepare(_ database: Database) throws {
-    try database.create(self) { builder in
-      builder.id()
-      builder.string(City.Keys.cityName)
-    }
-  }
-  
-  static func revert(_ database: Database) throws {
-    try database.delete(self)
-  }
-}
-
-// MARK: JSON
-
-extension City: JSONRepresentable {
-  
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(City.Keys.id, id)
-    try json.set(City.Keys.cityName, cityName)
-    return json
-  }
-}
-
-// MARK: HTTP
-
-extension City: ResponseRepresentable { }
