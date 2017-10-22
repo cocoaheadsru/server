@@ -39,13 +39,21 @@ final class SocialAccount: Model {
   }
 }
 
+// MARK: Relations
+
+extension SocialAccount {
+  var social: Parent<SocialAccount, Social> {
+    return parent(id: Identifier(socialId, in: nil))
+  }
+}
+
 // MARK: Fluent Preparation
 
 extension SocialAccount: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(SocialAccount.Keys.socialId, references: Social.Keys.id, on: Social.self, named: "social")
+      builder.foreignKey(SocialAccount.Keys.socialId, references: Social.foreignIdKey, on: Social.self)
       builder.string(SocialAccount.Keys.socialId)
       builder.string(SocialAccount.Keys.socialUserId)
       builder.string(SocialAccount.Keys.userId)

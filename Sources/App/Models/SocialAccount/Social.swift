@@ -4,6 +4,7 @@ import HTTP
 
 final class Social: Model {
   let storage = Storage()
+  static let foreignIdKey = "id"
   
   var name: String
   var appId: String
@@ -41,14 +42,6 @@ final class Social: Model {
     try row.set(Social.Keys.secureKey, secureKey)
     try row.set(Social.Keys.serviceToken, serviceToken)
     return row
-  }
-}
-
-// MARK: Relations
-
-extension Social {
-  var accounts: Children<Social, SocialAccount> {
-    return children()
   }
 }
 
