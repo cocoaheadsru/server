@@ -9,7 +9,7 @@ final class Content: Model {
   
   let storage = Storage()
   
-  // sourcery: relatedModel = Speech
+  // sourcery: relation = parent, relatedModel = Speech
   var speechId: Identifier
   // sourcery: enum, video, slide
   var type: ContentType
@@ -49,6 +49,6 @@ final class Content: Model {
 extension Content {
   
   func speech() throws -> Speech? {
-    return try children().first()
+    return try parent(id: speechId).get()
   }
 }

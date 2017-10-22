@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: toJSON, Preparation, Updateable
 final class EventReg: Model {
   
   static var entity: String = "event_reg"
@@ -11,7 +11,7 @@ final class EventReg: Model {
   
   // sourcery: relatedModel = RegForm
   var regFormId: Identifier
-  // sourcery: relatedModel = User
+  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   // sourcery: enum, waiting, rejected, approved, canceled
   var status: RegistrationStatus = .waiting

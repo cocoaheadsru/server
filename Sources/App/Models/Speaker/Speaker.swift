@@ -9,9 +9,9 @@ final class Speaker: Model {
   
   let storage = Storage()
   
-  // sourcery: relatedModel = User
+  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
-  // sourcery: relatedModel = Event
+  // sourcery: relation = parent, relatedModel = Event
   var eventId: Identifier
   
   init(userId: Identifier, eventId: Identifier) {
@@ -37,10 +37,10 @@ final class Speaker: Model {
 extension Speech {
   
   func user() throws -> User? {
-    return try children().first()
+    return try parent(id: userId).get()
   }
   
   func event() throws -> Event? {
-    return try children().first()
+    return try parent(id: eventId).get()
   }
 }

@@ -19,7 +19,7 @@ extension Speaker: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.foreignKey(Keys.userId, references: User.Keys.id, on: User.self)
-      builder.foreignKey(Keys.eventId, references: Event.Keys.id, on: Event.self)
+      builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
     }
   }
 

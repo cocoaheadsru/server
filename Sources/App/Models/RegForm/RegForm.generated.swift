@@ -19,7 +19,7 @@ extension RegForm: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.eventId, references: Event.Keys.id, on: Event.self)
+      builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
       builder.string(Keys.formName)
       builder.string(Keys.description)
     }

@@ -9,7 +9,7 @@ final class Creator: Model {
   
   let storage = Storage()
   
-  // sourcery: relatedModel = User
+  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   var position: Int
   var photoUrl: String
@@ -52,7 +52,7 @@ final class Creator: Model {
 extension Creator {
 
   func user() throws -> User? {
-        return try children().first()
+    return try parent(id: userId).get()
   }
   
   func photo() throws -> String {

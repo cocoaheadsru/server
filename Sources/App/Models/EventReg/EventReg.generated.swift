@@ -37,6 +37,17 @@ extension EventReg {
   }
 }
 
+extension EventReg: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<EventReg>] {
+    return [
+      UpdateableKey(Keys.regFormId, Identifier.self) { $0.regFormId = $1 },
+      UpdateableKey(Keys.userId, Identifier.self) { $0.userId = $1 },
+      UpdateableKey(Keys.status, String.self) { $0.status = RegistrationStatus($1) }
+    ]
+  }
+}
+
 extension EventReg: Preparation {
 
   static func prepare(_ database: Database) throws {

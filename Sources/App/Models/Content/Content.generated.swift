@@ -40,7 +40,7 @@ extension Content: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.speechId, references: Speech.Keys.id, on: Speech.self)
+      builder.parent(Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
       builder.string(Keys.type)
       builder.string(Keys.title)
       builder.string(Keys.description)

@@ -9,7 +9,7 @@ final class GiveSpeech: Model {
 
   let storage = Storage()
 
-  // sourcery: relatedModel = User
+  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   var title: String
   var description: String
@@ -40,7 +40,7 @@ final class GiveSpeech: Model {
 extension GiveSpeech {
 
   func user() throws -> User? {
-    return try children().first()
+    return try parent(id: userId).get()
   }
 }
 

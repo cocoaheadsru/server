@@ -9,7 +9,7 @@ final class EventRegField: Model {
   
   let storage = Storage()
   
-  // sourcery: relatedModel = RegForm
+  // sourcery: relation = parent, relatedModel = RegForm
   var regFormId: Identifier
   // sourcery: relatedModel = RegField
   var fieldId: Identifier
@@ -45,7 +45,7 @@ final class EventRegField: Model {
 extension EventRegField {
   
   func regForm() throws -> RegForm? {
-    return try children().first()
+    return try parent(id: regFormId).get()
   }
   
   func field() throws -> RegField? {

@@ -9,7 +9,7 @@ final class Speech: Model {
   
   let storage = Storage()
   
-  // sourcery: relatedModel = Event
+  // sourcery: relation = parent, relatedModel = Event
   var eventId: Identifier
   // sourcery: relatedModel = Speaker
   var speakerId: Identifier
@@ -49,7 +49,7 @@ final class Speech: Model {
 extension Speech {
   
   func event() throws -> Event? {
-    return try children().first()
+    return try parent(id: eventId).get()
   }
   
   func speaker() throws -> Speaker? {
