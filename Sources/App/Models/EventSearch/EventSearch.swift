@@ -1,6 +1,6 @@
 import Vapor
 import FluentProvider
 
-final class EventSearch { //}: Event {
-
+final class EventSearch { //}: Event   {
+  
 }

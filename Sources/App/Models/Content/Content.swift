@@ -5,6 +5,8 @@ import FluentProvider
 // sourcery: toJSON, Preparation
 final class Content: Model {
   
+  static var entity: String = "content"
+  
   let storage = Storage()
   
   // sourcery: relatedModel = Speech

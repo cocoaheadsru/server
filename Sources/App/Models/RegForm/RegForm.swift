@@ -3,7 +3,9 @@ import FluentProvider
 
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
-final class EventRegForm: Model {
+final class RegForm: Model {
+  
+  static var entity: String = "reg_form"
   
   let storage = Storage()
   
@@ -18,7 +20,7 @@ final class EventRegForm: Model {
     self.description = description
   }
   
-  // sourcery:inline:auto:EventRegForm.AutoModelGeneratable
+  // sourcery:inline:auto:RegForm.AutoModelGeneratable
   init(row: Row) throws {
     eventId = try row.get(Keys.eventId)
     formName = try row.get(Keys.formName)
@@ -33,4 +35,11 @@ final class EventRegForm: Model {
     return row
   }
   // sourcery:end
+}
+
+extension RegForm {
+  
+  func eventRegFields() throws -> [EventRegField] {
+    return try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, id).all()
+  }
 }

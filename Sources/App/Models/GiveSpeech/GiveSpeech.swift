@@ -40,7 +40,7 @@ final class GiveSpeech: Model {
 extension GiveSpeech {
 
   func user() throws -> User? {
-        return try children().first()
-    }
+    return try children().first()
+  }
 }
 

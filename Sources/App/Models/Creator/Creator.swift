@@ -53,5 +53,9 @@ extension Creator {
 
   func user() throws -> User? {
         return try children().first()
-    }
+  }
+  
+  func photo() throws -> String {
+    return "http://upapi.ru/photos/creators/\(photoUrl)"
+  }
 }

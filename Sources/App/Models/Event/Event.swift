@@ -63,15 +63,15 @@ extension Event {
     return try children().first()
   }
   
-  func speeches() -> [Speech] {
-    return []
+  func speeches() throws -> [Speech] {
+    return try Speech.makeQuery().filter(Speech.Keys.eventId, id).all()
   }
   
   func status() -> String {
     return ""
   }
   
-  func registrationForm() /*-> EventRegistrationForm*/ {
-    //
+  func registrationForm() throws -> RegForm? {
+    return try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
   }
 }

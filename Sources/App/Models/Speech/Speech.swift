@@ -55,5 +55,9 @@ extension Speech {
   func speaker() throws -> Speaker? {
     return try children().first()
   }
+  
+  func contents() throws -> [Content] {
+    return try Content.makeQuery().filter(Content.Keys.speechId, id).all()
+  }
 }
 

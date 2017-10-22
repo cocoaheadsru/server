@@ -8,8 +8,10 @@ extension RegField {
 
   struct Keys {
     static let id = "id"
-    static let name = "name"
     static let type = "type"
+    static let rules = "rules"
+    static let name = "name"
+    static let placeholder = "placeholder"
   }
 }
 
@@ -34,13 +36,39 @@ extension RegField {
   }
 }
 
+extension RegField: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<RegField>] {
+    return [
+      UpdateableKey(Keys.type, String.self) { $0.type = FieldType($1) },
+      UpdateableKey(Keys.rules, Array.self) { $0.rules = $1 },
+      UpdateableKey(Keys.name, String.self) { $0.name = $1 },
+      UpdateableKey(Keys.placeholder, String.self) { $0.placeholder = $1 }
+    ]
+  }
+}
+
+extension RegField: JSONInitializable {
+
+  convenience init(json: JSON) throws {
+    self.init(
+      name: try json.get(Keys.name),
+      type: FieldType(try json.get(Keys.type)),
+      placeholder: try json.get(Keys.placeholder),
+      rules: try json.get(Keys.rules)
+    )
+  }
+}
+
 extension RegField: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.string(Keys.name)
       builder.string(Keys.type)
+      builder.foreignKey(Keys.rules, references: RegFieldRule.Keys.id, on: RegFieldRule.self)
+      builder.string(Keys.name)
+      builder.string(Keys.placeholder)
     }
   }
 
@@ -54,8 +82,10 @@ extension RegField: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.name, name)
     try json.set(Keys.type, type.string)
+    try json.set(Keys.rules, rules)
+    try json.set(Keys.name, name)
+    try json.set(Keys.placeholder, placeholder)
     return json
   }
 }

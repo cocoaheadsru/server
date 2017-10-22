@@ -4,7 +4,7 @@
 import Vapor
 import FluentProvider
 
-extension EventRegForm {
+extension RegForm {
 
   struct Keys {
     static let id = "id"
@@ -14,7 +14,7 @@ extension EventRegForm {
   }
 }
 
-extension EventRegForm: Preparation {
+extension RegForm: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
@@ -30,7 +30,7 @@ extension EventRegForm: Preparation {
   }
 }
 
-extension EventRegForm: JSONRepresentable {
+extension RegForm: JSONRepresentable {
 
   func makeJSON() throws -> JSON {
     var json = JSON()
