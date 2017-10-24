@@ -6,6 +6,7 @@ final class User: Model {
 
   let storage = Storage()
 
+  var id: Node
   var name: String
   var lastname: String
   var company: String
@@ -14,7 +15,7 @@ final class User: Model {
   var email: String
   var phone: String
 
-  struct Keys {
+  private struct Keys {
     static let id = "id"
     static let name = "name"
     static let lastname = "lastname"
@@ -26,36 +27,39 @@ final class User: Model {
 
   }
 
-  init(name: String, lastname: String) {
+  init(id: String, name: String, lastname: String, company: String = "", position: String = "", photo: String = "", email: String = "", phone: String = "") {
+    self.id = Node(id, in: nil)
     self.name = name
     self.lastname = lastname
-    self.company = ""
-    self.phone = ""
-    self.email = ""
-    self.phone = ""
+    self.company = company
+    self.position = position
+    self.photo = photo
+    self.email = email
+    self.phone = phone
   }
 
   init(row: Row) throws {
-    id = try row.get(Post.Keys.id)
-    name = try row.get(Post.Keys.name)
-    lastname = try row.get(Post.Keys.lastname)
-    company = try row.get(Post.Keys.company)
-    position = try row.get(Post.Keys.position)
-    photo = try row.get(Post.Keys.photo)
-    email = try row.get(Post.Keys.email)
-    phone = try row.get(Post.Keys.phone)
+    id = try row.get(Keys.id)
+    name = try row.get(Keys.name)
+    name = try row.get(Keys.name)
+    lastname = try row.get(Keys.lastname)
+    company = try row.get(Keys.company)
+    position = try row.get(Keys.position)
+    photo = try row.get(Keys.photo)
+    email = try row.get(Keys.email)
+    phone = try row.get(Keys.phone)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(User.Keys.id, id)
-    try row.set(User.Keys.name, name)
-    try row.set(User.Keys.lastname, lastname)
-    try row.set(User.Keys.company, company)
-    try row.set(User.Keys.position, position)
-    try row.set(User.Keys.photo, photo)
-    try row.set(User.Keys.email, email)
-    try row.set(User.Keys.phone, phone)
+    try row.set(Keys.id, id)
+    try row.set(Keys.name, name)
+    try row.set(Keys.lastname, lastname)
+    try row.set(Keys.company, company)
+    try row.set(Keys.position, position)
+    try row.set(Keys.photo, photo)
+    try row.set(Keys.email, email)
+    try row.set(Keys.phone, phone)
     return row
   }
 }
@@ -86,6 +90,19 @@ extension User: Preparation {
 // MARK: JSON
 
 extension User: JSONConvertible {
+  convenience init(json: JSON) throws {
+    self.init(
+
+      id: try json.get(Keys.id),
+      name: try json.get(Keys.name),
+      lastname: try json.get(Keys.lastname),
+      company: try json.get(Keys.company),
+      position: try json.get(Keys.position),
+      photo: try json.get(Keys.photo),
+      email: try json.get(Keys.email),
+      phone: try json.get(Keys.phone)
+    )
+  }
 
   func makeJSON() throws -> JSON {
     var json = JSON()
