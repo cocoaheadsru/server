@@ -32,7 +32,7 @@ extension EventRegAnswer: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.regId, references: EventReg.Keys.id, on: EventReg.self)
+      builder.parent(EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
       builder.foreignKey(Keys.fieldId, references: EventRegField.Keys.id, on: EventRegField.self)
       builder.foreignKey(Keys.answerId, references: RegFieldAnswer.Keys.id, on: RegFieldAnswer.self)
       builder.string(Keys.answerValue)

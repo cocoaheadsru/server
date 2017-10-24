@@ -30,7 +30,7 @@ extension GiveSpeech: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.userId, references: User.Keys.id, on: User.self)
+      builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
       builder.string(Keys.title)
       builder.string(Keys.description)
     }

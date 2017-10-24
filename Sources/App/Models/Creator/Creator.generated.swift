@@ -22,7 +22,7 @@ extension Creator: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.userId, references: User.Keys.id, on: User.self)
+      builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
       builder.int(Keys.position)
       builder.string(Keys.photoUrl)
       builder.string(Keys.info)
