@@ -51,4 +51,8 @@ extension RegField {
   func regFieldAnswers() throws -> [RegFieldAnswer] {
     return try RegFieldAnswer.makeQuery().filter(RegFieldAnswer.Keys.fieldId, id).all()
   }
+  
+  func validationRules() throws -> [RegFieldRule] {
+    return try children().all()
+  }
 }
