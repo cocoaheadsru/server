@@ -6,7 +6,7 @@ final class User: Model {
 
   let storage = Storage()
 
-  var id: Node
+  var id: Identifier
   var name: String
   var lastname: String
   var company: String
@@ -28,7 +28,7 @@ final class User: Model {
   }
 
   init(id: String, name: String, lastname: String, company: String = "", position: String = "", photo: String = "", email: String = "", phone: String = "") {
-    self.id = Node(id, in: nil)
+    self.id = Identifier.string(id, in: nil)
     self.name = name
     self.lastname = lastname
     self.company = company
@@ -71,13 +71,13 @@ extension User: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.string(User.Keys.name)
-      builder.string(User.Keys.lastname)
-      builder.string(User.Keys.company)
-      builder.string(User.Keys.position)
-      builder.string(User.Keys.photo)
-      builder.string(User.Keys.email)
-      builder.string(User.Keys.phone)
+      builder.string(Keys.name)
+      builder.string(Keys.lastname)
+      builder.string(Keys.company)
+      builder.string(Keys.position)
+      builder.string(Keys.photo)
+      builder.string(Keys.email)
+      builder.string(Keys.phone)
       
     }
   }
@@ -106,15 +106,23 @@ extension User: JSONConvertible {
 
   func makeJSON() throws -> JSON {
     var json = JSON()
-    try json.set(User.Keys.id, id)
-    try json.set(User.Keys.name, name)
-    try json.set(User.Keys.lastname, lastname)
-    try json.set(User.Keys.company, company)
-    try json.set(User.Keys.position, position)
-    try json.set(User.Keys.photo, photo)
-    try json.set(User.Keys.email, email)
-    try json.set(User.Keys.phone, phone)
+    try json.set(Keys.id, id)
+    try json.set(Keys.name, name)
+    try json.set(Keys.lastname, lastname)
+    try json.set(Keys.company, company)
+    try json.set(Keys.position, position)
+    try json.set(Keys.photo, photo)
+    try json.set(Keys.email, email)
+    try json.set(Keys.phone, phone)
     return json
+  }
+}
+
+
+// MARK: Relations
+extension User {
+  var clients: Children<User, Client> {
+    return children()
   }
 }
 
