@@ -142,3 +142,5 @@ extension User: Updateable {
     ]
   }
 }
+
+extension User: ResponseRepresentable {}
