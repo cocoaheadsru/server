@@ -1,7 +1,7 @@
 import Vapor
 
 extension Droplet {
-    func setupRoutes() throws {
-
-    }
+  func setupRoutes() throws {
+    
+  }
 }
