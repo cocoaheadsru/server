@@ -6,7 +6,6 @@ final class Client: Model {
 
   let storage = Storage()
 
-  var id: Identifier
   var pushToken: String
   var userId: Identifier
 
@@ -16,14 +15,12 @@ final class Client: Model {
     static let userId = "user_id"
   }
 
-  init(id: String, pushToken: String, userId: String) {
-    self.id = Identifier.string(id, in: nil)
+  init(pushToken: String, userId: String) {
     self.pushToken = pushToken
     self.userId = Identifier.string(userId, in: nil)
   }
 
   init(row: Row) throws {
-    id = try row.get(Keys.id)
     pushToken = try row.get(Keys.pushToken)
     userId = try row.get(Keys.userId)
   }
@@ -46,7 +43,6 @@ extension Client: Preparation {
       builder.id()
       builder.string(Keys.pushToken)
       builder.foreignId(for: User.self)
-
     }
   }
 
@@ -60,9 +56,15 @@ extension Client: Preparation {
 extension Client: JSONConvertible {
   convenience init(json: JSON) throws {
     self.init(
-      id: try json.get(Keys.id),
       pushToken: try json.get(Keys.pushToken),
       userId: try json.get(Keys.userId)
+    )
+  }
+  
+  convenience init(request: Request) throws {
+    self.init(
+      pushToken: try request.json!.get(Keys.pushToken),
+      userId: (try request.parameters.next(User.self).id?.string)!
     )
   }
 
@@ -75,3 +77,13 @@ extension Client: JSONConvertible {
   }
 }
 
+// MARK: Update
+extension Client: Updateable {
+  public static var updateableKeys: [UpdateableKey<Client>] {
+    return [
+      UpdateableKey(Keys.pushToken, String.self) { $0.pushToken = $1 }
+    ]
+  }
+}
+
+extension Client: ResponseRepresentable {}
