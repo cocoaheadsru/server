@@ -43,7 +43,6 @@ final class User: Model {
 
   init(row: Row) throws {
     name = try row.get(Keys.name)
-    name = try row.get(Keys.name)
     lastname = try row.get(Keys.lastname)
     company = try row.get(Keys.company)
     position = try row.get(Keys.position)

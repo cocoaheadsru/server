@@ -56,3 +56,22 @@ extension BaseController {
     return JSON()
   }
 }
+
+extension BaseController where Resource: Updateable {
+  
+  func addUpdateRoute(to droplet: Droplet, namespace: String? = nil) {
+    let modelRoute = namespace ?? String(describing: Resource.self).lowercased()
+    let resourceGroup = droplet.grouped(modelRoute)
+    resourceGroup.patch(Resource.parameter, handler: update)
+  }
+  
+  func update(_ request: Request) throws -> ResponseRepresentable {
+    guard let _ = request.json else {
+      throw Abort.badRequest
+    }
+    let resource = try request.parameters.next(Resource.self)
+    try resource.update(for: request)
+    try resource.save()
+    return resource
+  }
+}
