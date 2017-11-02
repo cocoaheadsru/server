@@ -5,8 +5,7 @@ import HTTP
 final class User: Model {
 
   let storage = Storage()
-
-  var id: Identifier
+  
   var name: String
   var lastname: String
   var company: String
@@ -24,11 +23,15 @@ final class User: Model {
     static let photo = "photo"
     static let email = "email"
     static let phone = "phone"
-
   }
 
-  init(id: String, name: String, lastname: String, company: String = "", position: String = "", photo: String = "", email: String = "", phone: String = "") {
-    self.id = Identifier.string(id, in: nil)
+  init(name: String,
+       lastname: String,
+       company: String = "",
+       position: String = "",
+       photo: String = "",
+       email: String = "",
+       phone: String = "") {
     self.name = name
     self.lastname = lastname
     self.company = company
@@ -39,7 +42,6 @@ final class User: Model {
   }
 
   init(row: Row) throws {
-    id = try row.get(Keys.id)
     name = try row.get(Keys.name)
     name = try row.get(Keys.name)
     lastname = try row.get(Keys.lastname)
@@ -91,16 +93,14 @@ extension User: Preparation {
 
 extension User: JSONConvertible {
   convenience init(json: JSON) throws {
-    self.init(
-
-      id: try json.get(Keys.id),
-      name: try json.get(Keys.name),
-      lastname: try json.get(Keys.lastname),
-      company: try json.get(Keys.company),
-      position: try json.get(Keys.position),
-      photo: try json.get(Keys.photo),
-      email: try json.get(Keys.email),
-      phone: try json.get(Keys.phone)
+    try self.init(
+      name: json.get(Keys.name),
+      lastname: json.get(Keys.lastname),
+      company: json.get(Keys.company) ?? "",
+      position: json.get(Keys.position) ?? "",
+      photo: json.get(Keys.photo) ?? "",
+      email: json.get(Keys.email) ?? "",
+      phone: json.get(Keys.phone) ?? ""
     )
   }
 
@@ -118,7 +118,6 @@ extension User: JSONConvertible {
   }
 }
 
-
 // MARK: Relations
 extension User {
   var clients: Children<User, Client> {
@@ -127,7 +126,6 @@ extension User {
 }
 
 // MARK: Update
-
 extension User: Updateable {
 
   public static var updateableKeys: [UpdateableKey<User>] {
