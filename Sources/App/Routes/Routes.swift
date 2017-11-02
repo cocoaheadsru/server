@@ -5,5 +5,8 @@ extension Droplet {
     let users = UserController()
     users.addRoutes(to: self)
     users.addUpdateRoute(to: self)
+    
+    let clients = ClientController()
+    clients.addRoutes(to: self)
   }
 }
