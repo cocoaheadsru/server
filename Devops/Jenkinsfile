@@ -1,0 +1,200 @@
+pipeline {
+
+      agent {
+        node {
+          label 'chstage-node'
+          customWorkspace 'workspace/ch-server'
+        }   
+      }   
+ 
+      environment {
+        //CI-CD config
+       // REPO ='http://github.com/cocoaheadsru/server/'
+       // BRANCH = '*/develop'
+        
+        //Local paths   
+        BASE_DIR = '/home/jenkins/ch-stage'
+        WS_DIR ='workspace/ch-server'
+        WORK_DIR = "${BASE_DIR}/${WS_DIR}"
+        SCRIPTS_DIR = "${BASE_DIR}/scripts"
+
+        //MySQL config
+        MYSQL_CONFIG = "${SCRIPTS_DIR}/mysql.json"
+        SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
+
+        //Build config
+        VAPOR = "/usr/local/bin/vapor"
+        BUILD_PARAM = "--verbose --release"
+      
+        //Deploy config 
+        CH_BUILD = "${WORK_DIR}"  // export to scripts 
+        CH_WEBROOT = "/var/www/stage" // export to scripts 
+        DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
+        ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
+        
+        //Rollback config
+        DEPLOY_STATUS = "SUCCESS"
+
+      } // env 
+
+      stages {
+      
+        stage('1. CHECKOUT STAGE') {
+          
+          steps{
+            //sh 'printenv'
+            echo "Start checkout by url: '${env.GIT_URL}' branch '${env.BRANCH_NAME}'"
+            checkout scm 
+          /*  checkout(
+                    changelog: false, 
+                    poll: false, 
+                    scm: [$class: 'GitSCM', branches: [[name: "${env.BRANCH}"]], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: "${env.REPO}"]]]) 
+         */   
+            echo "Copy ${env.MYSQL_CONFIG} to ${env.SERVER_CONFIG_DIR}"
+
+            sh 'cp $MYSQL_CONFIG $SERVER_CONFIG_DIR'
+          }
+          
+
+          post {
+             
+              success {
+                  slackSend(
+                      color: 'good',
+                      message: "1 of 3 Chekout SUCCESS - ${env.JOB_NAME} ${env.BUILD_NUMBER}  ${env.BUILD_URL}"
+                  )
+              }
+              
+              failure {
+                  slackSend(
+                      color: 'danger',
+                      failOnError: true,
+                      message: "Chekout FAILURE - ${env.JOB_NAME} ${env.BUILD_NUMBER}  ${env.BUILD_URL}"
+                  )
+              }
+
+          } // post  
+        } // checkout  
+        
+        stage('2. BUILD STAGE') {
+          
+          steps {
+              ansiColor('xterm') {
+                  sh '$VAPOR build $BUILD_PARAM'
+              }
+          }
+          
+          post {
+           success {
+            slackSend( 
+                    color: 'good', 
+                    message: "2 of 3 Build SUCCESS - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+            )
+           } 
+           failure {
+            slackSend(
+                    color: 'danger', 
+                    failOnError: true, 
+                    message: "2 of 3 Build FAILURE - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+            ) 
+           } 
+          }//post 
+        }//Build 
+        
+        stage('3. DEPLOY STAGE') {
+            
+            steps{
+                ansiColor('xterm') {
+                  sh '$DEPLOY_SCRIPT'
+                }
+            }
+
+            post {
+                
+                always {
+                  slackSend( 
+                    color: 'good', 
+                    message: "3 of 3 Deploy ${env.DEPLOY_STATUS} - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+                  )
+                }
+
+               /* success { 
+                   
+                    slackSend( 
+                      color: 'good', 
+                      message: "3 of 3 Deploy SUCCESS - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+                    )
+
+                } 
+
+                failure {
+                    echo "Deploy staus: ${env.DEPLOY_STATUS}"
+                    ansiColor('xterm') {
+                      sh '$ROLLBACK_SCRIPT'
+                    }
+                    slackSend(
+                      color: 'danger',  
+                      message: "Deploy FAILURE need rollback - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+                    ) 
+                }*/   
+            }//post 
+        }//Deploy
+    
+        stage('POST CHECK') {
+            when {
+              environment name: 'DEPLOY_STATUS', value: 'FAILURE'  
+            }
+
+            steps{
+              ansiColor('xterm') {
+                sh '$ROLLBACK_SCRIPT'
+              }
+            }
+
+            post {
+                
+                success { 
+                    slackSend( 
+                      color: 'waring', 
+                      failOnError: true,
+                      message: "Rollback SUCCESS - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+                    )
+
+                } 
+
+                failure {
+                    slackSend(
+                      color: 'danger',  
+                      failOnError: true,
+                      message: "Rollback FAILURE please ask ditansu@gmail.com - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+                    ) 
+                }   
+            }//post 
+        }//Post check
+    } // stages 
+    
+
+    post {
+      always {
+       echo 'Pipline was finished with result: '
+      }
+      success {
+       slackSend(
+         color: 'good',
+         message: "COMMIT SUCCESS! - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+        )
+       echo ' SUCCESS!'
+      }
+      failure {
+       slackSend(
+         color: 'waring',
+         message: "COMMIT FAILED! - ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+        )
+        echo ' FAILURE!'
+      }
+    } // post
+} //pipeline 
