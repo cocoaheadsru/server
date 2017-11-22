@@ -1,0 +1,182 @@
+#!groovy
+// useful links
+// https://dzone.com/articles/build-your-pipeline-in-jenkins-20-as-code-with-ios
+// https://gist.github.com/jonico/e205b16cf07451b2f475543cf1541e70
+
+WORK_NODE = 'nil'
+WORK_SPACE = "/home/jenkins/ch-stage/workspace/ch-server"
+DEVELOP_BRANCH = 'develop'
+MASTER_BRANCH = 'master'
+
+stage("Select a target node lable") {
+  node('master') {
+    echo "Start prepare..."
+    
+    switch(BRANCH_NAME) {
+    case DEVELOP_BRANCH:
+      WORK_NODE = 'chstage-node'
+      break
+    case MASTER_BRANCH:
+      WORK_NODE = 'chprod-node'
+      break
+    default:
+      WORK_NODE = 'master'
+      break
+    }
+    
+    echo "end prepare the Node is ${WORK_NODE}..."
+  }
+}
+
+//if master of devlop commit
+if(WORK_NODE != 'master'){
+  node(WORK_NODE){
+    ws(WORK_SPACE) {
+      setenv()
+      checkout()
+      build()
+      deploy()
+      if(env.DEPLOY_STATUS == 'FAILURE') {
+        rollback()
+      } else {
+        slackSend( color: 'good', message: "Deploy SUCCESS :smiley: :rocket:")
+      }
+    }// workspace
+  }//node
+} else {
+  // check Pull Request
+  node('chstage-node'){
+    stage("checkout"){
+      checkout scm
+      def COMMIT_MESSAGE = commitMessage()
+      
+      slackSend(
+        color: 'good',
+        message: "Start PR codestyle check for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+      )
+    }
+    
+    stage("check codestyle"){
+      //start
+      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml || true'
+      checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
+      slackSend( color: 'good', message: "Codestyle checking is done :smiley:")
+      
+    }
+  }
+  
+  
+}
+
+//===============================================================================================================
+//===============================================================================================================
+//===============================================================================================================
+
+
+def setenv() {
+  stage("Set environment"){
+    //Local paths
+    WORK_DIR = "${env.WORKSPACE}"
+    SCRIPTS_DIR = "${WORK_DIR}/Devops"
+    
+    //MySQL config
+    MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
+    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
+    
+    //Build config
+    VAPOR = "/usr/local/bin/vapor"
+    BUILD_PARAM = "--verbose --release"
+    
+    //Deploy config
+    env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
+    env.CH_WEBROOT = "/var/www/stage" // export to scripts
+    DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
+    ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
+    
+    //For rollback config
+    env.DEPLOY_STATUS = "SUCCESS"
+    echo "========================"
+    sh 'printenv'
+    echo "========================"
+  }
+}
+
+def checkout(){
+  stage("Checkout") {
+    try{
+      echo "Start checkout on node: ${WORK_NODE}"
+      checkout scm
+      def COMMIT_MESSAGE = commitMessage()
+    
+      slackSend(
+        color: 'good',
+        message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+      )
+    
+      echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
+      sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
+      slackSend( color: 'good', message: "Chekout SUCCESS :smiley:")
+
+    }catch(err) {
+      slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
+      println(err.getMessage());
+      throw err
+    }
+  }
+}
+
+def build() {
+  stage("Build"){
+    try{
+      echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
+      ansiColor('xterm') {
+        sh "$VAPOR build $BUILD_PARAM"
+      }
+      slackSend( color: 'good', message: "Build SUCCESS :smiley:" )
+    }catch(err) {
+      slackSend(color: 'danger', message: "Build FAILED :scream:")
+      println(err.getMessage());
+      throw err
+    }
+  }
+}
+
+def deploy() {
+  stage("Deploy"){
+    try{
+      echo "Start deploy by script ${DEPLOY_SCRIPT}"
+      sh "$DEPLOY_SCRIPT"
+      currentBuild.result = 'SUCCESS'
+    } catch(err) {
+      slackSend( color: 'danger',message: "3 of 3 Deploy FAILED :scream:")
+      println(err.getMessage());
+      throw err
+    }
+  }
+}
+
+
+def rollback() {
+  stage("ROLLBACK"){
+    try{
+      echo "Start rollback by ${ROLLBACK_SCRIPT}"
+      sh "$ROLLBACK_SCRIPT"
+      currentBuild.result = 'FAILURE'
+      slackSend(color: 'danger', message: "Deploy failed but Rollback is SUCCESS :grimacing:")
+    } catch(err) {
+      slackSend( color: 'danger', message: "Deploy FAILED and Rollback is FAILED :scream:")
+      println(err.getMessage());
+      throw err
+    }
+  }
+}
+
+
+def commitMessage() {
+  sh 'git log --format=%B -n 1 HEAD > commitMessage'
+  def commitMessage = readFile('commitMessage')
+  sh 'rm commitMessage'
+  commitMessage
+}
+
+
