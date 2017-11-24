@@ -27,6 +27,7 @@ final class Place: Model {
   }
   
   // sourcery:inline:auto:Place.AutoModelGeneratable
+
   init(row: Row) throws {
     cityId = try row.get(Keys.cityId)
     title = try row.get(Keys.title)

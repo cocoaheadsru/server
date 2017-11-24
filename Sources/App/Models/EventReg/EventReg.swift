@@ -23,6 +23,7 @@ final class EventReg: Model {
   }
   
   // sourcery:inline:auto:EventReg.AutoModelGeneratable
+
   init(row: Row) throws {
     regFormId = try row.get(Keys.regFormId)
     userId = try row.get(Keys.userId)

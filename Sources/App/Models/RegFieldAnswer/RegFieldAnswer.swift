@@ -19,6 +19,7 @@ final class RegFieldAnswer: Model {
   }
   
   // sourcery:inline:auto:RegFieldAnswer.AutoModelGeneratable
+
   init(row: Row) throws {
     fieldId = try row.get(Keys.fieldId)
     value = try row.get(Keys.value)

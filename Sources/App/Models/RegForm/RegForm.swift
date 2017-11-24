@@ -21,6 +21,7 @@ final class RegForm: Model {
   }
   
   // sourcery:inline:auto:RegForm.AutoModelGeneratable
+
   init(row: Row) throws {
     eventId = try row.get(Keys.eventId)
     formName = try row.get(Keys.formName)

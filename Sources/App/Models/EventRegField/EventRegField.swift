@@ -24,6 +24,7 @@ final class EventRegField: Model {
   }
   
   // sourcery:inline:auto:EventRegField.AutoModelGeneratable
+
   init(row: Row) throws {
     regFormId = try row.get(Keys.regFormId)
     fieldId = try row.get(Keys.fieldId)

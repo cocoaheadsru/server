@@ -27,6 +27,7 @@ final class Creator: Model {
   }
   
   // sourcery:inline:auto:Creator.AutoModelGeneratable
+
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     position = try row.get(Keys.position)

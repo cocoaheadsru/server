@@ -18,8 +18,8 @@ extension EventReg {
 
   enum RegistrationStatus {
     case approved
-    case waiting
     case rejected
+    case waiting
     case canceled
 
     var string: String {
@@ -29,8 +29,8 @@ extension EventReg {
     init(_ string: String) {
       switch string {
       case "approved": self = .approved
-      case "waiting": self = .waiting
       case "rejected": self = .rejected
+      case "waiting": self = .waiting
       default: self = .canceled
       }
     }

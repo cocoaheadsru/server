@@ -26,6 +26,7 @@ final class Content: Model {
   }
   
   // sourcery:inline:auto:Content.AutoModelGeneratable
+
   init(row: Row) throws {
     speechId = try row.get(Keys.speechId)
     type = ContentType(try row.get(Keys.type))

@@ -17,6 +17,7 @@ final class RegFieldRule: Model {
   }
   
   // sourcery:inline:auto:RegFieldRule.AutoModelGeneratable
+
   init(row: Row) throws {
     type = ValidationRule(try row.get(Keys.type))
   }

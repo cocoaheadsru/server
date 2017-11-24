@@ -24,6 +24,7 @@ final class RegField: Model {
   }
 
   // sourcery:inline:auto:RegField.AutoModelGeneratable
+
   init(row: Row) throws {
     type = FieldType(try row.get(Keys.type))
     rules = try row.get(Keys.rules)

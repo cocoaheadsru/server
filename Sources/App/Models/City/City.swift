@@ -16,6 +16,7 @@ final class City: Model {
   }
   
   // sourcery:inline:auto:City.AutoModelGeneratable
+
   init(row: Row) throws {
     cityName = try row.get(Keys.cityName)
   }

@@ -21,6 +21,7 @@ final class GiveSpeech: Model {
   }
   
   // sourcery:inline:auto:GiveSpeech.AutoModelGeneratable
+
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     title = try row.get(Keys.title)

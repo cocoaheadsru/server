@@ -20,6 +20,7 @@ final class Speaker: Model {
   }
 
   // sourcery:inline:auto:Speaker.AutoModelGeneratable
+
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     eventId = try row.get(Keys.eventId)
@@ -34,7 +35,7 @@ final class Speaker: Model {
   // sourcery:end
 }
 
-extension Speech {
+extension Speaker {
   
   func user() throws -> User? {
     return try parent(id: userId).get()

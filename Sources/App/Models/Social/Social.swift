@@ -1,23 +1,18 @@
 import Vapor
 import FluentProvider
-import HTTP
 
+// sourcery: AutoModelGeneratable
+// sourcery: fromJSON, toJSON, Preparation
 final class Social: Model {
+  
+  static var entity: String = "social"
+
   let storage = Storage()
-  static let foreignIdKey = "id"
   
   var name: String
   var appId: String
   var secureKey: String
   var serviceToken: String
-  
-  struct Keys {
-    static let id = "id"
-    static let name  = "name"
-    static let appId = "app_id"
-    static let secureKey = "secure_key"
-    static let serviceToken = "service_token"
-  }
   
   init(name: String, appId: String, secureKey: String, serviceToken: String) {
     self.name = name
@@ -26,62 +21,22 @@ final class Social: Model {
     self.serviceToken = serviceToken
   }
   
+  // sourcery:inline:auto:Social.AutoModelGeneratable
+
   init(row: Row) throws {
-    name = try row.get(Social.Keys.name)
-    appId = try row.get(Social.Keys.appId)
-    secureKey = try row.get(Social.Keys.secureKey)
-    serviceToken = try row.get(Social.Keys.serviceToken)
-    id = try row.get(Social.Keys.id)
+    name = try row.get(Keys.name)
+    appId = try row.get(Keys.appId)
+    secureKey = try row.get(Keys.secureKey)
+    serviceToken = try row.get(Keys.serviceToken)
   }
-  
+
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Social.Keys.id, id)
-    try row.set(Social.Keys.name, name)
-    try row.set(Social.Keys.appId, appId)
-    try row.set(Social.Keys.secureKey, secureKey)
-    try row.set(Social.Keys.serviceToken, serviceToken)
+    try row.set(Keys.name, name)
+    try row.set(Keys.appId, appId)
+    try row.set(Keys.secureKey, secureKey)
+    try row.set(Keys.serviceToken, serviceToken)
     return row
   }
+  // sourcery:end
 }
-
-// MARK: Fluent Preparation
-
-extension Social: Preparation {
-  static func prepare(_ database: Database) throws {
-    try database.create(self) { builder in
-      builder.id()
-      builder.string(Social.Keys.name)
-      builder.string(Social.Keys.appId)
-      builder.string(Social.Keys.secureKey)
-      builder.string(Social.Keys.serviceToken)
-    }
-  }
-  
-  static func revert(_ database: Database) throws {
-    try database.delete(self)
-  }
-}
-
-// MARK: JSON
-
-extension Social: JSONConvertible {
-  convenience init(json: JSON) throws {
-    try self.init(
-      name: json.get(Social.Keys.name),
-      appId: json.get(Social.Keys.appId),
-      secureKey: json.get(Social.Keys.secureKey),
-      serviceToken: json.get(Social.Keys.serviceToken))
-  }
-  
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Social.Keys.id, id)
-    try json.set(Social.Keys.name, name)
-    try json.set(Social.Keys.appId, appId)
-    try json.set(Social.Keys.secureKey, secureKey)
-    try json.set(Social.Keys.serviceToken, serviceToken)
-    return json
-  }
-}
-
