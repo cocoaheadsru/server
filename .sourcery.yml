@@ -1,0 +1,6 @@
+sources:
+  - Sources/App/Models
+templates:
+  - Templates/
+output:
+  Sources/App/Models
