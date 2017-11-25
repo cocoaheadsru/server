@@ -16,7 +16,9 @@ final class EventReg: Model {
   // sourcery: enum, waiting, rejected, approved, canceled
   var status: RegistrationStatus = .waiting
   
-  init(regFormId: Identifier, userId: Identifier, status: RegistrationStatus = .waiting) {
+  init(regFormId: Identifier,
+       userId: Identifier,
+       status: RegistrationStatus = .waiting) {
     self.regFormId = regFormId
     self.userId = userId
     self.status = status

@@ -14,7 +14,9 @@ final class RegForm: Model {
   var formName: String
   var description: String
   
-  init(eventId: Identifier, formName: String, description: String) {
+  init(eventId: Identifier,
+       formName: String,
+       description: String) {
     self.eventId = eventId
     self.formName = formName
     self.description = description

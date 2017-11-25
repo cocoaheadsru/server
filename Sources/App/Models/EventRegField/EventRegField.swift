@@ -16,7 +16,10 @@ final class EventRegField: Model {
   var shouldSave: Bool
   var required: Bool
   
-  init(regFormId: Identifier, fieldId: Identifier, shouldSave: Bool, required: Bool) {
+  init(regFormId: Identifier,
+       fieldId: Identifier,
+       shouldSave: Bool,
+       required: Bool) {
     self.regFormId = regFormId
     self.fieldId = fieldId
     self.shouldSave = shouldSave

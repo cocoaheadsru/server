@@ -19,7 +19,13 @@ final class Event: Model {
   var endDate: Int
   var hide: Bool = false
   
-  init(title: String, description: String, photoUrl: String, placeId: Identifier, isRegistrationOpen: Bool = true, startDate: Int, endDate: Int, hide: Bool = false) {
+  init(title: String,
+       description: String,
+       photoUrl: String,
+       placeId: Identifier,
+       isRegistrationOpen: Bool = true,
+       startDate: Int, endDate: Int,
+       hide: Bool = false) {
     self.title = title
     self.description = description
     self.photoUrl = photoUrl

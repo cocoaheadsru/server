@@ -16,7 +16,10 @@ final class RegField: Model {
   var name: String
   var placeholder: String
   
-  init(name: String, type: FieldType, placeholder: String, rules: [Identifier]) {
+  init(name: String,
+       type: FieldType,
+       placeholder: String,
+       rules: [Identifier]) {
     self.name = name
     self.type = type
     self.placeholder = placeholder

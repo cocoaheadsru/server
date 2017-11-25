@@ -15,7 +15,9 @@ final class SocialAccount: Model {
   var socialId: Identifier
   var socialUserId: String
   
-  init(userId: Identifier, socialId: Identifier, socialUserId: String) {
+  init(userId: Identifier,
+       socialId: Identifier,
+       socialUserId: String) {
     self.socialId = socialId
     self.socialUserId = socialUserId
     self.userId = userId

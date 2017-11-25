@@ -14,7 +14,9 @@ final class GiveSpeech: Model {
   var title: String
   var description: String
   
-  init(title: String, description: String, userId: Identifier) {
+  init(title: String,
+       description: String,
+       userId: Identifier) {
     self.title = title
     self.description = description
     self.userId = userId

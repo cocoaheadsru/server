@@ -17,7 +17,12 @@ final class Place: Model {
   var latitude: Double
   var longitude: Double
   
-  init(title: String, address: String, description: String, latitude: Double, longitude: Double, cityId: Identifier) {
+  init(title: String,
+       address: String,
+       description: String,
+       latitude: Double,
+       longitude: Double,
+       cityId: Identifier) {
     self.title = title
     self.address = address
     self.description = description

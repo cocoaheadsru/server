@@ -17,7 +17,11 @@ final class Content: Model {
   var description: String
   var link: String
   
-  init(speechId: Identifier, title: String, description: String, link: String, type: ContentType) {
+  init(speechId: Identifier,
+       title: String,
+       description: String,
+       link: String,
+       type: ContentType) {
     self.speechId = speechId
     self.title = title
     self.description = description

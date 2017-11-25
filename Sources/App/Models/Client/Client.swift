@@ -11,10 +11,10 @@ final class Client: Model {
   let storage = Storage()
 
   // sourcery: relation = foreignId, relatedModel = User
-  var userId: Identifier
+  var userId: Identifier?
   var pushToken: String
 
-  init(pushToken: String, userId: Identifier) {
+  init(pushToken: String, userId: Identifier?) {
     self.pushToken = pushToken
     self.userId = userId
   }

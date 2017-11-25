@@ -13,11 +13,15 @@ final class Speech: Model {
   var eventId: Identifier
   // sourcery: relatedModel = Speaker
   var speakerId: Identifier
-  var title: String
+  var title: String?
   var description: String
-  var photoUrl: String
+  var photoUrl: String?
   
-  init(eventId: Identifier, title: String, description: String, speakerId: Identifier, photoUrl: String) {
+  init(eventId: Identifier,
+       title: String?,
+       description: String,
+       speakerId: Identifier,
+       photoUrl: String?) {
     self.eventId = eventId
     self.title = title
     self.description = description

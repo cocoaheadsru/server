@@ -55,7 +55,7 @@ extension EventReg: Preparation {
       builder.id()
       builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
       builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.string(Keys.status)
+      builder.enum(Keys.status, options: ["approved","rejected","waiting","canceled"])
     }
   }
 

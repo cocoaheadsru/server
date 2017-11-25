@@ -14,7 +14,10 @@ final class Social: Model {
   var secureKey: String
   var serviceToken: String
   
-  init(name: String, appId: String, secureKey: String, serviceToken: String) {
+  init(name: String,
+       appId: String,
+       secureKey: String,
+       serviceToken: String) {
     self.name = name
     self.appId = appId
     self.secureKey = secureKey

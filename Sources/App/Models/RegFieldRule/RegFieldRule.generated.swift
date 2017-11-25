@@ -42,7 +42,7 @@ extension RegFieldRule: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.string(Keys.type)
+      builder.enum(Keys.type, options: ["phone","number","alphanumeric","email","string"])
     }
   }
 

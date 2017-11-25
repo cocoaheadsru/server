@@ -17,7 +17,10 @@ final class EventRegAnswer: Model {
   var answerId: Identifier
   var answerValue: String
   
-  init(regId: Identifier, fieldId: Identifier, answerId: Identifier, answerValue: String) {
+  init(regId: Identifier,
+       fieldId: Identifier,
+       answerId: Identifier,
+       answerValue: String) {
     self.regId = regId
     self.fieldId = fieldId
     self.answerId = answerId

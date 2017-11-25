@@ -41,7 +41,7 @@ extension Content: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
-      builder.string(Keys.type)
+      builder.enum(Keys.type, options: ["video","slide"])
       builder.string(Keys.title)
       builder.string(Keys.description)
       builder.string(Keys.link)

@@ -10,9 +10,9 @@ final class Migration: Model {
   let storage = Storage()
   
   var version: String
-  var applyTime: Int
+  var applyTime: Int?
   
-  init(version: String, applyTime: Int) {
+  init(version: String, applyTime: Int?) {
     self.version = version
     self.applyTime = applyTime
   }

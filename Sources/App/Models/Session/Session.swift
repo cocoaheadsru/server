@@ -15,7 +15,10 @@ final class Session: Model {
   var actual: Bool
   var timestamp: Int // NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ??? FIX
   
-  init(userId: Identifier, token: String, actual: Bool = true, timestamp: Int) {
+  init(userId: Identifier,
+       token: String,
+       actual: Bool = true,
+       timestamp: Int) {
     self.userId = userId
     self.token = token
     self.actual = actual
