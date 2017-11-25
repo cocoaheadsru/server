@@ -20,21 +20,6 @@ extension User {
 
 extension User: ResponseRepresentable { }
 
-extension User: Updateable {
-
-  public static var updateableKeys: [UpdateableKey<User>] {
-    return [
-      UpdateableKey(Keys.name, String.self) { $0.name = $1 },
-      UpdateableKey(Keys.lastname, String.self) { $0.lastname = $1 },
-      UpdateableKey(Keys.company, String.self) { $0.company = $1 },
-      UpdateableKey(Keys.position, String.self) { $0.position = $1 },
-      UpdateableKey(Keys.photo, String.self) { $0.photo = $1 },
-      UpdateableKey(Keys.email, String.self) { $0.email = $1 },
-      UpdateableKey(Keys.phone, String.self) { $0.phone = $1 }
-    ]
-  }
-}
-
 extension User: JSONInitializable {
 
   convenience init(json: JSON) throws {
@@ -47,6 +32,23 @@ extension User: JSONInitializable {
       email: try json.get(Keys.email),
       phone: try json.get(Keys.phone)
     )
+  }
+}
+
+extension User: Timestampable { }
+
+extension User: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<User>] {
+    return [
+      UpdateableKey(Keys.name, String.self) { $0.name = $1 },
+      UpdateableKey(Keys.lastname, String.self) { $0.lastname = $1 },
+      UpdateableKey(Keys.company, String.self) { $0.company = $1 },
+      UpdateableKey(Keys.position, String.self) { $0.position = $1 },
+      UpdateableKey(Keys.photo, String.self) { $0.photo = $1 },
+      UpdateableKey(Keys.email, String.self) { $0.email = $1 },
+      UpdateableKey(Keys.phone, String.self) { $0.phone = $1 }
+    ]
   }
 }
 

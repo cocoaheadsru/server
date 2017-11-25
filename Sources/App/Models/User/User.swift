@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable
+// sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class User: Model {
   
   static var entity: String = "user"

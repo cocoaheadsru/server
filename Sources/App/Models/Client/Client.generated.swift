@@ -15,16 +15,6 @@ extension Client {
 
 extension Client: ResponseRepresentable { }
 
-extension Client: Updateable {
-
-  public static var updateableKeys: [UpdateableKey<Client>] {
-    return [
-      UpdateableKey(Keys.userId, Identifier.self) { $0.userId = $1 },
-      UpdateableKey(Keys.pushToken, String.self) { $0.pushToken = $1 }
-    ]
-  }
-}
-
 extension Client: JSONInitializable {
 
   convenience init(json: JSON) throws {
@@ -32,6 +22,18 @@ extension Client: JSONInitializable {
       pushToken: try json.get(Keys.pushToken),
       userId: try json.get(Keys.userId)
     )
+  }
+}
+
+extension Client: Timestampable { }
+
+extension Client: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<Client>] {
+    return [
+      UpdateableKey(Keys.userId, Identifier.self) { $0.userId = $1 },
+      UpdateableKey(Keys.pushToken, String.self) { $0.pushToken = $1 }
+    ]
   }
 }
 

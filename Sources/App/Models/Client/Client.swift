@@ -3,7 +3,7 @@ import FluentProvider
 import HTTP
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable
+// sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class Client: Model {
   
   static var entity: String = "client"
