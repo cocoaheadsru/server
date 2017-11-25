@@ -24,7 +24,7 @@ extension Event: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.placeId, references: Place.Keys.id, on: Place.self)
+      builder.foreignId(for: Place.self, optional: false, unique: false, foreignIdKey: Keys.placeId)
       builder.string(Keys.title)
       builder.string(Keys.description)
       builder.string(Keys.photoUrl)

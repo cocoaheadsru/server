@@ -40,7 +40,7 @@ extension Client: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.userId, references: User.Keys.id, on: User.self)
+      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
       builder.string(Keys.pushToken)
     }
   }

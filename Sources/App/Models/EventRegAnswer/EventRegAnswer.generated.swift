@@ -33,8 +33,8 @@ extension EventRegAnswer: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
-      builder.foreignKey(Keys.fieldId, references: EventRegField.Keys.id, on: EventRegField.self)
-      builder.foreignKey(Keys.answerId, references: RegFieldAnswer.Keys.id, on: RegFieldAnswer.self)
+      builder.foreignId(for: EventRegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
+      builder.foreignId(for: RegFieldAnswer.self, optional: false, unique: false, foreignIdKey: Keys.answerId)
       builder.string(Keys.answerValue)
     }
   }

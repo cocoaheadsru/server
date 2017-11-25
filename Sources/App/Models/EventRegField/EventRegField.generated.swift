@@ -21,7 +21,7 @@ extension EventRegField: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
-      builder.foreignKey(Keys.fieldId, references: RegField.Keys.id, on: RegField.self)
+      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
       builder.bool(Keys.shouldSave)
       builder.bool(Keys.required)
     }

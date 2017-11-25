@@ -66,7 +66,7 @@ extension RegField: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.string(Keys.type)
-      builder.foreignKey(Keys.rules, references: RegFieldRule.Keys.id, on: RegFieldRule.self)
+      builder.foreignId(for: RegFieldRule.self, optional: false, unique: false, foreignIdKey: Keys.rules)
       builder.string(Keys.name)
       builder.string(Keys.placeholder)
     }

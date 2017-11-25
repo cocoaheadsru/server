@@ -22,7 +22,7 @@ extension Speech: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
-      builder.foreignKey(Keys.speakerId, references: Speaker.Keys.id, on: Speaker.self)
+      builder.foreignId(for: Speaker.self, optional: false, unique: false, foreignIdKey: Keys.speakerId)
       builder.string(Keys.title)
       builder.string(Keys.description)
       builder.string(Keys.photoUrl)

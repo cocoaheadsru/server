@@ -22,7 +22,7 @@ extension Place: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignKey(Keys.cityId, references: City.Keys.id, on: City.self)
+      builder.foreignId(for: City.self, optional: false, unique: false, foreignIdKey: Keys.cityId)
       builder.string(Keys.title)
       builder.string(Keys.address)
       builder.string(Keys.description)
