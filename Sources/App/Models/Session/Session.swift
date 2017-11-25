@@ -9,7 +9,7 @@ final class Session: Model {
   
   let storage = Storage()
   
-  // sourcery: relation = foreignId, relatedModel = User
+  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   var token: String
   var actual: Bool
