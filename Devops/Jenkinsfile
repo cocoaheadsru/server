@@ -49,22 +49,13 @@ if(WORK_NODE != 'master'){
     stage("checkout"){
       checkout scm
       def COMMIT_MESSAGE = commitMessage()
-      
       slackSend(
         color: 'good',
         message: "Start PR codestyle check for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
       )
     }
-    
-    stage("check codestyle"){
-      //start
-      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml || true'
-      checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
-      slackSend( color: 'good', message: "Codestyle checking is done :smiley:")
-      
-    }
+    check_codestyle()
   }
-  
   
 }
 
@@ -99,6 +90,15 @@ def setenv() {
     sh 'printenv'
     echo "========================"
   }
+}
+
+def check_codestyle() {
+ stage("check codestyle"){
+      //start
+      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml || true'
+      checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
+      slackSend( color: 'good', message: "Codestyle checking is done :smiley:")
+ }
 }
 
 def checkout(){
