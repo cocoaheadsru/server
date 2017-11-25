@@ -1,0 +1,254 @@
+{# Defining macros for each annotation #}
+
+
+
+{% macro RowConvertible type %}
+
+  init(row: Row) throws {
+    {% for variable in type.storedVariables where variable.name != "storage"  %}
+    {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
+    {{ variable.name }} = {{ variable.unwrappedTypeName }}(try row.get(Keys.{{ variable.name }}))
+    {% else %}
+    {{ variable.name }} = try row.get(Keys.{{ variable.name }})
+    {% endif %}
+    {% endfor %}
+  }
+
+  func makeRow() throws -> Row {
+    var row = Row()
+    {% for variable in type.storedVariables where variable.name != "storage"  %}
+    {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
+    try row.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    {% else %}
+    try row.set(Keys.{{ variable.name }}, {{ variable.name }})
+    {% endif %}
+    {% endfor %}
+    return row
+  }
+{% endmacro %}
+
+
+{% macro ResponseRepresentable type %}
+
+extension {{ type.name }}: ResponseRepresentable { }
+{% endmacro %}
+
+
+{% macro Timestampable type %}
+
+extension {{ type.name }}: Timestampable { }
+{% endmacro %}
+
+
+{% macro Keys type %}
+extension {{ type.name }} {
+
+  struct Keys {
+    static let id = "id"
+    {% for variable in type.storedVariables where variable.name != "storage"  %}
+    static let {{ variable.name }} = "{{ variable.name|camelToSnakeCase }}"
+    {% endfor %}
+  }
+}
+{% endmacro %}
+
+
+{% macro CreateEnumsIfExists type %}
+{% for variable in type.storedVariables where variable|annotated:"enum" %}
+
+extension {{ type.name }} {
+
+  enum {{ variable.unwrappedTypeName }} {
+    {% for annotation in variable.annotations where annotation != "enum" %}
+    case {{ annotation }}
+    {% endfor %}
+
+    var string: String {
+      return String(describing: self)
+    }
+
+    init(_ string: String) {
+      switch string {
+      {% for annotation in variable.annotations where annotation != "enum" %}
+      {% if forloop.last %}
+      default: self = .{{ annotation }}
+      {% else %}
+      case "{{ annotation }}": self = .{{ annotation }}
+      {% endif %}
+      {% endfor %}
+      }
+    }
+  }
+}
+{% endfor %}
+{% endmacro %}
+
+
+{% macro fromJSON type %}
+
+extension {{ type.name }}: JSONInitializable {
+
+  convenience init(json: JSON) throws {
+    self.init(
+      {% for parameter in type.initializers.first.parameters %}
+      {% for variable in type.storedVariables where variable|annotated:"enum" and parameter.unwrappedTypeName == variable.unwrappedTypeName and parameter.name == variable.name %}
+      {{ parameter.name }}: {{ parameter.unwrappedTypeName }}(try json.get(Keys.{{ parameter.name }})){% empty %}{{ parameter.name }}: try json.get(Keys.{{ parameter.name }}){% endfor %}{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    )
+  }
+}
+{% endmacro %}
+
+
+{% macro toJSON type %}
+
+extension {{ type.name }}: JSONRepresentable {
+
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.id, id)
+    {% for variable in type.storedVariables where variable.name != "storage" %}
+    {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
+    try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    {% else %}
+    try json.set(Keys.{{ variable.name }}, {{ variable.name }})
+    {% endif %}
+    {% endfor %}
+    return json
+  }
+}
+{% endmacro %}
+
+
+{% macro Updateable type %}
+
+extension {{ type.name }}: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<{{ type.name }}>] {
+    return [
+      {% for variable in type.storedVariables where variable.name != "storage"  %}
+      {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
+      UpdateableKey(Keys.{{ variable.name }}, String.self) { $0.{{ variable.name }} = {{ variable.unwrappedTypeName }}($1) }{% if not forloop.last %},{% endif %}
+      {% elif variable.isArray %}
+      UpdateableKey(Keys.{{ variable.name }}, Array.self) { $0.{{ variable.name }} = $1 }{% if not forloop.last %},{% endif %}
+      {% else %}
+      UpdateableKey(Keys.{{ variable.name }}, {{ variable.unwrappedTypeName }}.self) { $0.{{ variable.name }} = $1 }{% if not forloop.last %},{% endif %}
+      {% endif %}
+      {% endfor %}
+    ]
+  }
+}
+{% endmacro %}
+
+
+{% macro ParentRelation variable isOptional %}
+      builder.parent({{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+{% endmacro %}
+
+
+{% macro ForeignRelation variable isOptional %}
+      builder.foreignId(for: {{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+{% endmacro %}
+
+
+{% macro PlainType variable %}
+      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }})
+{% endmacro %}
+
+{% macro PrepareEnum variable %}
+      builder.enum(Keys.{{ variable.name }}, options: [{% for annotation in variable.annotations where annotation != "enum" %}"{{ annotation }}"{% if not forloop.last %},{% endif %}{% endfor %}])
+{% endmacro%}
+
+
+{% macro Preparation type %}
+
+extension {{ type.name }}: Preparation {
+
+  static func prepare(_ database: Database) throws {
+    try database.create(self) { builder in
+      builder.id()
+      {% for variable in type.storedVariables where variable.name != "storage"  %}
+          {% if variable.typeName|lowercase|contains:"identifier" %} 
+              {% if variable|annotated:"relation" %}
+                  {% if variable.annotations.relation == "parent" %}
+                      {% if variable.typeName.isOptional %}
+                          {% call ParentRelation variable "true" %}
+                      {% else %}
+                          {% call ParentRelation variable "false" %}
+                      {% endif %}
+                  {% else %}
+                      {% if variable.typeName.isOptional %}
+                          {% call ForeignRelation variable "true" %}
+                      {% else %}
+                          {% call ForeignRelation variable "false" %}
+                      {% endif %}
+                  {% endif %}
+              {% else %}
+                  {% if variable.typeName.isOptional %}
+                      {% call ForeignRelation variable "true" %}
+                  {% else %}
+                      {% call ForeignRelation variable "false" %}
+                  {% endif %}
+              {% endif %}
+          {% elif variable|annotated:"enum" or variable.type.kind == "enum" %}
+              {% call PrepareEnum variable %}
+          {% else %}
+              {% call PlainType variable %}
+          {% endif %}
+      {% endfor %}
+    }
+  }
+
+  static func revert(_ database: Database) throws {
+    try database.delete(self)
+  }
+}
+{% endmacro %}
+
+
+
+
+{# Generating inlined boilerplate code #}  
+
+
+{% for type in types.all|annotated:"AutoModelGeneratable" %}
+// sourcery:inline:auto:{{ type.name }}.AutoModelGeneratable
+{% call RowConvertible type %}
+// sourcery:end
+{% endfor %}
+
+
+{# Generating boilerplate code in separate .generated.swift file #}
+
+
+{% for type in types.all|annotated:"AutoModelGeneratable" %}
+// sourcery:file:{{ type.name }}/{{ type.name }}.generated.swift
+import Vapor
+import FluentProvider
+
+{% call Keys type %}
+{% call CreateEnumsIfExists type %}
+{% for annotation in type.annotations %}
+    {% if annotation == "Preparation" %}
+        {% call Preparation type %}
+    {% endif %}
+    {% if annotation == "fromJSON" %}
+        {% call fromJSON type %}
+    {% endif %}
+    {% if annotation == "toJSON" %}
+        {% call toJSON type %}
+    {% endif%}
+    {% if annotation == "Updateable" %}
+        {% call Updateable type %}
+    {% endif%}
+    {% if annotation == "ResponseRepresentable" %}
+        {% call ResponseRepresentable type %}
+    {% endif%}
+    {% if annotation == "Timestampable" %}
+        {% call Timestampable type %}
+    {% endif%}
+{% endfor %}
+
+// sourcery:end
+
+{% endfor %}
