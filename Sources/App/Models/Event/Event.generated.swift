@@ -56,3 +56,5 @@ extension Event: JSONRepresentable {
     return json
   }
 }
+
+extension Event: Timestampable { }
