@@ -48,7 +48,7 @@ Create database
 
 ```
 mysql -u root
-CREATE DATABASE cocoaheads
+CREATE DATABASE cocoaheads;
 ```
 
 #### Create project
