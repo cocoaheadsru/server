@@ -1,5 +1,5 @@
 import Foundation
 
 enum MiddlewareError: Error {
-  case missingAppToken
+  case missingClientToken
 }

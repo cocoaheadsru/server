@@ -33,7 +33,7 @@
         "error",
         "date",
         "file",
-        "app-middleware"
+        "client-middleware"
     ],
 
     "//": "Choose which commands this application can run",
