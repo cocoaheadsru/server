@@ -7,38 +7,38 @@ import HTTP
 
 class RouteTests: TestCase {
   let drop = try! Droplet.testable()
-  
+
   func testUnathorizedRequest() throws {
     try drop
       .unauthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .unauthorized)
   }
-  
+
   func testAppAuthorizedRequest() throws {
     try drop
       .appAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
   }
-  
+
   func testFailedAppAuthorizedRequest() throws {
-    let randomToken = String.randomToken
+    let randomToken = String.invalidRandomToken
     try drop
-      .unauthorizedTestResponse(to: .get, at: "hello", headers: ["app-token": randomToken])
+      .unauthorizedTestResponse(to: .get, at: "hello", headers: ["client-token": randomToken])
       .assertStatus(is: .unauthorized)
   }
-  
+
   func testHello() throws {
     try drop
       .appAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
       .assertJSON("hello", equals: "world")
   }
-  
-  func testInfo() throws {
+
+  func testPlainText() throws {
     try drop
-      .appAuthorizedTestResponse(to: .get, at: "info")
+      .appAuthorizedTestResponse(to: .get, at: "plaintext")
       .assertStatus(is: .ok)
-      .assertBody(contains: "0.0.0.0")
+      .assertBody(contains: "Hello, world!")
   }
 }
 
@@ -50,7 +50,7 @@ extension RouteTests {
   /// See ./Tests/LinuxMain.swift for examples
   static let allTests = [
     ("testHello", testHello),
-    ("testInfo", testInfo),
+    ("testPlainText", testPlainText),
     ("testUnathorizedRequest", testUnathorizedRequest),
     ("testAppAuthorizedRequest", testAppAuthorizedRequest),
     ("testFailedAppAuthorizedRequest", testFailedAppAuthorizedRequest)
