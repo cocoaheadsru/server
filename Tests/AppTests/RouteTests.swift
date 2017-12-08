@@ -16,7 +16,7 @@ class RouteTests: TestCase {
 
   func testAppAuthorizedRequest() throws {
     try drop
-      .appAuthorizedTestResponse(to: .get, at: "hello")
+      .clientAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
   }
 
@@ -29,14 +29,14 @@ class RouteTests: TestCase {
 
   func testHello() throws {
     try drop
-      .appAuthorizedTestResponse(to: .get, at: "hello")
+      .clientAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
       .assertJSON("hello", equals: "world")
   }
 
   func testPlainText() throws {
     try drop
-      .appAuthorizedTestResponse(to: .get, at: "plaintext")
+      .clientAuthorizedTestResponse(to: .get, at: "plaintext")
       .assertStatus(is: .ok)
       .assertBody(contains: "Hello, world!")
   }

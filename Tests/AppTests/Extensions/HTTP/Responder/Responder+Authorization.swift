@@ -1,3 +1,4 @@
+import Vapor
 import HTTP
 
 extension Responder {
@@ -21,7 +22,7 @@ extension Responder {
     )
   }
   
-  public func appAuthorizedTestResponse(
+  public func clientAuthorizedTestResponse(
     to method: HTTP.Method,
     at path: String,
     hostname: String = "0.0.0.0",
@@ -30,8 +31,13 @@ extension Responder {
     file: StaticString = #file,
     line: UInt = #line
     ) throws -> HTTP.Response {
+
+    let droplet = self as? Droplet
+    let token = droplet?.config["server", "client-token"]?.string
+
     var appHeaders = headers
-    appHeaders["client-token"] = "test"
+    appHeaders["client-token"] = token
+
     return try self.unauthorizedTestResponse(
       to: method,
       at: path,
@@ -54,7 +60,7 @@ extension Responder {
     ) throws -> HTTP.Response {
     var userHeaders = headers
     userHeaders["user-token"] = "user"
-    return try self.appAuthorizedTestResponse(
+    return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,
       hostname:

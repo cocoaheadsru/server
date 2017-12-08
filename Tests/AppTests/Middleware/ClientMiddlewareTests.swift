@@ -6,23 +6,14 @@ import Testing
 class ClientMiddlewareTests: TestCase {
   let droplet = try! Droplet.testable()
 
-  let validClientToken = "test"
-  let invalidClientToken = String.invalidRandomToken
+  let validToken = "test"
+  let generatedToken = String.invalidRandomToken
 
   func testMiddleware_MiddlewarePresentInConfig() {
     let config = droplet.config
     let configMiddlewares = try! config.resolveMiddleware()
-    XCTAssertTrue(configMiddlewares.contains { middleware in
-      if let _ = middleware as? ClientMiddleware {
-        return true
-      }
-      return false
-    })
-  }
-
-  func testMiddleware_ClientTokenIsTakenFromConfig() {
-    let config = droplet.config
-    XCTAssertEqual(config["server", "client-token"]?.string, validClientToken)
+    let clientMiddleware = configMiddlewares.filter { $0 is ClientMiddleware }
+    XCTAssertTrue(clientMiddleware.count > 0)
   }
 
   func testConfigInitialization_FailWithoutToken() {
@@ -47,20 +38,20 @@ class ClientMiddlewareTests: TestCase {
 
   func testConfigInitialization_PassWithAnyNonEmptyToken() {
     var config = droplet.config
-    try! config.set("server.client-token", invalidClientToken)
+    try! config.set("server.client-token", generatedToken)
     XCTAssertNoThrow(try ClientMiddleware(config: config))
   }
 
   func testConfigInitialization_TokenIsAssigned() {
     var config = droplet.config
-    try! config.set("server.client-token", invalidClientToken)
+    try! config.set("server.client-token", generatedToken)
     let middleware = try! ClientMiddleware(config: config)
-    XCTAssertEqual(middleware.token, invalidClientToken)
+    XCTAssertEqual(middleware.token, generatedToken)
   }
 
   func testResponse_PassWithCoincidentToken() {
-    let middleware = ClientMiddleware(invalidClientToken)
-    let request = Request(method: .get, uri: "hello", headers: ["client-token": invalidClientToken])
+    let middleware = ClientMiddleware(generatedToken)
+    let request = Request(method: .get, uri: "hello", headers: ["client-token": generatedToken])
     let responder = ResponderStub(.notFound)
 
     let response = try! middleware.respond(to: request, chainingTo: responder)
@@ -68,8 +59,8 @@ class ClientMiddlewareTests: TestCase {
   }
 
   func testResponse_FailWithIncoincidentToken() {
-    let middleware = ClientMiddleware(invalidClientToken)
-    let request = Request(method: .get, uri: "hello", headers: ["client-token": validClientToken])
+    let middleware = ClientMiddleware(generatedToken)
+    let request = Request(method: .get, uri: "hello", headers: ["client-token": validToken])
     let responder = ResponderStub()
 
     let response = try! middleware.respond(to: request, chainingTo: responder)
@@ -86,8 +77,6 @@ extension ClientMiddlewareTests {
   static let allTests = [
     ("testMiddleware_MiddlewarePresentInConfig",
      testMiddleware_MiddlewarePresentInConfig),
-    ("testMiddleware_ClientTokenIsTakenFromConfig",
-     testMiddleware_ClientTokenIsTakenFromConfig),
     ("testConfigInitialization_FailWithoutToken",
      testConfigInitialization_FailWithoutToken),
     ("testConfigInitialization_FailWithEmptyToken",
