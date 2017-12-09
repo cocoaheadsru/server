@@ -28,12 +28,13 @@ class RouteTests: TestCase {
 
 // MARK: Manifest
 
-extension RouteTests {
-    /// This is a requirement for XCTest on Linux
-    /// to function properly.
-    /// See ./Tests/LinuxMain.swift for examples
-    static let allTests = [
-        ("testHello", testHello),
-        ("testInfo", testInfo),
-    ]
-}
+//extension RouteTests {
+//    /// This is a requirement for XCTest on Linux
+//    /// to function properly.
+//    /// See ./Tests/LinuxMain.swift for examples
+//    static let allTests = [
+//        ("testHello", testHello),
+//        ("testInfo", testInfo),
+//    ]
+//}
+
