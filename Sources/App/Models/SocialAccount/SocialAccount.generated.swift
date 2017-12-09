@@ -4,6 +4,10 @@
 import Vapor
 import FluentProvider
 
+
+extension SocialAccount {
+  static var entity: String = "social_account"
+}
 extension SocialAccount {
 
   struct Keys {

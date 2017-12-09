@@ -6,8 +6,6 @@ import HTTP
 // sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class Client: Model {
   
-  static var entity: String = "client"
-
   let storage = Storage()
 
   // sourcery: relation = foreignId, relatedModel = User
@@ -20,7 +18,6 @@ final class Client: Model {
   }
   
   // sourcery:inline:auto:Client.AutoModelGeneratable
-
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     pushToken = try row.get(Keys.pushToken)

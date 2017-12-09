@@ -4,6 +4,10 @@
 import Vapor
 import FluentProvider
 
+
+extension User {
+  static var entity: String = "user"
+}
 extension User {
 
   struct Keys {

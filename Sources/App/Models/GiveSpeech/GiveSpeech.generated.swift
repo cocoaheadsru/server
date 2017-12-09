@@ -4,6 +4,10 @@
 import Vapor
 import FluentProvider
 
+
+extension GiveSpeech {
+  static var entity: String = "give_speech"
+}
 extension GiveSpeech {
 
   struct Keys {

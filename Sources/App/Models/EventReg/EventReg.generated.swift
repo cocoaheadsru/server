@@ -4,6 +4,10 @@
 import Vapor
 import FluentProvider
 
+
+extension EventReg {
+  static var entity: String = "event_reg"
+}
 extension EventReg {
 
   struct Keys {

@@ -4,6 +4,10 @@
 import Vapor
 import FluentProvider
 
+
+extension Session {
+  static var entity: String = "session"
+}
 extension Session {
 
   struct Keys {
@@ -32,7 +36,7 @@ extension Session: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
+      builder.parent(User.self, optional: false, unique: true, foreignIdKey: Keys.userId)
       builder.string(Keys.token)
       builder.bool(Keys.actual)
       builder.int(Keys.timestamp)
