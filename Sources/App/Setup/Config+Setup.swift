@@ -21,7 +21,6 @@ extension Config {
   /// schemas prepared before the app boots
   private func setupPreparations() throws {
     let entities: [Preparation.Type] = [
-      Heartbeat.self,
       User.self,
       Client.self,
       Session.self,
