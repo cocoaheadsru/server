@@ -4,10 +4,10 @@
 import Vapor
 import FluentProvider
 
-
 extension Migration {
   static var entity: String = "migration"
 }
+
 extension Migration {
 
   struct Keys {

@@ -4,10 +4,10 @@
 import Vapor
 import FluentProvider
 
-
 extension RegFieldAnswer {
   static var entity: String = "reg_field_answer"
 }
+
 extension RegFieldAnswer {
 
   struct Keys {

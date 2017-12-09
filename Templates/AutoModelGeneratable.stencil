@@ -2,7 +2,6 @@
 
 
 {% macro AddEntity type %}
-
 extension {{ type.name }} {
   static var entity: String = "{{ type.name|lowerFirst|camelToSnakeCase }}"
 }
@@ -232,6 +231,7 @@ import Vapor
 import FluentProvider
 
 {% call AddEntity type %}
+
 {% call Keys type %}
 {% call CreateEnumsIfExists type %}
 {% for annotation in type.annotations %}
