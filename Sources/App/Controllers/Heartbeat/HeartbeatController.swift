@@ -1,9 +1,3 @@
-//
-//  HeartbeatController.swift
-//  App
-//
-//  Created by di on 01.12.2017.
-//
 import Vapor
 import HTTP
 

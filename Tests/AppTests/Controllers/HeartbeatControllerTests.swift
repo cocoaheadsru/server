@@ -1,10 +1,3 @@
-//
-//  HeartbeatControllerTests.swift
-//  AppTests
-//
-//  Created by di on 30.11.2017.
-//
-
 import XCTest
 import Testing
 import HTTP
