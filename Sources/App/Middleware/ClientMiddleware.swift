@@ -8,7 +8,7 @@ final class ClientMiddleware: Middleware {
   }
 
   func respond(to request: Request, chainingTo next: Responder) throws -> Response {
-    guard request.headers["client-token"] == token else {
+    guard request.headers[Constants.Config.clientTokenHeader] == token else {
       return Response(status: .unauthorized)
     }
 
@@ -18,9 +18,11 @@ final class ClientMiddleware: Middleware {
 
 extension ClientMiddleware: ConfigInitializable {
   convenience init(config: Config) throws {
-    guard let token = config["server", "client-token"]?.string, !token.isEmpty else {
+    let constants = Constants.Config.self
+    if let token = config[constants.server, constants.clientToken]?.string.ifNotEmpty {
+      self.init(token)
+    } else {
       throw MiddlewareError.missingClientToken
     }
-    self.init(token)
   }
 }
