@@ -12,7 +12,7 @@ final class Heartbeat: Model {
   }
   
 
-// sourcery:inline:auto:Heartbeat.AutoModelGeneratable
+  // sourcery:inline:auto:Heartbeat.AutoModelGeneratable
   init(row: Row) throws {
     beat = try row.get(Keys.beat)
   }
@@ -22,5 +22,5 @@ final class Heartbeat: Model {
     try row.set(Keys.beat, beat)
     return row
   }
-// sourcery:end
+  // sourcery:end
 }

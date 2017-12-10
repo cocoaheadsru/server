@@ -5,7 +5,7 @@ final class HeartbeatController  {
   
   func index(req: Request) throws -> ResponseRepresentable {
     guard let beat = try Heartbeat.all().first else {
-      return Response.init(status: .noContent)
+      return Response(status: .noContent)
     }
     let result = try beat.makeJSON()
     return result
@@ -17,7 +17,7 @@ final class HeartbeatController  {
       try Heartbeat.makeQuery().delete()
     }
     let json = req.json
-    let value : Int = try json?.get("beat") ?? -1
+    let value = try json?.get("beat") ?? -1
     let beat = Heartbeat(beat: value)
     try beat.save()
     let result = try beat.makeJSON()
