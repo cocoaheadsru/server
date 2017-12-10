@@ -13,7 +13,7 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatPostSetBeatAnyValue() throws {
     // arrange
-    let beat = 33
+    let beat = Int.randomValue()
     // act
     guard let res = try setBeat(to: beat) as? Response else {
       XCTFail()
@@ -25,9 +25,9 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatRowCountAfterStoreAlwaysBeEqualOne() throws {
     // arrange
-    let beat1 = 56
-    let beat2 = 33
-    let beat3 = 45
+    let beat1 = Int.randomValue()
+    let beat2 = Int.randomValue()
+    let beat3 = Int.randomValue()
     // act
     _ = try setBeat(to: beat1)
     let count1 = try Heartbeat.count()
@@ -45,9 +45,11 @@ class HeartbeatControllerTests: TestCase {
     XCTAssert(count3 == 1)
   }
   
+  
+  
   func testThatShowGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try Heartbeat.makeQuery().delete()
+    try cleanHeartbeatTable()
     let req = Request.makeTest(method: .get)
     // act
     let res = try controller.index(req: req).makeResponse()
@@ -57,8 +59,8 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatShowGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try Heartbeat.makeQuery().delete()
-    let beat = 45
+    try cleanHeartbeatTable()
+    let beat = Int.randomValue()
     _ = try setBeat(to: beat)
     let req = Request.makeTest(method: .get)
     // act
@@ -69,12 +71,11 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatRoutePostMethodShouldSetAnyIntValue() throws {
     // arrange
-    let beat = 488
+    let beat = Int.randomValue()
     let heartbeat = Heartbeat(beat: beat)
     let json = try heartbeat.makeJSON()
     let reqBody = try Body(json)
     let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json"], body: reqBody)
-    
     // act & assert
     try drop
       .testResponse(to: req)
@@ -82,9 +83,9 @@ class HeartbeatControllerTests: TestCase {
       .assertJSON("beat", equals: beat)
   }
   
-  func testThatRouteGet204NoContectForEmptyBeatTable() throws {
+  func testThatRouteGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try Heartbeat.makeQuery().delete()
+    try cleanHeartbeatTable()
     // act & assert
     try drop
       .testResponse(to: .get, at: "heartbeat")
@@ -93,8 +94,8 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatRouteGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try Heartbeat.makeQuery().delete()
-    let beat = 893
+    try cleanHeartbeatTable()
+    let beat = Int.randomValue()
     _ = try setBeat(to: beat)
     // act & assert
     try drop
@@ -104,44 +105,32 @@ class HeartbeatControllerTests: TestCase {
   }
   
   func testThatRouteHearbeatScenarioIsCorrect() throws {
-    // arrange
-    let beat = 1
-    let heartbeat = Heartbeat(beat: beat)
-    let json = try heartbeat.makeJSON()
-    let reqBody = try Body(json)
-    let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json"], body: reqBody)
     
-    // act & assert
-    try drop
-      .testResponse(to: req)
-      .assertStatus(is: .ok)
-      .assertJSON("beat", equals: beat)
+    func makePostRequestForHeartbeat(with beat: Int) throws {
+      // arrange
+      let heartbeat = Heartbeat(beat: beat)
+      let json = try heartbeat.makeJSON()
+      let reqBody = try Body(json)
+      let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json"], body: reqBody)
+      // act & assert
+      try drop
+        .testResponse(to: req)
+        .assertStatus(is: .ok)
+        .assertJSON("beat", equals: beat)
+      try drop
+        .testResponse(to: .get, at: "heartbeat")
+        .assertStatus(is: .ok)
+        .assertJSON("beat", equals: beat)
+    }
     
-    try drop
-      .testResponse(to: .get, at: "heartbeat")
-      .assertStatus(is: .ok)
-      .assertJSON("beat", equals: beat)
-    
-    let beat2 = 2
-    let heartbeat2 = Heartbeat(beat: beat2)
-    let json2 = try heartbeat2.makeJSON()
-    let reqBody2 = try Body(json2)
-    let req2 = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json"], body: reqBody2)
-    
-    // act & assert
-    try drop
-      .testResponse(to: req2)
-      .assertStatus(is: .ok)
-      .assertJSON("beat", equals: beat2)
-    
-    try drop
-      .testResponse(to: .get, at: "heartbeat")
-      .assertStatus(is: .ok)
-      .assertJSON("beat", equals: beat2)
-    
+    try makePostRequestForHeartbeat(with: 1)
+    try makePostRequestForHeartbeat(with: 2)
+    try makePostRequestForHeartbeat(with: 1)
+    try makePostRequestForHeartbeat(with: 2)
+  
   }
   
-  
+  // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
     let req = Request.makeTest(method: .post)
     req.json =  try JSON(node: ["beat":value])
@@ -149,6 +138,14 @@ class HeartbeatControllerTests: TestCase {
     return res
   }
   
+  fileprivate func cleanHeartbeatTable() throws {
+    try Heartbeat.makeQuery().delete()
+  }
+  
 }
 
-
+extension Int {
+  static func randomValue() -> Int {
+    return Int.random(min: 0, max: 1000)
+  }
+}
