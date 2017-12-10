@@ -9,26 +9,26 @@ class ClientMiddlewareTests: TestCase {
   let validToken = "test"
   let generatedToken = String.invalidRandomToken
 
-  func testMiddleware_MiddlewarePresentInConfig() {
+  func testThatMiddlewarePresentInConfig() {
     let config = droplet.config
     let configMiddlewares = try! config.resolveMiddleware()
     let clientMiddleware = configMiddlewares.filter { $0 is ClientMiddleware }
     XCTAssertTrue(clientMiddleware.count > 0)
   }
 
-  func testConfigInitialization_FailWithoutToken() {
+  func testThatConfigInitializationFailWithoutToken() {
     var config = droplet.config
     config.removeKey("server.client-token")
     XCTAssertThrowsError(try ClientMiddleware(config: config))
   }
 
-  func testConfigInitialization_FailWithEmptyToken() {
+  func testThatConfigInitializationFailWithEmptyToken() {
     var config = droplet.config
     try! config.set("server.client-token", "")
     XCTAssertThrowsError(try ClientMiddleware(config: config))
   }
 
-  func testConfigInitialization_FailAndThrowsMissingTokenError() {
+  func testThatFailedConfigInitializationThrowsProperError() {
     var config = droplet.config
     try! config.set("server.client-token", "")
     XCTAssertThrowsError(try ClientMiddleware(config: config)) { error in
@@ -36,20 +36,20 @@ class ClientMiddlewareTests: TestCase {
     }
   }
 
-  func testConfigInitialization_PassWithAnyNonEmptyToken() {
+  func testThatConfigInitializationPassWithAnyNonEmptyToken() {
     var config = droplet.config
     try! config.set("server.client-token", generatedToken)
     XCTAssertNoThrow(try ClientMiddleware(config: config))
   }
 
-  func testConfigInitialization_TokenIsAssigned() {
+  func testThatTokenIsAssignedFromConfigInitialization() {
     var config = droplet.config
     try! config.set("server.client-token", generatedToken)
     let middleware = try! ClientMiddleware(config: config)
     XCTAssertEqual(middleware.token, generatedToken)
   }
 
-  func testResponse_PassWithCoincidentToken() {
+  func testThatResponsePassWithCoincidentToken() {
     let middleware = ClientMiddleware(generatedToken)
     let request = Request(method: .get, uri: "hello", headers: ["client-token": generatedToken])
     let responder = ResponderStub(.notFound)
@@ -58,7 +58,7 @@ class ClientMiddlewareTests: TestCase {
     XCTAssertEqual(response.status, responder.status)
   }
 
-  func testResponse_FailWithIncoincidentToken() {
+  func testThatResponseFailWithIncoincidentToken() {
     let middleware = ClientMiddleware(generatedToken)
     let request = Request(method: .get, uri: "hello", headers: ["client-token": validToken])
     let responder = ResponderStub()
@@ -75,21 +75,21 @@ extension ClientMiddlewareTests {
   /// to function properly.
   /// See ./Tests/LinuxMain.swift for examples
   static let allTests = [
-    ("testMiddleware_MiddlewarePresentInConfig",
-     testMiddleware_MiddlewarePresentInConfig),
-    ("testConfigInitialization_FailWithoutToken",
-     testConfigInitialization_FailWithoutToken),
-    ("testConfigInitialization_FailWithEmptyToken",
-     testConfigInitialization_FailWithEmptyToken),
-    ("testConfigInitialization_FailAndThrowsMissingTokenError",
-     testConfigInitialization_FailAndThrowsMissingTokenError),
-    ("testConfigInitialization_PassWithAnyNonEmptyToken",
-     testConfigInitialization_PassWithAnyNonEmptyToken),
-    ("testConfigInitialization_TokenIsAssigned",
-     testConfigInitialization_TokenIsAssigned),
-    ("testResponse_PassWithCoincidentToken",
-     testResponse_PassWithCoincidentToken),
-    ("testResponse_FailWithIncoincidentToken",
-     testResponse_FailWithIncoincidentToken)
+    ("testThatMiddlewarePresentInConfig",
+     testThatMiddlewarePresentInConfig),
+    ("testThatConfigInitializationFailWithoutToken",
+     testThatConfigInitializationFailWithoutToken),
+    ("testThatConfigInitializationFailWithEmptyToken",
+     testThatConfigInitializationFailWithEmptyToken),
+    ("testThatFailedConfigInitializationThrowsProperError",
+     testThatFailedConfigInitializationThrowsProperError),
+    ("testThatConfigInitializationPassWithAnyNonEmptyToken",
+     testThatConfigInitializationPassWithAnyNonEmptyToken),
+    ("testThatTokenIsAssignedFromConfigInitialization",
+     testThatTokenIsAssignedFromConfigInitialization),
+    ("testThatResponsePassWithCoincidentToken",
+     testThatResponsePassWithCoincidentToken),
+    ("testThatResponseFailWithIncoincidentToken",
+     testThatResponseFailWithIncoincidentToken)
   ]
 }

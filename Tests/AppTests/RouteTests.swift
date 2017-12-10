@@ -8,33 +8,33 @@ import HTTP
 class RouteTests: TestCase {
   let drop = try! Droplet.testable()
 
-  func testUnathorizedRequest() throws {
+  func testThatRequestWithNoClientTokenFails() throws {
     try drop
       .unauthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .unauthorized)
   }
 
-  func testAppAuthorizedRequest() throws {
+  func testThatAuthorizedRequestPasses() throws {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
   }
 
-  func testFailedAppAuthorizedRequest() throws {
+  func testThatRequestWithInvalidClientTokenFails() throws {
     let randomToken = String.invalidRandomToken
     try drop
       .unauthorizedTestResponse(to: .get, at: "hello", headers: ["client-token": randomToken])
       .assertStatus(is: .unauthorized)
   }
 
-  func testHello() throws {
+  func testThatRequestToHelloReturnsProperData() throws {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "hello")
       .assertStatus(is: .ok)
       .assertJSON("hello", equals: "world")
   }
 
-  func testPlainText() throws {
+  func testThatRequestToPlainTextReturnsProperData() throws {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "plaintext")
       .assertStatus(is: .ok)
@@ -49,10 +49,15 @@ extension RouteTests {
   /// to function properly.
   /// See ./Tests/LinuxMain.swift for examples
   static let allTests = [
-    ("testHello", testHello),
-    ("testPlainText", testPlainText),
-    ("testUnathorizedRequest", testUnathorizedRequest),
-    ("testAppAuthorizedRequest", testAppAuthorizedRequest),
-    ("testFailedAppAuthorizedRequest", testFailedAppAuthorizedRequest)
+    ("testThatRequestToHelloReturnsProperData",
+     testThatRequestToHelloReturnsProperData),
+    ("testThatRequestToPlainTextReturnsProperData",
+     testThatRequestToPlainTextReturnsProperData),
+    ("testThatRequestWithNoClientTokenFails",
+     testThatRequestWithNoClientTokenFails),
+    ("testThatAuthorizedRequestPasses",
+     testThatAuthorizedRequestPasses),
+    ("testThatRequestWithInvalidClientTokenFails",
+     testThatRequestWithInvalidClientTokenFails)
   ]
 }
