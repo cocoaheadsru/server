@@ -17,7 +17,7 @@ final class HeartbeatController  {
       try Heartbeat.makeQuery().delete()
     }
     let json = req.json
-    let value = try json?.get("beat") ?? -1
+    let value = try json?.get(Heartbeat.Keys.beat) ?? -1
     let beat = Heartbeat(beat: value)
     try beat.save()
     let result = try beat.makeJSON()

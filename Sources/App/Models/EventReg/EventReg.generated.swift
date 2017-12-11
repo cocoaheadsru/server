@@ -18,8 +18,8 @@ extension EventReg {
 
   enum RegistrationStatus {
     case approved
-    case rejected
     case waiting
+    case rejected
     case canceled
 
     var string: String {
@@ -29,8 +29,8 @@ extension EventReg {
     init(_ string: String) {
       switch string {
       case "approved": self = .approved
-      case "rejected": self = .rejected
       case "waiting": self = .waiting
+      case "rejected": self = .rejected
       default: self = .canceled
       }
     }
@@ -55,7 +55,7 @@ extension EventReg: Preparation {
       builder.id()
       builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
       builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.enum(Keys.status, options: ["approved","rejected","waiting","canceled"])
+      builder.enum(Keys.status, options: ["approved","waiting","rejected","canceled"])
     }
   }
 

@@ -6,9 +6,9 @@ extension Config {
     // allow fuzzy conversions for these types
     // (add your own types here)
     Node.fuzzy = [Row.self, JSON.self, Node.self]
-    
     try setupProviders()
     try setupPreparations()
+    try setupMiddleware()
   }
   
   /// Configure providers
@@ -49,5 +49,10 @@ extension Config {
       .forEach {
         preparations.append($0)
       }
+  }
+  
+  // Configure Middleware
+  private func setupMiddleware() throws {
+    self.addConfigurable(middleware: ClientMiddleware.init, name: Constants.Middleware.client)
   }
 }
