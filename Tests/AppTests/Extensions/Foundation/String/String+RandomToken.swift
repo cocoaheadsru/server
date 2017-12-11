@@ -1,18 +1,8 @@
 import Foundation
 
-extension String {
-  
-  static var randomString: String {
-    let uuid = UUID().uuidString
-    let upperBound = UInt32(uuid.count - 1)
-    let randomStringLength = Int(arc4random_uniform(upperBound)) + 1
-    let randomStringIndex = String.Index(encodedOffset: randomStringLength)
-    let randString = String(uuid[..<randomStringIndex])
-    return randString
-  }
-    
+extension String {    
   static var invalidRandomToken: String {
-    let token = String.randomString
+    let token = String.randomValue
     if ["test", "user"].contains(token) {
       return self.invalidRandomToken
     }
