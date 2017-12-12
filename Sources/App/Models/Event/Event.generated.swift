@@ -23,6 +23,8 @@ extension Event {
   }
 }
 
+extension Event: ResponseRepresentable { }
+
 extension Event: Preparation {
 
   static func prepare(_ database: Database) throws {

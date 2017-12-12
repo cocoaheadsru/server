@@ -16,6 +16,12 @@ extension ClientMiddlewareTests {
    ("testThatResponseFailWithIncoincidentToken", testThatResponseFailWithIncoincidentToken)
   ]
 }
+extension EventControllerTests {
+  static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
+   ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
+   ("testThatGetEventByIdRouteReturnOkStatus", testThatGetEventByIdRouteReturnOkStatus)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -41,6 +47,7 @@ extension RouteTests {
 // swiftlint:disable trailing_comma
 XCTMain([
   testCase(ClientMiddlewareTests.allTests),
+  testCase(EventControllerTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])

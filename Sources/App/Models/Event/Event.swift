@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Timestampable
+// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable
 final class Event: Model {
     
   let storage = Storage()
