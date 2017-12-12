@@ -25,7 +25,7 @@ final class HeartbeatController  {
   }
 }
 
-extension HeartbeatController : ResourceRepresentable  {
+extension HeartbeatController: ResourceRepresentable  {
   
   func makeResource() -> Resource<Heartbeat> {
     return Resource(
@@ -33,6 +33,4 @@ extension HeartbeatController : ResourceRepresentable  {
       store: store
     )
   }
-
-  
 }

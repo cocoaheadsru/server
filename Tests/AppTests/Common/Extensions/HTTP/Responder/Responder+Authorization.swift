@@ -6,7 +6,7 @@ extension Responder {
     to method: HTTP.Method,
     at path: String,
     hostname: String = "0.0.0.0",
-    headers: [HTTP.HeaderKey : String] = [:],
+    headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
     file: StaticString = #file,
     line: UInt = #line
@@ -26,7 +26,7 @@ extension Responder {
     to method: HTTP.Method,
     at path: String,
     hostname: String = "0.0.0.0",
-    headers: [HTTP.HeaderKey : String] = [:],
+    headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
     file: StaticString = #file,
     line: UInt = #line
@@ -53,7 +53,7 @@ extension Responder {
     to method: HTTP.Method,
     at path: String,
     hostname: String = "0.0.0.0",
-    headers: [HTTP.HeaderKey : String] = [:],
+    headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
     file: StaticString = #file,
     line: UInt = #line
