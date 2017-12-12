@@ -1,6 +1,7 @@
 sources:
   - Sources/App/Models
+  - Tests/AppTests
 templates:
   - Templates/
 output:
-  Sources/App/Models
+  .

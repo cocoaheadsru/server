@@ -4,6 +4,18 @@
 #if os(Linux)
 import XCTest
 
+extension ClientMiddlewareTests {
+  static var allTests: [(String, (ClientMiddlewareTests) -> () throws -> Void)] = [
+   ("testThatMiddlewarePresentInConfig", testThatMiddlewarePresentInConfig),
+   ("testThatConfigInitializationFailWithoutToken", testThatConfigInitializationFailWithoutToken),
+   ("testThatConfigInitializationFailWithEmptyToken", testThatConfigInitializationFailWithEmptyToken),
+   ("testThatFailedConfigInitializationThrowsProperError", testThatFailedConfigInitializationThrowsProperError),
+   ("testThatConfigInitializationPassWithAnyNonEmptyToken", testThatConfigInitializationPassWithAnyNonEmptyToken),
+   ("testThatTokenIsAssignedFromConfigInitialization", testThatTokenIsAssignedFromConfigInitialization),
+   ("testThatResponsePassWithCoincidentToken", testThatResponsePassWithCoincidentToken),
+   ("testThatResponseFailWithIncoincidentToken", testThatResponseFailWithIncoincidentToken)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -11,20 +23,24 @@ extension HeartbeatControllerTests {
    ("testThatShowGet204NoContentForEmptyBeatTable", testThatShowGet204NoContentForEmptyBeatTable),
    ("testThatShowGetCurrentValueIfBeatTableIsNotEmpty", testThatShowGetCurrentValueIfBeatTableIsNotEmpty),
    ("testThatRoutePostMethodShouldSetAnyIntValue", testThatRoutePostMethodShouldSetAnyIntValue),
-   ("testThatRouteGet204NoContectForEmptyBeatTable", testThatRouteGet204NoContectForEmptyBeatTable),
+   ("testThatRouteGet204NoContentForEmptyBeatTable", testThatRouteGet204NoContentForEmptyBeatTable),
    ("testThatRouteGetCurrentValueIfBeatTableIsNotEmpty", testThatRouteGetCurrentValueIfBeatTableIsNotEmpty),
    ("testThatRouteHearbeatScenarioIsCorrect", testThatRouteHearbeatScenarioIsCorrect)
   ]
 }
 extension RouteTests {
   static var allTests: [(String, (RouteTests) -> () throws -> Void)] = [
-   ("testHello", testHello),
-   ("testInfo", testInfo)
+   ("testThatRequestWithNoClientTokenFails", testThatRequestWithNoClientTokenFails),
+   ("testThatAuthorizedRequestPasses", testThatAuthorizedRequestPasses),
+   ("testThatRequestWithInvalidClientTokenFails", testThatRequestWithInvalidClientTokenFails),
+   ("testThatRequestToHelloReturnsProperData", testThatRequestToHelloReturnsProperData),
+   ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
 
 // swiftlint:disable trailing_comma
 XCTMain([
+  testCase(ClientMiddlewareTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])

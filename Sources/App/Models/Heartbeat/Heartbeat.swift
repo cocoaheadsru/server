@@ -5,7 +5,6 @@ import FluentProvider
 final class Heartbeat: Model {
   let storage = Storage()
   
-  static var entity: String = "heartbeat"
   var beat: Int
   
   init(beat: Int) {
@@ -14,7 +13,6 @@ final class Heartbeat: Model {
   
 
   // sourcery:inline:auto:Heartbeat.AutoModelGeneratable
-  
   init(row: Row) throws {
     beat = try row.get(Keys.beat)
   }

@@ -5,6 +5,10 @@ import Vapor
 import FluentProvider
 
 extension RegForm {
+  static var entity: String = "reg_form"
+}
+
+extension RegForm {
 
   struct Keys {
     static let id = "id"

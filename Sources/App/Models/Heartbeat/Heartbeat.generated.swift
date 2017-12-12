@@ -5,6 +5,10 @@ import Vapor
 import FluentProvider
 
 extension Heartbeat {
+  static var entity: String = "heartbeat"
+}
+
+extension Heartbeat {
 
   struct Keys {
     static let id = "id"
