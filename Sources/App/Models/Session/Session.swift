@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation
 final class Session: Model {
-  
-  static var entity: String = "session"
-  
+    
   let storage = Storage()
   
   // sourcery: relation = parent, relatedModel = User, unique = true
@@ -26,7 +24,6 @@ final class Session: Model {
   }
 
   // sourcery:inline:auto:Session.AutoModelGeneratable
-
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     token = try row.get(Keys.token)

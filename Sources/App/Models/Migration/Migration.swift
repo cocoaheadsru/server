@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation
 final class Migration: Model {
-  
-  static var entity: String = "migration"
-  
+    
   let storage = Storage()
   
   var version: String
@@ -18,7 +16,6 @@ final class Migration: Model {
   }
   
   // sourcery:inline:auto:Migration.AutoModelGeneratable
-
   init(row: Row) throws {
     version = try row.get(Keys.version)
     applyTime = try row.get(Keys.applyTime)

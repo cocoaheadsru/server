@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation
 final class SocialAccount: Model {
-  
-  static var entity: String = "social_account"
-  
+    
   let storage = Storage()
   
   // sourcery: relation = parent, relatedModel = User
@@ -24,7 +22,6 @@ final class SocialAccount: Model {
   }
   
   // sourcery:inline:auto:SocialAccount.AutoModelGeneratable
-
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     socialId = try row.get(Keys.socialId)

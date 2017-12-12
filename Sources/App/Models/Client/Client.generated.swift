@@ -5,6 +5,10 @@ import Vapor
 import FluentProvider
 
 extension Client {
+  static var entity: String = "client"
+}
+
+extension Client {
 
   struct Keys {
     static let id = "id"

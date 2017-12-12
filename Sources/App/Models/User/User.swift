@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class User: Model {
-  
-  static var entity: String = "user"
-  
+    
   let storage = Storage()
   
   var name: String
@@ -34,7 +32,6 @@ final class User: Model {
   }
   
   // sourcery:inline:auto:User.AutoModelGeneratable
-
   init(row: Row) throws {
     name = try row.get(Keys.name)
     lastname = try row.get(Keys.lastname)

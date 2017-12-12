@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
 final class RegFieldRule: Model {
-  
-  static var entity: String = "reg_field_rule"
-  
+    
   let storage = Storage()
   
   // sourcery: enum, email, number, alphanumeric, string, phone
@@ -17,7 +15,6 @@ final class RegFieldRule: Model {
   }
   
   // sourcery:inline:auto:RegFieldRule.AutoModelGeneratable
-
   init(row: Row) throws {
     type = ValidationRule(try row.get(Keys.type))
   }
