@@ -1,12 +1,25 @@
 import HTTP
 
-final class Constants {
+struct Constants {
+  
   struct Config {
-    static var server = "server"
-    static var clientToken = "client-token"
-    static var clientTokenHeader: HeaderKey = "client-token"
+    static let server = "server"
+    static let clientToken = "client-token"
   }
+  
+  struct Header {
+    
+    struct Key {
+      static let clientToken: HeaderKey = "client-token"
+      static let contentType: HeaderKey = "Content-Type"
+    }
+    
+    struct Value {
+      static let applicationJson = "application/json"
+    }
+  }
+
   struct Middleware {
-    static var client = "client-middleware"
+    static let client = "client-middleware"
   }
 }

@@ -11,5 +11,8 @@ extension Droplet {
     get("plaintext") { req in
       return "Hello, world!"
     }
+    
+    let heartbeatController = HeartbeatController()
+    resource("heartbeat", heartbeatController)
   }
 }
