@@ -5,6 +5,10 @@ import Vapor
 import FluentProvider
 
 extension Event {
+  static var entity: String = "event"
+}
+
+extension Event {
 
   struct Keys {
     static let id = "id"

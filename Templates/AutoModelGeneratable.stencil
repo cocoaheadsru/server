@@ -1,9 +1,13 @@
 {# Defining macros for each annotation #}
 
 
+{% macro AddEntity type %}
+extension {{ type.name }} {
+  static var entity: String = "{{ type.name|lowerFirst|camelToSnakeCase }}"
+}
+{% endmacro %}
 
 {% macro RowConvertible type %}
-
   init(row: Row) throws {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
@@ -222,9 +226,11 @@ extension {{ type.name }}: Preparation {
 
 
 {% for type in types.all|annotated:"AutoModelGeneratable" %}
-// sourcery:file:{{ type.name }}/{{ type.name }}.generated.swift
+// sourcery:file:Sources/App/Models/{{ type.name }}/{{ type.name }}.generated.swift
 import Vapor
 import FluentProvider
+
+{% call AddEntity type %}
 
 {% call Keys type %}
 {% call CreateEnumsIfExists type %}

@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation
 final class RegFieldAnswer: Model {
-  
-  static var entity: String = "reg_field_answer"
-  
+    
   let storage = Storage()
   
   // sourcery: relatedModel = RegField
@@ -19,7 +17,6 @@ final class RegFieldAnswer: Model {
   }
   
   // sourcery:inline:auto:RegFieldAnswer.AutoModelGeneratable
-
   init(row: Row) throws {
     fieldId = try row.get(Keys.fieldId)
     value = try row.get(Keys.value)

@@ -5,6 +5,10 @@ import Vapor
 import FluentProvider
 
 extension Speech {
+  static var entity: String = "speech"
+}
+
+extension Speech {
 
   struct Keys {
     static let id = "id"

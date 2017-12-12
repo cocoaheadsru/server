@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
 final class Creator: Model {
-  
-  static var entity: String = "creator"
-  
+    
   let storage = Storage()
   
   // sourcery: relation = foreignId, relatedModel = User
@@ -27,7 +25,6 @@ final class Creator: Model {
   }
   
   // sourcery:inline:auto:Creator.AutoModelGeneratable
-
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
     position = try row.get(Keys.position)

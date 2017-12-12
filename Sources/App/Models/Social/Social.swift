@@ -5,8 +5,6 @@ import FluentProvider
 // sourcery: fromJSON, toJSON, Preparation
 final class Social: Model {
   
-  static var entity: String = "social"
-
   let storage = Storage()
   
   var name: String
@@ -25,7 +23,6 @@ final class Social: Model {
   }
   
   // sourcery:inline:auto:Social.AutoModelGeneratable
-
   init(row: Row) throws {
     name = try row.get(Keys.name)
     appId = try row.get(Keys.appId)

@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation, Timestampable
 final class Event: Model {
-  
-  static var entity: String = "event"
-  
+    
   let storage = Storage()
   
   // sourcery: relatedModel = Place
@@ -37,7 +35,6 @@ final class Event: Model {
   }
   
   // sourcery:inline:auto:Event.AutoModelGeneratable
-
   init(row: Row) throws {
     placeId = try row.get(Keys.placeId)
     title = try row.get(Keys.title)

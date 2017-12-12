@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
 final class Content: Model {
-  
-  static var entity: String = "content"
-  
+    
   let storage = Storage()
   
   // sourcery: relation = parent, relatedModel = Speech
@@ -30,7 +28,6 @@ final class Content: Model {
   }
   
   // sourcery:inline:auto:Content.AutoModelGeneratable
-
   init(row: Row) throws {
     speechId = try row.get(Keys.speechId)
     type = ContentType(try row.get(Keys.type))

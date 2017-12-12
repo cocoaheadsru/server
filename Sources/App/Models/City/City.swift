@@ -5,8 +5,6 @@ import FluentProvider
 // sourcery: toJSON, Preparation
 final class City: Model {
   
-  static var entity: String = "city"
-  
   let storage = Storage()
   
   var cityName: String
@@ -16,7 +14,6 @@ final class City: Model {
   }
   
   // sourcery:inline:auto:City.AutoModelGeneratable
-
   init(row: Row) throws {
     cityName = try row.get(Keys.cityName)
   }

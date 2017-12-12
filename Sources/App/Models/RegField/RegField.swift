@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation, fromJSON, Updateable
 final class RegField: Model {
-  
-  static var entity: String = "reg_field"
-  
+    
   let storage = Storage()
   
   // sourcery: enum, string, radio, checkbox
@@ -27,7 +25,6 @@ final class RegField: Model {
   }
 
   // sourcery:inline:auto:RegField.AutoModelGeneratable
-
   init(row: Row) throws {
     type = FieldType(try row.get(Keys.type))
     rules = try row.get(Keys.rules)

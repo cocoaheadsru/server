@@ -4,9 +4,7 @@ import FluentProvider
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
 final class RegForm: Model {
-  
-  static var entity: String = "reg_form"
-  
+    
   let storage = Storage()
   
   // sourcery: relation = parent, relatedModel = Event
@@ -23,7 +21,6 @@ final class RegForm: Model {
   }
   
   // sourcery:inline:auto:RegForm.AutoModelGeneratable
-
   init(row: Row) throws {
     eventId = try row.get(Keys.eventId)
     formName = try row.get(Keys.formName)
