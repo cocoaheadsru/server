@@ -76,6 +76,6 @@ extension Event {
   }
   
   func registrationForm() throws -> RegForm? {
-    return try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
+    return try children().first()
   }
 }

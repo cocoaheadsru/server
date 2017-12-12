@@ -9,8 +9,6 @@ final class Speech: Model {
   
   // sourcery: relation = parent, relatedModel = Event
   var eventId: Identifier
-  // sourcery: relatedModel = Speaker
-  var speakerId: Identifier
   var title: String?
   var description: String
   var photoUrl: String?
@@ -18,19 +16,16 @@ final class Speech: Model {
   init(eventId: Identifier,
        title: String?,
        description: String,
-       speakerId: Identifier,
        photoUrl: String?) {
     self.eventId = eventId
     self.title = title
     self.description = description
-    self.speakerId = speakerId
     self.photoUrl = photoUrl
   }
   
   // sourcery:inline:auto:Speech.AutoModelGeneratable
   init(row: Row) throws {
     eventId = try row.get(Keys.eventId)
-    speakerId = try row.get(Keys.speakerId)
     title = try row.get(Keys.title)
     description = try row.get(Keys.description)
     photoUrl = try row.get(Keys.photoUrl)
@@ -39,7 +34,6 @@ final class Speech: Model {
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.eventId, eventId)
-    try row.set(Keys.speakerId, speakerId)
     try row.set(Keys.title, title)
     try row.set(Keys.description, description)
     try row.set(Keys.photoUrl, photoUrl)
@@ -54,12 +48,12 @@ extension Speech {
     return try parent(id: eventId).get()
   }
   
-  func speaker() throws -> Speaker? {
-    return try children().first()
+  func speakers() throws -> [Speaker] {
+    return try children().all()
   }
   
   func contents() throws -> [Content] {
-    return try Content.makeQuery().filter(Content.Keys.speechId, id).all()
+    return try children().all()
   }
 }
 

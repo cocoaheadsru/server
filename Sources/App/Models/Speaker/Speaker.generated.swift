@@ -13,7 +13,7 @@ extension Speaker {
   struct Keys {
     static let id = "id"
     static let userId = "user_id"
-    static let eventId = "event_id"
+    static let speechId = "speech_id"
   }
 }
 
@@ -23,7 +23,7 @@ extension Speaker: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
+      builder.parent(Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
     }
   }
 
@@ -38,7 +38,7 @@ extension Speaker: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.userId, userId)
-    try json.set(Keys.eventId, eventId)
+    try json.set(Keys.speechId, speechId)
     return json
   }
 }

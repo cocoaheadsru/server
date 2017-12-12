@@ -9,24 +9,24 @@ final class Speaker: Model {
   
   // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
-  // sourcery: relation = parent, relatedModel = Event
-  var eventId: Identifier
+  // sourcery: relation = parent, relatedModel = Speech
+  var speechId: Identifier
   
-  init(userId: Identifier, eventId: Identifier) {
+  init(userId: Identifier, speechId: Identifier) {
     self.userId = userId
-    self.eventId = eventId
+    self.speechId = speechId
   }
 
   // sourcery:inline:auto:Speaker.AutoModelGeneratable
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
-    eventId = try row.get(Keys.eventId)
+    speechId = try row.get(Keys.speechId)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.userId, userId)
-    try row.set(Keys.eventId, eventId)
+    try row.set(Keys.speechId, speechId)
     return row
   }
   // sourcery:end
@@ -38,7 +38,7 @@ extension Speaker {
     return try parent(id: userId).get()
   }
   
-  func event() throws -> Event? {
-    return try parent(id: eventId).get()
+  func speech() throws -> Speech? {
+    return try parent(id: speechId).get()
   }
 }

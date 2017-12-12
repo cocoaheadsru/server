@@ -55,6 +55,6 @@ final class Place: Model {
 extension Place {
   
   func city() throws -> City? {
-    return try children().first()
+    return try parent(id: cityId).get()
   }
 }
