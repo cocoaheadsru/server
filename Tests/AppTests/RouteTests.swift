@@ -41,23 +41,3 @@ class RouteTests: TestCase {
       .assertBody(contains: "Hello, world!")
   }
 }
-
-// MARK: Manifest
-
-extension RouteTests {
-  /// This is a requirement for XCTest on Linux
-  /// to function properly.
-  /// See ./Tests/LinuxMain.swift for examples
-  static let allTests = [
-    ("testThatRequestToHelloReturnsProperData",
-     testThatRequestToHelloReturnsProperData),
-    ("testThatRequestToPlainTextReturnsProperData",
-     testThatRequestToPlainTextReturnsProperData),
-    ("testThatRequestWithNoClientTokenFails",
-     testThatRequestWithNoClientTokenFails),
-    ("testThatAuthorizedRequestPasses",
-     testThatAuthorizedRequestPasses),
-    ("testThatRequestWithInvalidClientTokenFails",
-     testThatRequestWithInvalidClientTokenFails)
-  ]
-}

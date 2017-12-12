@@ -6,7 +6,7 @@ import Testing
 class ClientMiddlewareTests: TestCase {
   let droplet = try! Droplet.testable()
 
-  let validToken = "test"
+  let validToken = TestConstants.Middleware.validToken
   let generatedToken = String.invalidRandomToken
 
   func testThatMiddlewarePresentInConfig() {
@@ -66,30 +66,4 @@ class ClientMiddlewareTests: TestCase {
     let response = try! middleware.respond(to: request, chainingTo: responder)
     XCTAssertEqual(response.status, .unauthorized)
   }
-}
-
-// MARK: Manifest
-
-extension ClientMiddlewareTests {
-  /// This is a requirement for XCTest on Linux
-  /// to function properly.
-  /// See ./Tests/LinuxMain.swift for examples
-  static let allTests = [
-    ("testThatMiddlewarePresentInConfig",
-     testThatMiddlewarePresentInConfig),
-    ("testThatConfigInitializationFailWithoutToken",
-     testThatConfigInitializationFailWithoutToken),
-    ("testThatConfigInitializationFailWithEmptyToken",
-     testThatConfigInitializationFailWithEmptyToken),
-    ("testThatFailedConfigInitializationThrowsProperError",
-     testThatFailedConfigInitializationThrowsProperError),
-    ("testThatConfigInitializationPassWithAnyNonEmptyToken",
-     testThatConfigInitializationPassWithAnyNonEmptyToken),
-    ("testThatTokenIsAssignedFromConfigInitialization",
-     testThatTokenIsAssignedFromConfigInitialization),
-    ("testThatResponsePassWithCoincidentToken",
-     testThatResponsePassWithCoincidentToken),
-    ("testThatResponseFailWithIncoincidentToken",
-     testThatResponseFailWithIncoincidentToken)
-  ]
 }
