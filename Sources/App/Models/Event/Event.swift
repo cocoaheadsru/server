@@ -67,7 +67,7 @@ final class Event: Model {
 extension Event {
   
   func place() throws -> Place? {
-    return try children().first()
+    return try parent(id: placeId).get()
   }
   
   func speeches() throws -> [Speech] {
