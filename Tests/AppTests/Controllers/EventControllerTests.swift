@@ -19,6 +19,45 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(place)
   }
   
+  func testThatShowEventReturnOkStatus() throws {
+    try cleanEventTable()
+    let eventId = try storeEvent()
+    guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      return
+    }
+    
+    let request = Request.makeTest(method: .get)
+    let res = try eventContoller.show(request, event: event).makeResponse()
+    XCTAssertEqual(res.status, .ok)
+  }
+  
+  func testThatShowEventReturnJSONWithAllRequiredFields() throws {
+    try cleanEventTable()
+    let eventId = try storeEvent()
+    guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      return
+    }
+    
+    let request = Request.makeTest(method: .get)
+    let res = try eventContoller.show(request, event: event).makeResponse()
+    let json = res.json
+    
+    XCTAssertNotNil(json)
+    XCTAssertNotNil(json?["id"])
+    XCTAssertNotNil(json?["place_id"])
+    XCTAssertNotNil(json?["title"])
+    XCTAssertNotNil(json?["description"])
+    XCTAssertNotNil(json?["photo_url"])
+    XCTAssertNotNil(json?["is_registration_open"])
+    XCTAssertNotNil(json?["start_date"])
+    XCTAssertNotNil(json?["end_date"])
+    XCTAssertNotNil(json?["hide"])
+  }
+    
+  // MARK: Endpoint tests
+  
   func testThatGetEventByIdRouteReturnOkStatus() throws {
     try cleanEventTable()
     let eventId = try storeEvent()
