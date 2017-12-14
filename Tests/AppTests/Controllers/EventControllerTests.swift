@@ -19,6 +19,19 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(place)
   }
   
+  func testThatPlaceOfEventHasCityRelation() throws {
+    try cleanEventTable()
+    let eventId = try storeEvent()
+    guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      return
+    }
+    
+    let place = try event.place()
+    let city = try place?.city()
+    XCTAssertNotNil(city)
+  }
+  
   func testThatShowEventReturnsOkStatus() throws {
     try cleanEventTable()
     let eventId = try storeEvent()
@@ -46,7 +59,6 @@ class EventControllerTests: TestCase {
     
     XCTAssertNotNil(json)
     XCTAssertNotNil(json?["id"])
-    XCTAssertNotNil(json?["place"])
     XCTAssertNotNil(json?["title"])
     XCTAssertNotNil(json?["description"])
     XCTAssertNotNil(json?["photo_url"])
@@ -54,6 +66,20 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(json?["start_date"])
     XCTAssertNotNil(json?["end_date"])
     XCTAssertNotNil(json?["hide"])
+    XCTAssertNotNil(json?["place"])
+    
+    let placeJSON = json?["place"]?.makeJSON()
+    XCTAssertNotNil(placeJSON?["id"])
+    XCTAssertNotNil(placeJSON?["latitude"])
+    XCTAssertNotNil(placeJSON?["longitude"])
+    XCTAssertNotNil(placeJSON?["title"])
+    XCTAssertNotNil(placeJSON?["description"])
+    XCTAssertNotNil(placeJSON?["address"])
+    XCTAssertNotNil(placeJSON?["city"])
+    
+    let cityJSON = placeJSON?["city"]?.makeJSON()
+    XCTAssertNotNil(cityJSON?["id"])
+    XCTAssertNotNil(cityJSON?["city_name"])
   }
   
   func testThatShowEventReturnsJSONWithExpectedFields() throws {
