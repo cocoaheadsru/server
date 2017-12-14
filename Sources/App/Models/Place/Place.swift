@@ -7,7 +7,7 @@ final class Place: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = City
+  // sourcery: relatedModel = City, nestedJSONField = city
   var cityId: Identifier
   var title: String
   var address: String

@@ -7,7 +7,7 @@ final class Event: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = Place
+  // sourcery: relatedModel = Place, nestedJSONField = place
   var placeId: Identifier
   var title: String
   var description: String

@@ -19,7 +19,11 @@ extension ClientMiddlewareTests {
 extension EventControllerTests {
   static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
    ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
-   ("testThatGetEventByIdRouteReturnOkStatus", testThatGetEventByIdRouteReturnOkStatus)
+   ("testThatShowEventReturnsOkStatus", testThatShowEventReturnsOkStatus),
+   ("testThatShowEventReturnsJSONWithAllRequiredFields", testThatShowEventReturnsJSONWithAllRequiredFields),
+   ("testThatShowEventReturnsJSONWithExpectedFields", testThatShowEventReturnsJSONWithExpectedFields),
+   ("testThatGetEventByIdRouteReturnsOkStatus", testThatGetEventByIdRouteReturnsOkStatus),
+   ("testThatGetEventByIdRouteFailsForEmptyTable", testThatGetEventByIdRouteFailsForEmptyTable)
   ]
 }
 extension HeartbeatControllerTests {

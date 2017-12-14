@@ -19,7 +19,7 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(place)
   }
   
-  func testThatShowEventReturnOkStatus() throws {
+  func testThatShowEventReturnsOkStatus() throws {
     try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
@@ -32,7 +32,7 @@ class EventControllerTests: TestCase {
     XCTAssertEqual(res.status, .ok)
   }
   
-  func testThatShowEventReturnJSONWithAllRequiredFields() throws {
+  func testThatShowEventReturnsJSONWithAllRequiredFields() throws {
     try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
@@ -46,7 +46,7 @@ class EventControllerTests: TestCase {
     
     XCTAssertNotNil(json)
     XCTAssertNotNil(json?["id"])
-    XCTAssertNotNil(json?["place_id"])
+    XCTAssertNotNil(json?["place"])
     XCTAssertNotNil(json?["title"])
     XCTAssertNotNil(json?["description"])
     XCTAssertNotNil(json?["photo_url"])
@@ -55,10 +55,36 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(json?["end_date"])
     XCTAssertNotNil(json?["hide"])
   }
+  
+  func testThatShowEventReturnsJSONWithExpectedFields() throws {
+    try cleanEventTable()
+    let eventId = try storeEvent()
+    guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      return
+    }
     
+    let request = Request.makeTest(method: .get)
+    let res = try eventContoller.show(request, event: event).makeResponse()
+    let json = res.json
+    let expectedPlaceJSON = try event.place()?.makeJSON()
+    let expectedCityJSON = try event.place()?.city()?.makeJSON()
+
+    XCTAssertEqual(json?["id"]?.int, event.id?.int)
+    XCTAssertEqual(json?["place"]?.makeJSON(), expectedPlaceJSON)
+    XCTAssertEqual(json?["place"]?.makeJSON()["city"]?.makeJSON(), expectedCityJSON)
+    XCTAssertEqual(json?["title"]?.string, event.title)
+    XCTAssertEqual(json?["description"]?.string, event.description)
+    XCTAssertEqual(json?["photo_url"]?.string, event.photoUrl)
+    XCTAssertEqual(json?["is_registration_open"]?.bool, event.isRegistrationOpen)
+    XCTAssertEqual(json?["start_date"]?.int, event.startDate)
+    XCTAssertEqual(json?["end_date"]?.int, event.endDate)
+    XCTAssertEqual(json?["hide"]?.bool, event.hide)
+  }
+  
   // MARK: Endpoint tests
   
-  func testThatGetEventByIdRouteReturnOkStatus() throws {
+  func testThatGetEventByIdRouteReturnsOkStatus() throws {
     try cleanEventTable()
     let eventId = try storeEvent()
     guard let id = eventId?.int else {
@@ -69,6 +95,13 @@ class EventControllerTests: TestCase {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "event/\(id)")
       .assertStatus(is: .ok)
+  }
+  
+  func testThatGetEventByIdRouteFailsForEmptyTable() throws {
+    try cleanEventTable()
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event/\(Int.randomValue)")
+      .assertStatus(is: .notFound)
   }
 }
 

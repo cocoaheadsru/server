@@ -45,7 +45,7 @@ extension Place: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.cityId, cityId)
+    try json.set("city", city()?.makeJSON())
     try json.set(Keys.title, title)
     try json.set(Keys.address, address)
     try json.set(Keys.description, description)
