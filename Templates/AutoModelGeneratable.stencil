@@ -114,6 +114,8 @@ extension {{ type.name }}: JSONRepresentable {
     {% for variable in type.storedVariables where variable.name != "storage" %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
     try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    {% elif variable.annotations.nestedJSONField %}
+    try json.set("{{ variable.annotations.nestedJSONField|camelToSnakeCase }}", {{ variable.annotations.nestedJSONField }}()?.makeJSON())
     {% else %}
     try json.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
