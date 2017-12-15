@@ -2,12 +2,16 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable
+// sourcery: toJSON, Preparation, Timestampable
 final class Event: Model {
     
   let storage = Storage()
   
+<<<<<<< HEAD
+  // sourcery: relatedModel = Place
+=======
   // sourcery: relatedModel = Place, ignoreInJSON
+>>>>>>> 289c57c... Updated Sourcery template. Added ability to insert nested fields that is not model variables
   var placeId: Identifier
   var title: String
   var description: String
@@ -65,7 +69,7 @@ extension Event {
   
   // sourcery: nestedJSONField
   func place() throws -> Place? {
-    return try parent(id: placeId).get()
+    return try children().first()
   }
   
   func speeches() throws -> [Speech] {
@@ -77,6 +81,6 @@ extension Event {
   }
   
   func registrationForm() throws -> RegForm? {
-    return try children().first()
+    return try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
   }
 }

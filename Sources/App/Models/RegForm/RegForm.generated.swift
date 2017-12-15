@@ -18,6 +18,8 @@ extension RegForm {
   }
 }
 
+extension RegForm: ResponseRepresentable { }
+
 extension RegForm: Preparation {
 
   static func prepare(_ database: Database) throws {

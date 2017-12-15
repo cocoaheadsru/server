@@ -52,6 +52,9 @@ extension {{ type.name }} {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     static let {{ variable.name }} = "{{ variable.name|camelToSnakeCase }}"
     {% endfor %}
+    {% for method in type.methods|annotated:"nestedJSONField" %}
+    static let {{ method.callName }} = "{{ method.callName|camelToSnakeCase }}"
+    {% endfor %}
   }
 }
 {% endmacro %}
@@ -111,12 +114,15 @@ extension {{ type.name }}: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    {% for variable in type.storedVariables where variable.name != "storage" %}
+    {% for variable in type.storedVariables where variable.name != "storage" and variable|!annotated:"ignoreInJSON" %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
     try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% else %}
     try json.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
+    {% endfor %}
+    {% for method in type.methods|annotated:"nestedJSONField" %}
+    try json.set(Keys.{{ method.callName }}, {{ method.callName }}(){% if method.isOptionalReturnType %}?{% endif %}.makeJSON())
     {% endfor %}
     return json
   }

@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: toJSON, Preparation, ResponseRepresentable
 final class RegForm: Model {
     
   let storage = Storage()

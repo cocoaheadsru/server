@@ -24,8 +24,6 @@ extension Event {
   }
 }
 
-extension Event: ResponseRepresentable { }
-
 extension Event: Preparation {
 
   static func prepare(_ database: Database) throws {
@@ -52,6 +50,10 @@ extension Event: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
+<<<<<<< HEAD
+    try json.set(Keys.placeId, placeId)
+=======
+>>>>>>> 289c57c... Updated Sourcery template. Added ability to insert nested fields that is not model variables
     try json.set(Keys.title, title)
     try json.set(Keys.description, description)
     try json.set(Keys.photoUrl, photoUrl)

@@ -41,6 +41,8 @@ extension EventReg {
   }
 }
 
+extension EventReg: ResponseRepresentable { }
+
 extension EventReg: Updateable {
 
   public static var updateableKeys: [UpdateableKey<EventReg>] {
