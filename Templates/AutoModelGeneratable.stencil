@@ -111,7 +111,7 @@ extension {{ type.name }}: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    {% for variable in type.storedVariables where variable.name != "storage" %}
+    {% for variable in type.storedVariables where variable.name != "storage" and not variable|annotated:"ignoreInJSON" %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
     try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% elif variable.annotations.nestedJSONField %}

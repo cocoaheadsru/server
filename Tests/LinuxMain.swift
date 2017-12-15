@@ -19,11 +19,19 @@ extension ClientMiddlewareTests {
 extension EventControllerTests {
   static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
    ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
+   ("testThatPlaceOfEventHasCityRelation", testThatPlaceOfEventHasCityRelation),
    ("testThatShowEventReturnsOkStatus", testThatShowEventReturnsOkStatus),
    ("testThatShowEventReturnsJSONWithAllRequiredFields", testThatShowEventReturnsJSONWithAllRequiredFields),
    ("testThatShowEventReturnsJSONWithExpectedFields", testThatShowEventReturnsJSONWithExpectedFields),
    ("testThatGetEventByIdRouteReturnsOkStatus", testThatGetEventByIdRouteReturnsOkStatus),
    ("testThatGetEventByIdRouteFailsForEmptyTable", testThatGetEventByIdRouteFailsForEmptyTable)
+  ]
+}
+extension EventSpeechControllerTests {
+  static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
+   ("testThatIndexEventReturnsOkStatus", testThatIndexEventReturnsOkStatus),
+   ("testThatIndexEventFailsForEmptyTable", testThatIndexEventFailsForEmptyTable),
+   ("testThatGetSpeechesForEventRouteReturnsOkStatus", testThatGetSpeechesForEventRouteReturnsOkStatus)
   ]
 }
 extension HeartbeatControllerTests {
@@ -52,6 +60,7 @@ extension RouteTests {
 XCTMain([
   testCase(ClientMiddlewareTests.allTests),
   testCase(EventControllerTests.allTests),
+  testCase(EventSpeechControllerTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])

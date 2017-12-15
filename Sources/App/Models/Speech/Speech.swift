@@ -7,7 +7,7 @@ final class Speech: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = Event
+  // sourcery: relation = parent, relatedModel = Event, ignoreInJSON
   var eventId: Identifier
   var title: String?
   var description: String
