@@ -20,6 +20,7 @@ extension Event {
     static let startDate = "start_date"
     static let endDate = "end_date"
     static let hide = "hide"
+    static let place = "place"
   }
 }
 
@@ -51,7 +52,6 @@ extension Event: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set("place", place()?.makeJSON())
     try json.set(Keys.title, title)
     try json.set(Keys.description, description)
     try json.set(Keys.photoUrl, photoUrl)
@@ -59,6 +59,7 @@ extension Event: JSONRepresentable {
     try json.set(Keys.startDate, startDate)
     try json.set(Keys.endDate, endDate)
     try json.set(Keys.hide, hide)
+    try json.set(Keys.place, place()?.makeJSON())
     return json
   }
 }

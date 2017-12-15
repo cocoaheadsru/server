@@ -48,10 +48,12 @@ extension Speech {
     return try parent(id: eventId).get()
   }
   
+  // sourcery: nestedJSONField
   func speakers() throws -> [Speaker] {
     return try children().all()
   }
   
+  // sourcery: nestedJSONField
   func contents() throws -> [Content] {
     return try children().all()
   }

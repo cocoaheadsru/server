@@ -7,7 +7,7 @@ final class Event: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = Place, nestedJSONField = place
+  // sourcery: relatedModel = Place, ignoreInJSON
   var placeId: Identifier
   var title: String
   var description: String
@@ -63,6 +63,7 @@ final class Event: Model {
 
 extension Event {
   
+  // sourcery: nestedJSONField
   func place() throws -> Place? {
     return try parent(id: placeId).get()
   }

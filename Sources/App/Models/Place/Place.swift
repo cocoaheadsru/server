@@ -7,7 +7,7 @@ final class Place: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = City, nestedJSONField = city
+  // sourcery: relatedModel = City, ignoreInJSON
   var cityId: Identifier
   var title: String
   var address: String
@@ -54,6 +54,7 @@ final class Place: Model {
 
 extension Place {
   
+  // sourcery: nestedJSONField
   func city() throws -> City? {
     return try parent(id: cityId).get()
   }

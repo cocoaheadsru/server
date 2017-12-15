@@ -16,6 +16,8 @@ extension Speech {
     static let title = "title"
     static let description = "description"
     static let photoUrl = "photo_url"
+    static let speakers = "speakers"
+    static let contents = "contents"
   }
 }
 
@@ -44,6 +46,8 @@ extension Speech: JSONRepresentable {
     try json.set(Keys.title, title)
     try json.set(Keys.description, description)
     try json.set(Keys.photoUrl, photoUrl)
+    try json.set(Keys.speakers, speakers().makeJSON())
+    try json.set(Keys.contents, contents().makeJSON())
     return json
   }
 }
