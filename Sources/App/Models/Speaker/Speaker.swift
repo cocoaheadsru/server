@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: Preparation
 final class Speaker: Model {
     
   let storage = Storage()
@@ -40,5 +40,20 @@ extension Speaker {
   
   func speech() throws -> Speech? {
     return try parent(id: speechId).get()
+  }
+}
+
+/// Custom implementation because of this exceptional case
+extension Speaker: JSONRepresentable {
+  
+  func makeJSON() throws -> JSON {
+    guard let userJSON = try user()?.makeJSON() else {
+      var json = JSON()
+      try json.set(Keys.id, id)
+      return json
+    }
+    var json = JSON(json: userJSON)
+    try json.set(Keys.id, id)
+    return json
   }
 }

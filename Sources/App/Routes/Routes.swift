@@ -14,5 +14,6 @@ extension Droplet {
     
     try resource("heartbeat", HeartbeatController.self)
     try resource("event", EventController.self)
+    try resource("event/:id/speech", EventSpeechController.self)
   }
 }

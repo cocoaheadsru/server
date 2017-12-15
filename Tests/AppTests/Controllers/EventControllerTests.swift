@@ -134,37 +134,14 @@ class EventControllerTests: TestCase {
 extension EventControllerTests {
   
   fileprivate func cleanEventTable() throws {
-    try Event.makeQuery().delete()
-    try Place.makeQuery().delete()
-    try City.makeQuery().delete()
+    try EventHelper.cleanEventTable()
   }
   
   fileprivate func storeEvent() throws -> Identifier? {
-    let city = City(cityName: String.randomValue)
-    try city.save()
-    
-    let place = Place(title: String.randomValue,
-                      address: String.randomValue,
-                      description: String.randomValue,
-                      latitude: Double.randomValue,
-                      longitude: Double.randomValue,
-                      cityId: (city.id)!)
-    try place.save()
-    
-    let event = Event(title: String.randomValue,
-                      description: String.randomValue,
-                      photoUrl: String.randomValue,
-                      placeId: (place.id)!,
-                      isRegistrationOpen: Bool.randomValue,
-                      startDate: Int.randomValue,
-                      endDate: Int.randomValue,
-                      hide: Bool.randomValue)
-    try event.save()
-    
-    return event.id
+    return try EventHelper.storeEvent()
   }
   
-  func findEvent(by id: Identifier?) throws -> App.Event? {
-    return try Event.makeQuery().find(id)
+  fileprivate func findEvent(by id: Identifier?) throws -> App.Event? {
+    return try EventHelper.findEvent(by: id)
   }
 }

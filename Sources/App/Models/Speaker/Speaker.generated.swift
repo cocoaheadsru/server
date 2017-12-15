@@ -31,14 +31,3 @@ extension Speaker: Preparation {
     try database.delete(self)
   }
 }
-
-extension Speaker: JSONRepresentable {
-
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Keys.id, id)
-    try json.set(Keys.userId, userId)
-    try json.set(Keys.speechId, speechId)
-    return json
-  }
-}

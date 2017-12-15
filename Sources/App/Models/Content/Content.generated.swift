@@ -62,7 +62,6 @@ extension Content: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.speechId, speechId)
     try json.set(Keys.type, type.string)
     try json.set(Keys.title, title)
     try json.set(Keys.description, description)
