@@ -1,6 +1,8 @@
 import Vapor
 import HTTP
 
+typealias HTTPHeader = [HTTP.HeaderKey: String]
+
 extension Responder {
   public func unauthorizedTestResponse(
     to method: HTTP.Method,
@@ -63,8 +65,7 @@ extension Responder {
     return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,
-      hostname:
-      hostname,
+      hostname: hostname,
       headers: userHeaders,
       body: body,
       file: file,

@@ -28,6 +28,10 @@ extension HeartbeatControllerTests {
    ("testThatRouteHearbeatScenarioIsCorrect", testThatRouteHearbeatScenarioIsCorrect)
   ]
 }
+extension RegistrationControllerTests {
+  static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
+  ]
+}
 extension RouteTests {
   static var allTests: [(String, (RouteTests) -> () throws -> Void)] = [
    ("testThatRequestWithNoClientTokenFails", testThatRequestWithNoClientTokenFails),
@@ -42,6 +46,7 @@ extension RouteTests {
 XCTMain([
   testCase(ClientMiddlewareTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
+  testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])
 // swiftlint:enable trailing_comma

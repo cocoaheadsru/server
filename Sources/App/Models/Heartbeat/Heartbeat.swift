@@ -1,7 +1,7 @@
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: fromJSON, toJSON, Preparation
 final class Heartbeat: Model {
   let storage = Storage()
   

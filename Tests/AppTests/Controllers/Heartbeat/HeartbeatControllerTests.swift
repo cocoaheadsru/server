@@ -73,11 +73,11 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
     let json = try heartbeat.makeJSON()
-    let reqBody = try Body(json)
-    let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json", "client-token":validToken], body: reqBody)
+    let header : HTTPHeader = ["Content-Type": "application/json"]
     // act & assert
+    print(json)
     try drop
-      .testResponse(to: req)
+      .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -87,7 +87,7 @@ class HeartbeatControllerTests: TestCase {
     try cleanHeartbeatTable()
     // act & assert
     try drop
-      .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+      .userAuthorizedTestResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .noContent)
   }
   
@@ -109,15 +109,14 @@ class HeartbeatControllerTests: TestCase {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
       let json = try heartbeat.makeJSON()
-      let reqBody = try Body(json)
-      let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json", "client-token": validToken], body: reqBody)
+      let header : HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
       try drop
-        .testResponse(to: req)
+        .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
       try drop
-        .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+        .userAuthorizedTestResponse(to: .get, at: "heartbeat")
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
     }
