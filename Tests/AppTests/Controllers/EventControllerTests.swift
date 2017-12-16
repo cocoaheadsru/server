@@ -7,8 +7,12 @@ class EventControllerTests: TestCase {
   let drop = try! Droplet.testable()
   let eventContoller = EventController()
   
+  override func setUp() {
+    super.setUp()
+    try! cleanEventTable()
+  }
+  
   func testThatEventHasPlaceRelation() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
       XCTFail()
@@ -20,7 +24,6 @@ class EventControllerTests: TestCase {
   }
   
   func testThatPlaceOfEventHasCityRelation() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
       XCTFail()
@@ -33,7 +36,6 @@ class EventControllerTests: TestCase {
   }
   
   func testThatShowEventReturnsOkStatus() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
       XCTFail()
@@ -46,7 +48,6 @@ class EventControllerTests: TestCase {
   }
   
   func testThatShowEventReturnsJSONWithAllRequiredFields() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
       XCTFail()
@@ -83,9 +84,16 @@ class EventControllerTests: TestCase {
   }
   
   func testThatShowEventReturnsJSONWithExpectedFields() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      return
+    }
+    guard let place = try event.place() else {
+      XCTFail()
+      return
+    }
+    guard let city = try place.city() else {
       XCTFail()
       return
     }
@@ -93,12 +101,8 @@ class EventControllerTests: TestCase {
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
     let json = res.json
-    let expectedPlaceJSON = try event.place()?.makeJSON()
-    let expectedCityJSON = try event.place()?.city()?.makeJSON()
 
     XCTAssertEqual(json?["id"]?.int, event.id?.int)
-    XCTAssertEqual(json?["place"]?.makeJSON(), expectedPlaceJSON)
-    XCTAssertEqual(json?["place"]?.makeJSON()["city"]?.makeJSON(), expectedCityJSON)
     XCTAssertEqual(json?["title"]?.string, event.title)
     XCTAssertEqual(json?["description"]?.string, event.description)
     XCTAssertEqual(json?["photo_url"]?.string, event.photoUrl)
@@ -106,12 +110,23 @@ class EventControllerTests: TestCase {
     XCTAssertEqual(json?["start_date"]?.int, event.startDate)
     XCTAssertEqual(json?["end_date"]?.int, event.endDate)
     XCTAssertEqual(json?["hide"]?.bool, event.hide)
+    
+    let placeJSON = json?["place"]?.makeJSON()
+    XCTAssertEqual(placeJSON?["id"]?.int, place.id?.int)
+    XCTAssertEqual(placeJSON?["latitude"]?.double, place.latitude)
+    XCTAssertEqual(placeJSON?["longitude"]?.double, place.longitude)
+    XCTAssertEqual(placeJSON?["title"]?.string, place.title)
+    XCTAssertEqual(placeJSON?["description"]?.string, place.description)
+    XCTAssertEqual(placeJSON?["address"]?.string, place.address)
+
+    let cityJSON = placeJSON?["city"]?.makeJSON()
+    XCTAssertEqual(cityJSON?["id"]?.int, city.id?.int)
+    XCTAssertEqual(cityJSON?["city_name"]?.string, city.cityName)
   }
   
   // MARK: Endpoint tests
   
   func testThatGetEventByIdRouteReturnsOkStatus() throws {
-    try cleanEventTable()
     let eventId = try storeEvent()
     guard let id = eventId?.int else {
       XCTFail()
@@ -124,7 +139,6 @@ class EventControllerTests: TestCase {
   }
   
   func testThatGetEventByIdRouteFailsForEmptyTable() throws {
-    try cleanEventTable()
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "event/\(Int.randomValue)")
       .assertStatus(is: .notFound)
@@ -134,6 +148,7 @@ class EventControllerTests: TestCase {
 extension EventControllerTests {
   
   fileprivate func cleanEventTable() throws {
+    try EventSpeechHelper.cleanSpeechTable()
     try EventHelper.cleanEventTable()
   }
   

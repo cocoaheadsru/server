@@ -29,9 +29,14 @@ extension EventControllerTests {
 }
 extension EventSpeechControllerTests {
   static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
-   ("testThatIndexEventReturnsOkStatus", testThatIndexEventReturnsOkStatus),
-   ("testThatIndexEventFailsForEmptyTable", testThatIndexEventFailsForEmptyTable),
-   ("testThatGetSpeechesForEventRouteReturnsOkStatus", testThatGetSpeechesForEventRouteReturnsOkStatus)
+   ("testThatIndexSpeechesReturnsOkStatus", testThatIndexSpeechesReturnsOkStatus),
+   ("testThatIndexSpeechesFailsForEmptyTable", testThatIndexSpeechesFailsForEmptyTable),
+   ("testThatIndexSpeechesReturnsJSONWithAllRequiredFields", testThatIndexSpeechesReturnsJSONWithAllRequiredFields),
+   ("testThatIndexSpeechesReturnsJSONWithExpectedFields", testThatIndexSpeechesReturnsJSONWithExpectedFields),
+   ("testThatIndexSpeechesReturnsCorrectSpeechesCount", testThatIndexSpeechesReturnsCorrectSpeechesCount),
+   ("testThatIndexSpeechesReturnsCorrectSpeakersCount", testThatIndexSpeechesReturnsCorrectSpeakersCount),
+   ("testThatIndexSpeechesReturnsCorrectContentsCount", testThatIndexSpeechesReturnsCorrectContentsCount),
+   ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus)
   ]
 }
 extension HeartbeatControllerTests {
