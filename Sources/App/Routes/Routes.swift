@@ -12,7 +12,8 @@ extension Droplet {
       return "Hello, world!"
     }
     
-    let heartbeatController = HeartbeatController()
-    resource("heartbeat", heartbeatController)
+    //let heartbeatController = HeartbeatController()
+    try resource("heartbeat", HeartbeatController.self)
+    try resource("event/:id/form", RegistrationController.self)
   }
 }

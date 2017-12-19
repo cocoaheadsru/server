@@ -30,6 +30,8 @@ extension HeartbeatControllerTests {
 }
 extension RegistrationControllerTests {
   static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
+   ("testThatRegFormGetNotFoundForWrongId", testThatRegFormGetNotFoundForWrongId),
+   ("testThatReqFormIdAndNameFetchedByEventName", testThatReqFormIdAndNameFetchedByEventName)
   ]
 }
 extension RouteTests {
