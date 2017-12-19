@@ -57,7 +57,7 @@ class EventControllerTests: TestCase {
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
     
-    checkEventHasRequiredFields(json: res.json)
+    assertEventHasRequiredFields(json: res.json)
   }
   
   func testThatShowEventReturnsJSONWithExpectedFields() throws {
@@ -70,7 +70,7 @@ class EventControllerTests: TestCase {
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
 
-    try checkEventHasExpectedFields(json: res.json, event: event)
+    try assertEventHasExpectedFields(json: res.json, event: event)
   }
   
   func testThatIndexEventsFailsForEmptyQueryParameters() throws {
@@ -130,8 +130,8 @@ class EventControllerTests: TestCase {
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
     
-    checkEventHasRequiredFields(json: eventJSON1)
-    checkEventHasRequiredFields(json: eventJSON2)
+    assertEventHasRequiredFields(json: eventJSON1)
+    assertEventHasRequiredFields(json: eventJSON2)
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields() throws {
@@ -152,8 +152,8 @@ class EventControllerTests: TestCase {
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
     
-    try checkEventHasExpectedFields(json: eventJSON1, event: event1)
-    try checkEventHasExpectedFields(json: eventJSON2, event: event2)
+    try assertEventHasExpectedFields(json: eventJSON1, event: event1)
+    try assertEventHasExpectedFields(json: eventJSON2, event: event2)
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastEvents() throws {
@@ -226,7 +226,7 @@ class EventControllerTests: TestCase {
 
 extension EventControllerTests {
   
-  fileprivate func checkEventHasRequiredFields(json: JSON?) {
+  fileprivate func assertEventHasRequiredFields(json: JSON?) {
     XCTAssertNotNil(json)
     XCTAssertNotNil(json?["id"])
     XCTAssertNotNil(json?["title"])
@@ -252,7 +252,7 @@ extension EventControllerTests {
     XCTAssertNotNil(cityJSON?["city_name"])
   }
   
-  fileprivate func checkEventHasExpectedFields(json: JSON?, event: App.Event) throws {
+  fileprivate func assertEventHasExpectedFields(json: JSON?, event: App.Event) throws {
     guard let place = try event.place() else {
       XCTFail()
       return
