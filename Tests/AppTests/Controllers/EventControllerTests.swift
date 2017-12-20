@@ -195,6 +195,39 @@ class EventControllerTests: TestCase {
       .clientAuthorizedTestResponse(to: .get, at: "event/\(Int.randomValue)")
       .assertStatus(is: .notFound)
   }
+  
+  func testThatGetEventByIdRouteFailsForIncorrectIdValue() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event/\(EventHelper.invalidQueryValueParameter)")
+      .assertStatus(is: .notFound)
+  }
+  
+  func testThatGetEventsBeforeTimestampRouteReturnsOkStatus() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: "before=\(Int.randomTimestamp)")
+      .assertStatus(is: .ok)
+  }
+  
+  func testThatGetEventsAfterTimestampRouteReturnsOkStatus() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: "after=\(Int.randomTimestamp)")
+      .assertStatus(is: .ok)
+  }
+  
+  func testThatGetEventsRouteFailsWithWrongQueryParameterKey() throws {
+    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Int.randomTimestamp)"
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: query)
+      .assertStatus(is: .badRequest)
+  }
+  
+  func testThatGetEventsRouteFailsWithWrongQueryParameterValue() throws {
+    let validKey = Bool.randomValue ? "after" : "before"
+    let query = "\(validKey)=\(EventHelper.invalidQueryValueParameter)"
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: query)
+      .assertStatus(is: .badRequest)
+  }
 }
 
 extension EventControllerTests {

@@ -30,6 +30,20 @@ class EventSpeechControllerTests: TestCase {
     XCTAssertEqual(res.status, .notFound)
   }
   
+  func testThatIndexSpeechesFailsWithIncorrectParameter() throws {
+    let req = Request.makeTest(method: .get)
+    try req.parameters.set(EventSpeechHelper.invalidParameterKey, Int.randomValue)
+    let res = try eventSpeechContoller.index(req: req).makeResponse()
+    XCTAssertEqual(res.status, .badRequest)
+  }
+  
+  func testThatIndexSpeechesFailsWithNonIntParameterValue() throws {
+    let req = Request.makeTest(method: .get)
+    try req.parameters.set("id", EventSpeechHelper.invalidParameterValue)
+    let res = try eventSpeechContoller.index(req: req).makeResponse()
+    XCTAssertEqual(res.status, .badRequest)
+  }
+  
   func testThatIndexSpeechesReturnsJSONWithAllRequiredFields() throws {
     guard let eventId = try storeEvent(), let id = eventId.int else {
       XCTFail()
@@ -39,10 +53,8 @@ class EventSpeechControllerTests: TestCase {
     try storeSpeech(forEventId: eventId)
 
     let res = try fetchSpeeches(parameterId: id)
-    let json = res.json?.array
-    let speechJSON = json?.first
+    let speechJSON = res.json?.array?.first
     
-    XCTAssertNotNil(json)
     XCTAssertNotNil(speechJSON)
     XCTAssertNotNil(speechJSON?["id"])
     XCTAssertNotNil(speechJSON?["title"])
@@ -78,24 +90,16 @@ class EventSpeechControllerTests: TestCase {
     }
     
     try storeSpeech(forEventId: eventId)
-
-    let res = try fetchSpeeches(parameterId: id)
-    let json = res.json?.array
-    let speechJSON = json?.first
     
-    guard let speech = try findEvent(by: eventId)?.speeches().first else {
-      XCTFail()
-      return
-    }
-    guard let speaker = try speech.speakers().first else {
-      XCTFail()
-      return
-    }
-    guard let user = try speaker.user() else {
-      XCTFail()
-      return
-    }
-    guard let content = try speech.contents().first else {
+    let res = try fetchSpeeches(parameterId: id)
+    let speechJSON = res.json?.array?.first
+    
+    guard
+      let speech = try findEvent(by: eventId)?.speeches().first,
+      let speaker = try speech.speakers().first,
+      let user = try speaker.user(),
+      let content = try speech.contents().first
+    else {
       XCTFail()
       return
     }
