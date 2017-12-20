@@ -14,62 +14,37 @@ class EventControllerTests: TestCase {
   
   func testThatEventHasPlaceRelation() throws {
     let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      return
-    }
-    
-    let place = try event.place()
+    let event = try findEvent(by: eventId)
+    let place = try event?.place()
     XCTAssertNotNil(place)
   }
   
   func testThatPlaceOfEventHasCityRelation() throws {
     let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      return
-    }
-    
-    let place = try event.place()
+    let event = try findEvent(by: eventId)
+    let place = try event?.place()
     let city = try place?.city()
     XCTAssertNotNil(city)
   }
   
   func testThatShowEventReturnsOkStatus() throws {
-    let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      return
-    }
-    
+    let event = try storeAndFetchEvent()
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatShowEventReturnsJSONWithAllRequiredFields() throws {
-    let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      return
-    }
-    
+    let event = try storeAndFetchEvent()
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
-    
     assertEventHasRequiredFields(json: res.json)
   }
   
   func testThatShowEventReturnsJSONWithExpectedFields() throws {
-    let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      return
-    }
-    
+    let event = try storeAndFetchEvent()
     let request = Request.makeTest(method: .get)
     let res = try eventContoller.show(request, event: event).makeResponse()
-
     try assertEventHasExpectedFields(json: res.json, event: event)
   }
   
@@ -83,7 +58,6 @@ class EventControllerTests: TestCase {
     let query = "before=\(Int.randomValue)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
-    
     XCTAssertEqual(res.status, .ok)
   }
   
@@ -91,7 +65,6 @@ class EventControllerTests: TestCase {
     let query = "after=\(Int.randomValue)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
-    
     XCTAssertEqual(res.status, .ok)
   }
   
@@ -106,21 +79,19 @@ class EventControllerTests: TestCase {
     let query = "before=\(EventHelper.invalidQueryValueParameter)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
-    
     XCTAssertEqual(res.status, .badRequest)
   }
   
   func testThatIndexEventsReturnsJSONArray() throws {
     let resAfter = try fetchEvents(after: Int.randomValue)
     let resBefore = try fetchEvents(before: Int.randomValue)
-    
     XCTAssertNotNil(resAfter.json?.array)
     XCTAssertNotNil(resBefore.json?.array)
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields() throws {
-    let timestamp = Int.random(min: 50000, max: 500000)
-
+    let timestamp = Int.randomTimestamp
+    
     try storeEvent(after: timestamp)
     try storeEvent(before: timestamp)
 
@@ -135,13 +106,15 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields() throws {
-    let timestamp = Int.random(min: 50000, max: 500000)
+    let timestamp = Int.randomTimestamp
     
     let eventId1 = try storeEvent(after: timestamp)
     let eventId2 = try storeEvent(before: timestamp)
     
-    guard let event1 = try findEvent(by: eventId1),
-          let event2 = try findEvent(by: eventId2) else {
+    guard
+      let event1 = try findEvent(by: eventId1),
+      let event2 = try findEvent(by: eventId2)
+    else {
       XCTFail()
       return
     }
@@ -157,7 +130,7 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastEvents() throws {
-    let timestamp = Int.random(min: 50000, max: 500000)
+    let timestamp = Int.randomTimestamp
     let expectedEventsCount = Int.random(min: 1, max: 20)
     
     for _ in 0..<expectedEventsCount {
@@ -170,9 +143,9 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfFutureEvents() throws {
-    let timestamp = Int.random(min: 50000, max: 500000)
+    let timestamp = Int.randomTimestamp
     let expectedEventsCount = Int.random(min: 1, max: 20)
-    
+
     for _ in 0..<expectedEventsCount {
       try storeEvent(after: timestamp)
     }
@@ -183,7 +156,7 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastAndFutureEvents() throws {
-    let timestamp = Int.random(min: 50000, max: 500000)
+    let timestamp = Int.randomTimestamp
     let expectedPastEventsCount = Int.random(min: 1, max: 20)
     let expectedFutureEventsCount = Int.random(min: 1, max: 20)
 
@@ -319,5 +292,14 @@ extension EventControllerTests {
   
   fileprivate func findEvent(by id: Identifier?) throws -> App.Event? {
     return try EventHelper.findEvent(by: id)
+  }
+  
+  fileprivate func storeAndFetchEvent() throws -> App.Event {
+    let eventId = try storeEvent()
+    guard let event = try findEvent(by: eventId) else {
+      XCTFail()
+      fatalError()
+    }
+    return event
   }
 }

@@ -35,37 +35,37 @@ class EventHelper {
     return try storeEvent(timestamp: t)
   }
   
-  static func storeEvent(timestamp: Int = Int.random(min: 50000, max: 500000)) throws -> Identifier? {
-    let city = City(cityName: String.randomValue)
+  static func storeEvent(timestamp: Int = Int.randomTimestamp) throws -> Identifier? {
+    let city = City(
+      cityName: String.randomValue
+    )
     try city.save()
     
-    let place = Place(title: String.randomValue,
-                      address: String.randomValue,
-                      description: String.randomValue,
-                      latitude: Double.randomValue,
-                      longitude: Double.randomValue,
-                      cityId: (city.id)!)
+    let place = Place(
+      title: String.randomValue,
+      address: String.randomValue,
+      description: String.randomValue,
+      latitude: Double.randomValue,
+      longitude: Double.randomValue,
+      cityId: (city.id)!
+    )
     try place.save()
     
-    let event = Event(title: String.randomValue,
-                      description: String.randomValue,
-                      photoUrl: String.randomValue,
-                      placeId: (place.id)!,
-                      isRegistrationOpen: Bool.randomValue,
-                      startDate: timestamp - 5000,
-                      endDate: timestamp,
-                      hide: Bool.randomValue)
+    let event = Event(
+      title: String.randomValue,
+      description: String.randomValue,
+      photoUrl: String.randomValue,
+      placeId: (place.id)!,
+      isRegistrationOpen: Bool.randomValue,
+      startDate: timestamp - 5000,
+      endDate: timestamp,
+      hide: Bool.randomValue
+    )
     try event.save()
-    
+  
     return event.id
   }
-  
-  static func storeAndFetchEvent() throws -> App.Event? {
-    let eventId = try storeEvent()
-    let event = try findEvent(by: eventId)
-    return event
-  }
-  
+
   static func findEvent(by id: Identifier?) throws -> App.Event? {
     return try Event.makeQuery().find(id)
   }

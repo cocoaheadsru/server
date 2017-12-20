@@ -1,4 +1,5 @@
 import Vapor
+import Fluent
 
 final class EventController {
   
@@ -25,17 +26,20 @@ final class EventController {
   }
   
   private func fetchEvents(before timestamp: Int) throws -> [Event] {
-    return try Event
-      .makeQuery()
-      .filter("end_date", .lessThanOrEquals, timestamp)
-      .sort("start_date", .descending)
-      .all()
+    return try fetchEvents(that: .lessThanOrEquals, timestamp: timestamp)
   }
   
   private func fetchEvents(after timestamp: Int) throws -> [Event] {
+    return try fetchEvents(that: .greaterThanOrEquals, timestamp: timestamp)
+  }
+  
+  private func fetchEvents(
+    that comparison: Filter.Comparison,
+    timestamp: Int
+  ) throws -> [Event] {
     return try Event
       .makeQuery()
-      .filter("end_date", .greaterThanOrEquals, timestamp)
+      .filter("end_date", comparison, timestamp)
       .sort("start_date", .descending)
       .all()
   }
