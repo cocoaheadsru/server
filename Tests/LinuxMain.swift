@@ -23,14 +23,32 @@ extension EventControllerTests {
    ("testThatShowEventReturnsOkStatus", testThatShowEventReturnsOkStatus),
    ("testThatShowEventReturnsJSONWithAllRequiredFields", testThatShowEventReturnsJSONWithAllRequiredFields),
    ("testThatShowEventReturnsJSONWithExpectedFields", testThatShowEventReturnsJSONWithExpectedFields),
+   ("testThatIndexEventsFailsForEmptyQueryParameters", testThatIndexEventsFailsForEmptyQueryParameters),
+   ("testThatIndexEventsReturnsOkStatusForBeforeQueryKey", testThatIndexEventsReturnsOkStatusForBeforeQueryKey),
+   ("testThatIndexEventsReturnsOkStatusForAfterQueryKey", testThatIndexEventsReturnsOkStatusForAfterQueryKey),
+   ("testThatIndexEventsFailsForIncorrectQueryKey", testThatIndexEventsFailsForIncorrectQueryKey),
+   ("testThatIndexEventsFailsForNonIntQueryValue", testThatIndexEventsFailsForNonIntQueryValue),
+   ("testThatIndexEventsReturnsJSONArray", testThatIndexEventsReturnsJSONArray),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields", testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields", testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastEvents", testThatIndexEventsReturnsCorrectNumberOfPastEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfFutureEvents", testThatIndexEventsReturnsCorrectNumberOfFutureEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastAndFutureEvents", testThatIndexEventsReturnsCorrectNumberOfPastAndFutureEvents),
    ("testThatGetEventByIdRouteReturnsOkStatus", testThatGetEventByIdRouteReturnsOkStatus),
-   ("testThatGetEventByIdRouteFailsForEmptyTable", testThatGetEventByIdRouteFailsForEmptyTable)
+   ("testThatGetEventByIdRouteFailsForEmptyTable", testThatGetEventByIdRouteFailsForEmptyTable),
+   ("testThatGetEventByIdRouteFailsForIncorrectIdValue", testThatGetEventByIdRouteFailsForIncorrectIdValue),
+   ("testThatGetEventsBeforeTimestampRouteReturnsOkStatus", testThatGetEventsBeforeTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsAfterTimestampRouteReturnsOkStatus", testThatGetEventsAfterTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterKey", testThatGetEventsRouteFailsWithWrongQueryParameterKey),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterValue", testThatGetEventsRouteFailsWithWrongQueryParameterValue)
   ]
 }
 extension EventSpeechControllerTests {
   static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
    ("testThatIndexSpeechesReturnsOkStatus", testThatIndexSpeechesReturnsOkStatus),
    ("testThatIndexSpeechesFailsForEmptyTable", testThatIndexSpeechesFailsForEmptyTable),
+   ("testThatIndexSpeechesFailsWithIncorrectParameter", testThatIndexSpeechesFailsWithIncorrectParameter),
+   ("testThatIndexSpeechesFailsWithNonIntParameterValue", testThatIndexSpeechesFailsWithNonIntParameterValue),
    ("testThatIndexSpeechesReturnsJSONWithAllRequiredFields", testThatIndexSpeechesReturnsJSONWithAllRequiredFields),
    ("testThatIndexSpeechesReturnsJSONWithExpectedFields", testThatIndexSpeechesReturnsJSONWithExpectedFields),
    ("testThatIndexSpeechesReturnsCorrectSpeechesCount", testThatIndexSpeechesReturnsCorrectSpeechesCount),
