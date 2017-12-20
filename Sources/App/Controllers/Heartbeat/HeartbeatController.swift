@@ -35,5 +35,5 @@ extension HeartbeatController: ResourceRepresentable  {
   }
 }
 
-extension HeartbeatController : EmptyInitializable {}
+extension HeartbeatController: EmptyInitializable {}
 

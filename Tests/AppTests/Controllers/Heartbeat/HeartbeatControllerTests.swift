@@ -73,7 +73,7 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
     let json = try heartbeat.makeJSON()
-    let header : HTTPHeader = ["Content-Type": "application/json"]
+    let header: HTTPHeader = ["Content-Type": "application/json"]
     // act & assert
     print(json)
     try drop
@@ -109,7 +109,7 @@ class HeartbeatControllerTests: TestCase {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
       let json = try heartbeat.makeJSON()
-      let header : HTTPHeader = ["Content-Type": "application/json"]
+      let header: HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
       try drop
         .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)

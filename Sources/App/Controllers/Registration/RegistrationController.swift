@@ -4,16 +4,15 @@ import Vapor
 final class  RegistrationController {
   
   func index(_ req: Request) throws -> ResponseRepresentable {
-    guard let id = req.parameters["id"]?.int else {
+    guard let eventId = req.parameters["id"]?.int else {
       return Response(status: .badRequest)
     }
     
-    guard let regForm = try RegForm.find(id) else {
+    guard let regForm = try RegForm.makeQuery().filter("event_id",eventId).first() else {
       return Response(status: .notFound)
     }
     
     return try regForm.makeJSON()
-    
   }
 }
 
@@ -26,5 +25,5 @@ extension RegistrationController: ResourceRepresentable {
   }
 }
 
-extension RegistrationController : EmptyInitializable { }
+extension RegistrationController: EmptyInitializable { }
 
