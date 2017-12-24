@@ -32,8 +32,8 @@ extension RegistrationControllerTests {
   static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
    ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
    ("testThatRegFormGetBadReguestForBadEventId", testThatRegFormGetBadReguestForBadEventId),
-   ("testThatRegFieldsGetNotFoundMessage", testThatRegFieldsGetNotFoundMessage),
-   ("testThatRegFomrAndRegFieldsFetchedByEventId", testThatRegFomrAndRegFieldsFetchedByEventId)
+   ("testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable", testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable),
+   ("testThatRegFormAndRegFieldsFetchedByEventId", testThatRegFormAndRegFieldsFetchedByEventId)
   ]
 }
 extension RouteTests {
@@ -46,12 +46,10 @@ extension RouteTests {
   ]
 }
 
-// swiftlint:disable trailing_comma
 XCTMain([
   testCase(ClientMiddlewareTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])
-// swiftlint:enable trailing_comma
 #endif

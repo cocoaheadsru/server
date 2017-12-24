@@ -9,4 +9,3 @@ extension Response {
     try self.init(status: status, json: json)
   }
 }
-

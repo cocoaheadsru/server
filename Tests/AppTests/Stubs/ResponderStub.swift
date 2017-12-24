@@ -5,7 +5,6 @@ final class ResponderStub: Responder {
   init(_ status: Status = .ok) {
     self.status = status
   }
-  
   func respond(to request: Request) throws -> Response {
     return Response(status: status)
   }

@@ -1,6 +1,6 @@
 import Foundation
 
-extension String {  
+extension String {
   static var invalidRandomToken: String {
     let uuid = UUID().uuidString
     let upperBound = UInt32(uuid.count - 1)

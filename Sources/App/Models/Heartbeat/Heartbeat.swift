@@ -11,7 +11,6 @@ final class Heartbeat: Model {
     self.beat = beat
   }
   
-
   // sourcery:inline:auto:Heartbeat.AutoModelGeneratable
   init(row: Row) throws {
     beat = try row.get(Keys.beat)

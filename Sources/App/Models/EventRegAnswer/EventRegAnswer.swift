@@ -58,5 +58,3 @@ extension EventRegAnswer {
 //    return ...
 //  }
 }
-
-

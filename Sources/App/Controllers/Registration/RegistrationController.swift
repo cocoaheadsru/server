@@ -11,14 +11,14 @@ final class  RegistrationController {
       )
     }
     
-    guard let regForm = try RegForm.makeQuery().filter("event_id",eventId).first() else {
+    guard let regForm = try RegForm.makeQuery().filter("event_id", eventId).first() else {
       return try Response(
         status: .notFound,
         message: "Can't find RegForm by event_id: \(eventId)"
       )
     }
     
-    let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId,regForm.id).all()
+    let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, regForm.id).all()
     guard regFields.count > 0 else {
       return try Response(
         status: .notFound,
@@ -46,4 +46,3 @@ extension RegistrationController: ResourceRepresentable {
 }
 
 extension RegistrationController: EmptyInitializable { }
-

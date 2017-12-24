@@ -49,5 +49,3 @@ extension EventReg {
     return try EventRegAnswer.makeQuery().filter(EventRegAnswer.Keys.regId, id).all()
   }
 }
-
-

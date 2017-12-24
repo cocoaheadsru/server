@@ -6,7 +6,7 @@ final class RegFormHelper {
   /// get EventId
   static func store() throws -> Identifier? {
    
-    var cityId:  [Identifier] = []
+    var cityId: [Identifier] = []
     var placeId: [Identifier] = []
     var eventId: [Identifier] = []
     let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 10))

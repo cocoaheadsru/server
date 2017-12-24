@@ -14,7 +14,6 @@ final class Rule: Model {
     self.type = type
   }
 
-
 // sourcery:inline:auto:Rule.AutoModelGeneratable
   init(row: Row) throws {
     type = ValidationRule(try row.get(Keys.type))

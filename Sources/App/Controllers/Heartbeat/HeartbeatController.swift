@@ -1,7 +1,7 @@
 import Vapor
 import HTTP
 
-final class HeartbeatController  {
+final class HeartbeatController {
   
   func index(req: Request) throws -> ResponseRepresentable {
     guard let beat = try Heartbeat.all().first else {
@@ -25,7 +25,7 @@ final class HeartbeatController  {
   }
 }
 
-extension HeartbeatController: ResourceRepresentable  {
+extension HeartbeatController: ResourceRepresentable {
   
   func makeResource() -> Resource<Heartbeat> {
     return Resource(
@@ -36,4 +36,3 @@ extension HeartbeatController: ResourceRepresentable  {
 }
 
 extension HeartbeatController: EmptyInitializable {}
-

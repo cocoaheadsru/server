@@ -15,7 +15,9 @@ extension Droplet {
   }
   func serveInBackground() throws {
     background {
+     //swiftlint:disable force_try
       try! self.run()
+     //swiftlint:enable force_try
     }
     console.wait(seconds: 0.5)
   }

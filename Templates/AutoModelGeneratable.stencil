@@ -166,7 +166,7 @@ extension {{ type.name }}: Updateable {
 {% endmacro %}
 
 {% macro PrepareEnum variable %}
-      builder.enum(Keys.{{ variable.name }}, options: [{% for annotation in variable.annotations where annotation != "enum" %}"{{ annotation }}"{% if not forloop.last %},{% endif %}{% endfor %}])
+      builder.enum(Keys.{{ variable.name }}, options: [{% for annotation in variable.annotations where annotation != "enum" %}"{{ annotation }}"{% if not forloop.last %}, {% endif %}{% endfor %}])
 {% endmacro%}
 
 

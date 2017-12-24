@@ -8,7 +8,7 @@ extension Double {
     let divisor = pow(10.0, 4.0)
     return Darwin.round(r * divisor) / divisor
   }
-  
+
   public static func random(min: Double, max: Double) -> Double {
     /// Random number from 0 to 1.0, inclusive
     let random = Double(arc4random()) / 0xFFFFFFFF

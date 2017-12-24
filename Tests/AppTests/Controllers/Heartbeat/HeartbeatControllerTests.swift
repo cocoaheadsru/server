@@ -7,8 +7,9 @@ import Fluent
 @testable import App
 
 class HeartbeatControllerTests: TestCase {
-  
+  //swiftlint:disable force_try
   let drop = try! Droplet.testable()
+  //swiftlint:enable force_try
   let controller = HeartbeatController()
   let validToken = TestConstants.Middleware.validToken
   
@@ -17,7 +18,7 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     // act
     guard let res = try setBeat(to: beat) as? Response else {
-      XCTFail()
+      XCTFail("Can't set beat and get current value for beat: \(beat)")
       return
     }
     // assert
@@ -133,7 +134,7 @@ extension HeartbeatControllerTests {
   // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
     let req = Request.makeTest(method: .post)
-    req.json =  try JSON(node: ["beat":value])
+    req.json =  try JSON(node: ["beat": value])
     let res = try controller.store(req: req).makeResponse()
     return res
   }

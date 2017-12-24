@@ -6,8 +6,9 @@ import HTTP
 @testable import App
 
 class RouteTests: TestCase {
+  //swiftlint:disable force_try
   let drop = try! Droplet.testable()
-
+  //swiftlint:eanble force_try
   func testThatRequestWithNoClientTokenFails() throws {
     try drop
       .unauthorizedTestResponse(to: .get, at: "hello")

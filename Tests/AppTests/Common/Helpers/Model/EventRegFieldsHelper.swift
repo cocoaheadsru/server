@@ -5,7 +5,6 @@ import Fluent
 
 final class EventRegFieldsHelper {
   
-  
   /// get eventId
   static func store() throws -> Identifier? {
     
@@ -17,12 +16,12 @@ final class EventRegFieldsHelper {
     }
     
     let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 10))
-    let regFieldType = ["checkbox","radio","string"]
-    let regFieldRules = ["phone","number","alphanumeric","email","string"]
+    let regFieldType = ["checkbox", "radio", "string"]
+    let regFieldRules = ["phone", "number", "alphanumeric", "email", "string"]
     var regFieldRuleEntities: [Rule] = []
     var regFieldId: [Identifier] = []
     
-    try regFieldRules.forEach{ rule in
+    try regFieldRules.forEach { rule in
       let regFieldRule = Rule(type: Rule.ValidationRule(rule))
       try regFieldRule.save()
       regFieldRuleEntities.append(regFieldRule)
@@ -59,7 +58,7 @@ final class EventRegFieldsHelper {
       return nil
     }
     
-    let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId,regForm.id!).all()
+    let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, regForm.id!).all()
     var regFieldsJSON = try regFields.makeJSON()
     regFieldsJSON.removeKey("id")
     regFieldsJSON.removeKey("reg_form_id")

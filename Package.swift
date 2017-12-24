@@ -18,10 +18,9 @@ let package = Package(
                 exclude: [
                     "Config",
                     "Public",
-                    "Resources",
+                    "Resources"
                 ]),
         .target(name: "Run", dependencies: ["App"]),
         .testTarget(name: "AppTests", dependencies: ["App", "Testing"])
     ]
 )
-

@@ -46,7 +46,7 @@ extension Rule: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.enum(Keys.type, options: ["phone","number","alphanumeric","email","string"])
+      builder.enum(Keys.type, options: ["phone", "number", "alphanumeric", "email", "string"])
     }
   }
 

@@ -43,4 +43,3 @@ extension GiveSpeech {
     return try parent(id: userId).get()
   }
 }
-

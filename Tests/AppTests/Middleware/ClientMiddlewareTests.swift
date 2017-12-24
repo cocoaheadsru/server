@@ -4,14 +4,15 @@ import Testing
 @testable import App
 
 class ClientMiddlewareTests: TestCase {
+  //swiftlint:disable force_try
   let droplet = try! Droplet.testable()
-
+  //swiftlint:enable force_try
   let validToken = TestConstants.Middleware.validToken
   let generatedToken = String.invalidRandomToken
 
-  func testThatMiddlewarePresentInConfig() {
+  func testThatMiddlewarePresentInConfig() throws {
     let config = droplet.config
-    let configMiddlewares = try! config.resolveMiddleware()
+    let configMiddlewares = try config.resolveMiddleware()
     let clientMiddleware = configMiddlewares.filter { $0 is ClientMiddleware }
     XCTAssertTrue(clientMiddleware.count > 0)
   }
@@ -22,48 +23,48 @@ class ClientMiddlewareTests: TestCase {
     XCTAssertThrowsError(try ClientMiddleware(config: config))
   }
 
-  func testThatConfigInitializationFailWithEmptyToken() {
+  func testThatConfigInitializationFailWithEmptyToken() throws {
     var config = droplet.config
-    try! config.set("server.client-token", "")
+    try config.set("server.client-token", "")
     XCTAssertThrowsError(try ClientMiddleware(config: config))
   }
 
-  func testThatFailedConfigInitializationThrowsProperError() {
+  func testThatFailedConfigInitializationThrowsProperError() throws {
     var config = droplet.config
-    try! config.set("server.client-token", "")
+    try config.set("server.client-token", "")
     XCTAssertThrowsError(try ClientMiddleware(config: config)) { error in
       XCTAssertEqual(error as? MiddlewareError, MiddlewareError.missingClientToken)
     }
   }
 
-  func testThatConfigInitializationPassWithAnyNonEmptyToken() {
+  func testThatConfigInitializationPassWithAnyNonEmptyToken() throws {
     var config = droplet.config
-    try! config.set("server.client-token", generatedToken)
+    try config.set("server.client-token", generatedToken)
     XCTAssertNoThrow(try ClientMiddleware(config: config))
   }
 
-  func testThatTokenIsAssignedFromConfigInitialization() {
+  func testThatTokenIsAssignedFromConfigInitialization() throws {
     var config = droplet.config
-    try! config.set("server.client-token", generatedToken)
-    let middleware = try! ClientMiddleware(config: config)
+    try config.set("server.client-token", generatedToken)
+    let middleware = try ClientMiddleware(config: config)
     XCTAssertEqual(middleware.token, generatedToken)
   }
 
-  func testThatResponsePassWithCoincidentToken() {
+  func testThatResponsePassWithCoincidentToken() throws {
     let middleware = ClientMiddleware(generatedToken)
     let request = Request(method: .get, uri: "hello", headers: ["client-token": generatedToken])
     let responder = ResponderStub(.notFound)
 
-    let response = try! middleware.respond(to: request, chainingTo: responder)
+    let response = try middleware.respond(to: request, chainingTo: responder)
     XCTAssertEqual(response.status, responder.status)
   }
 
-  func testThatResponseFailWithIncoincidentToken() {
+  func testThatResponseFailWithIncoincidentToken() throws {
     let middleware = ClientMiddleware(generatedToken)
     let request = Request(method: .get, uri: "hello", headers: ["client-token": validToken])
     let responder = ResponderStub()
 
-    let response = try! middleware.respond(to: request, chainingTo: responder)
+    let response = try middleware.respond(to: request, chainingTo: responder)
     XCTAssertEqual(response.status, .unauthorized)
   }
 }

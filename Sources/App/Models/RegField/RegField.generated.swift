@@ -66,7 +66,7 @@ extension RegField: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.enum(Keys.type, options: ["checkbox","radio","string"])
+      builder.enum(Keys.type, options: ["checkbox", "radio", "string"])
       builder.string(Keys.name)
       builder.string(Keys.placeholder)
     }
