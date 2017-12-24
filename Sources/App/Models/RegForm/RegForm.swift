@@ -42,4 +42,9 @@ extension RegForm {
   func eventRegFields() throws -> [EventRegField] {
     return try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, id).all()
   }
+  
+  static func getRegFormBy(_ eventId: Int) throws -> RegForm? {
+    return try RegForm.makeQuery().filter(Keys.eventId, eventId).first()
+  }
+  
 }

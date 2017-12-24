@@ -45,6 +45,10 @@ final class EventRegField: Model {
 
 extension EventRegField {
   
+  static func getEventRegFieldBy(_ regFormId: Identifier) throws -> [EventRegField]? {
+    return try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, regFormId).all()
+  }
+  
   func regForm() throws -> RegForm? {
     return try parent(id: regFormId).get()
   }
