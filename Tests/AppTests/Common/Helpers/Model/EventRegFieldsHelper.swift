@@ -30,6 +30,9 @@ final class EventRegFieldsHelper {
     for _ in iterations.min...iterations.max {
       let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 1)]
       let regField = RegField(
+        regFormId: regFormId,
+        shouldSave: Bool.randomValue,
+        required: Bool.randomValue,
         name: String.randomValue,
         type: RegField.FieldType(regFieldType.randomValue),
         placeholder: String.randomValue)
@@ -42,14 +45,6 @@ final class EventRegFieldsHelper {
       regFieldId.append(regField.id!)
     }
     
-    for _ in iterations.min...iterations.max {
-      let eventRegField = EventRegField(
-        regFormId: regFormId,
-        fieldId: regFieldId.randomValue,
-        shouldSave: Bool.randomValue,
-        required: Bool.randomValue)
-      try eventRegField.save()
-    }
     return eventId
   }
   
@@ -58,13 +53,10 @@ final class EventRegFieldsHelper {
       return nil
     }
     
-    let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, regForm.id!).all()
+    let regFields = try RegField.makeQuery().filter(RegField.Keys.regFormId, regForm.id!).all()
     var regFieldsJSON = try regFields.makeJSON()
     regFieldsJSON.removeKey("id")
     regFieldsJSON.removeKey("reg_form_id")
-    
-    //var result = try regForm.makeJSON()
-    //try result.set("reg_fields", regFieldsJSON)
     
     return regFieldsJSON
     

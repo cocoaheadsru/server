@@ -9,7 +9,7 @@ final class EventRegAnswer: Model {
   
   // sourcery: relation = parent, relatedModel = EventReg
   var regId: Identifier
-  // sourcery: relatedModel = EventRegField
+  // sourcery: relatedModel = RegField
   var fieldId: Identifier
   // sourcery: relatedModel = RegFieldAnswer
   var answerId: Identifier

@@ -37,7 +37,7 @@ extension EventRegAnswer: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
-      builder.foreignId(for: EventRegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
+      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
       builder.foreignId(for: RegFieldAnswer.self, optional: false, unique: false, foreignIdKey: Keys.answerId)
       builder.string(Keys.answerValue)
     }

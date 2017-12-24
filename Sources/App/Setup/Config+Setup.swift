@@ -34,7 +34,6 @@ extension Config {
       Rule.self,
       RegField.self,
       RegFieldAnswer.self,
-      EventRegField.self,
       EventRegAnswer.self,
       Speaker.self,
       Speech.self,

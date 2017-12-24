@@ -48,6 +48,26 @@ class RegistrationControllerTests: TestCase {
       .assertJSON("message", contains: "Can't find RegFields by event_id:")
   }
   
+//  func testThatFieldGetNotFoundMessageForEmptyFieldTable() throws {
+//    //arrange
+//    guard let eventId = try EventRegFieldsHelper.store() else {
+//      XCTFail("Can't store RegFiedld and get event_id")
+//      return
+//    }
+//    
+//    guard let _ = try EventRegFieldsHelper.fetchRegFieldsByEventId(eventId) else {
+//      XCTFail("Can't fetch RegField by event_id: \(eventId)")
+//      return
+//    }
+//
+//    try drop
+//      //act
+//      .userAuthorizedTestResponse(to: .get, at: "event/\(eventId.int ?? 0)/form")
+//      //assert
+//      .assertStatus(is: .notFound)
+//      .assertJSON("message", contains: "Can't find Field by event_id:")
+//  }
+  
   func testThatRegFormAndRegFieldsFetchedByEventId() throws {
     //arrange
     guard let eventId = try EventRegFieldsHelper.store() else {
@@ -78,7 +98,6 @@ class RegistrationControllerTests: TestCase {
 extension RegistrationControllerTests {
   func clean() throws {
     try Pivot<RegField, Rule>.makeQuery().delete()
-    try EventRegField.makeQuery().delete()
     try RegField.makeQuery().delete()
     try Rule.makeQuery().delete()
     try RegForm.makeQuery().delete()

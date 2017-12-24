@@ -7,21 +7,34 @@ final class RegField: Model {
     
   let storage = Storage()
   
-  // sourcery: enum, string, radio, checkbox
+  // sourcery: relation = parent, relatedModel = RegForm
+  var regFormId: Identifier
+  var shouldSave: Bool
+  var required: Bool
+  // sourcery: enum,string,radio,checkbox
   var type: FieldType
   var name: String
   var placeholder: String
   
-  init(name: String,
+  init(regFormId: Identifier,
+       shouldSave: Bool,
+       required: Bool,
+       name: String,
        type: FieldType,
        placeholder: String) {
-    self.name = name
+    self.regFormId = regFormId
+    self.shouldSave = shouldSave
+    self.required = required
     self.type = type
+    self.name = name
     self.placeholder = placeholder
   }
 
-  // sourcery:inline:auto:RegField.AutoModelGeneratable
+// sourcery:inline:auto:RegField.AutoModelGeneratable
   init(row: Row) throws {
+    regFormId = try row.get(Keys.regFormId)
+    shouldSave = try row.get(Keys.shouldSave)
+    required = try row.get(Keys.required)
     type = FieldType(try row.get(Keys.type))
     name = try row.get(Keys.name)
     placeholder = try row.get(Keys.placeholder)
@@ -29,12 +42,15 @@ final class RegField: Model {
 
   func makeRow() throws -> Row {
     var row = Row()
+    try row.set(Keys.regFormId, regFormId)
+    try row.set(Keys.shouldSave, shouldSave)
+    try row.set(Keys.required, required)
     try row.set(Keys.type, type.string)
     try row.set(Keys.name, name)
     try row.set(Keys.placeholder, placeholder)
     return row
   }
-  // sourcery:end
+// sourcery:end
 }
 
 extension RegField {
@@ -43,12 +59,15 @@ extension RegField {
     return siblings()
   }
   
-  func eventRegFields() throws -> [EventRegField] {
-    return try EventRegField.makeQuery().filter(EventRegField.Keys.fieldId, id).all()
+  static func getEventRegFieldBy(_ regFormId: Identifier) throws -> [RegField]? {
+    return try RegField.makeQuery().filter(RegField.Keys.regFormId, regFormId).all()
   }
   
-  func regFieldAnswers() throws -> [RegFieldAnswer] {
-    return try RegFieldAnswer.makeQuery().filter(RegFieldAnswer.Keys.fieldId, id).all()
+  func regForm() throws -> RegForm? {
+    return try parent(id: regFormId).get()
   }
   
+  func field() throws -> RegField? {
+    return try children().first()
+  }
 }

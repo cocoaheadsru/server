@@ -19,12 +19,14 @@ final class  RegistrationController {
       )
     }
     
-    guard let regFields = try EventRegField.getEventRegFieldBy(regForm.id!), regFields.count > 0 else {
+    guard let regFields = try RegField.getEventRegFieldBy(regForm.id!), regFields.count > 0 else {
       return try Response(
         status: .notFound,
         message: "Can't find RegFields by event_id: \(eventId) and regform_id: \(regForm.id?.int ?? 0)"
       )
     }
+    
+    //guard try RegField.makeQuery().filter("field_id")
     
     var regFieldsJSON = try regFields.makeJSON()
     regFieldsJSON.removeKey("id")

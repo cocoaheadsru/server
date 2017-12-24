@@ -39,8 +39,8 @@ final class RegForm: Model {
 
 extension RegForm {
   
-  func eventRegFields() throws -> [EventRegField] {
-    return try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, id).all()
+  func eventRegFields() throws -> [RegField] {
+    return try RegField.makeQuery().filter(RegField.Keys.regFormId, id).all()
   }
   
   static func getRegFormBy(_ eventId: Int) throws -> RegForm? {
