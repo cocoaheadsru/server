@@ -1,14 +1,10 @@
 import Vapor
+import Fluent
+
 @testable import App
 
 final class EventRegFieldsHelper {
   
-  static func clean() throws {
-    try EventRegField.makeQuery().delete()
-    try RegField.makeQuery().delete()
-    try RegFieldRule.makeQuery().delete()
-    try RegFormHelper.clean()
-  }
   
   /// get eventId
   static func store() throws -> Identifier? {
@@ -23,22 +19,27 @@ final class EventRegFieldsHelper {
     let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 10))
     let regFieldType = ["checkbox","radio","string"]
     let regFieldRules = ["phone","number","alphanumeric","email","string"]
-    var regFieldRuleId: [Identifier] = []
+    var regFieldRuleEntities: [Rule] = []
     var regFieldId: [Identifier] = []
     
     try regFieldRules.forEach{ rule in
-      let regFieldRule = RegFieldRule(type: RegFieldRule.ValidationRule(rule))
+      let regFieldRule = Rule(type: Rule.ValidationRule(rule))
       try regFieldRule.save()
-      regFieldRuleId.append(regFieldRule.id!)
+      regFieldRuleEntities.append(regFieldRule)
     }
     
     for _ in iterations.min...iterations.max {
+      let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 1)]
       let regField = RegField(
         name: String.randomValue,
         type: RegField.FieldType(regFieldType.randomValue),
-        placeholder: String.randomValue,
-        rules: [regFieldRuleId[Int.randomValue(min: 0, max: 1)],regFieldRuleId[Int.randomValue(min: 2, max: 4)]])
+        placeholder: String.randomValue)
       try regField.save()
+      try regField.rules.add(rule1)
+      if Bool.randomValue {
+        let rule2 = regFieldRuleEntities[Int.randomValue(min: 2, max: 4)]
+        try regField.rules.add(rule2)
+      }
       regFieldId.append(regField.id!)
     }
     
@@ -59,10 +60,14 @@ final class EventRegFieldsHelper {
     }
     
     let regFields = try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId,regForm.id!).all()
-    var json = try regForm.makeJSON()
-    try json.set("reg_fields", regFields.makeJSON())
+    var regFieldsJSON = try regFields.makeJSON()
+    regFieldsJSON.removeKey("id")
+    regFieldsJSON.removeKey("reg_form_id")
     
-    return json 
+    //var result = try regForm.makeJSON()
+    //try result.set("reg_fields", regFieldsJSON)
+    
+    return regFieldsJSON
     
   }
 }

@@ -4,11 +4,11 @@
 import Vapor
 import FluentProvider
 
-extension RegFieldRule {
-  static var entity: String = "reg_field_rule"
+extension Rule {
+  static var entity: String = "rule"
 }
 
-extension RegFieldRule {
+extension Rule {
 
   struct Keys {
     static let id = "id"
@@ -16,7 +16,7 @@ extension RegFieldRule {
   }
 }
 
-extension RegFieldRule {
+extension Rule {
 
   enum ValidationRule {
     case phone
@@ -41,7 +41,7 @@ extension RegFieldRule {
   }
 }
 
-extension RegFieldRule: Preparation {
+extension Rule: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
@@ -55,7 +55,7 @@ extension RegFieldRule: Preparation {
   }
 }
 
-extension RegFieldRule: JSONRepresentable {
+extension Rule: JSONRepresentable {
 
   func makeJSON() throws -> JSON {
     var json = JSON()

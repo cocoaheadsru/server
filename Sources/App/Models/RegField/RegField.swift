@@ -9,25 +9,20 @@ final class RegField: Model {
   
   // sourcery: enum, string, radio, checkbox
   var type: FieldType
-  // sourcery: relatedModel = RegFieldRule
-  var rules: [Identifier]
   var name: String
   var placeholder: String
   
   init(name: String,
        type: FieldType,
-       placeholder: String,
-       rules: [Identifier]) {
+       placeholder: String) {
     self.name = name
     self.type = type
     self.placeholder = placeholder
-    self.rules = rules
   }
 
   // sourcery:inline:auto:RegField.AutoModelGeneratable
   init(row: Row) throws {
     type = FieldType(try row.get(Keys.type))
-    rules = try row.get(Keys.rules)
     name = try row.get(Keys.name)
     placeholder = try row.get(Keys.placeholder)
   }
@@ -35,7 +30,6 @@ final class RegField: Model {
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.type, type.string)
-    try row.set(Keys.rules, rules)
     try row.set(Keys.name, name)
     try row.set(Keys.placeholder, placeholder)
     return row
@@ -45,6 +39,10 @@ final class RegField: Model {
 
 extension RegField {
   
+  var rules: Siblings<RegField, Rule, Pivot<RegField, Rule>> {
+    return siblings()
+  }
+  
   func eventRegFields() throws -> [EventRegField] {
     return try EventRegField.makeQuery().filter(EventRegField.Keys.fieldId, id).all()
   }
@@ -53,7 +51,6 @@ extension RegField {
     return try RegFieldAnswer.makeQuery().filter(RegFieldAnswer.Keys.fieldId, id).all()
   }
   
-  func validationRules() throws -> [RegFieldRule] {
-    return try children().all()
-  }
 }
+
+

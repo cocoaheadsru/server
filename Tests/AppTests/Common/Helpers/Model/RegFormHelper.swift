@@ -3,12 +3,6 @@ import Vapor
 
 final class RegFormHelper {
   
-  static func clean() throws {
-    try RegForm.makeQuery().delete()
-    try Event.makeQuery().delete()
-    try Place.makeQuery().delete()
-    try City.makeQuery().delete()
-  }
   /// get EventId
   static func store() throws -> Identifier? {
    

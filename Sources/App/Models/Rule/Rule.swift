@@ -3,7 +3,7 @@ import FluentProvider
 
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation
-final class RegFieldRule: Model {
+final class Rule: Model {
     
   let storage = Storage()
   
@@ -13,8 +13,9 @@ final class RegFieldRule: Model {
   init(type: ValidationRule) {
     self.type = type
   }
-  
-  // sourcery:inline:auto:RegFieldRule.AutoModelGeneratable
+
+
+// sourcery:inline:auto:Rule.AutoModelGeneratable
   init(row: Row) throws {
     type = ValidationRule(try row.get(Keys.type))
   }
@@ -24,5 +25,5 @@ final class RegFieldRule: Model {
     try row.set(Keys.type, type.string)
     return row
   }
-  // sourcery:end
+// sourcery:end
 }

@@ -31,7 +31,7 @@ extension Config {
       Event.self,
       RegForm.self,
       EventReg.self,
-      RegFieldRule.self,
+      Rule.self,
       RegField.self,
       RegFieldAnswer.self,
       EventRegField.self,
@@ -42,7 +42,8 @@ extension Config {
       Creator.self,
       GiveSpeech.self,
       Social.self,
-      SocialAccount.self
+      SocialAccount.self,
+      Pivot<RegField, Rule>.self
     ]
     
     entities
