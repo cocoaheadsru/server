@@ -28,7 +28,7 @@ final class EventRegFieldsHelper {
     }
     
     for _ in iterations.min...iterations.max {
-      let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 1)]
+      let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 2)]
       let regField = RegField(
         regFormId: regFormId,
         shouldSave: Bool.randomValue,
@@ -39,10 +39,21 @@ final class EventRegFieldsHelper {
       try regField.save()
       try regField.rules.add(rule1)
       if Bool.randomValue {
-        let rule2 = regFieldRuleEntities[Int.randomValue(min: 2, max: 4)]
+        let rule2 = regFieldRuleEntities[Int.randomValue(min: 3, max: 4)]
         try regField.rules.add(rule2)
       }
       regFieldId.append(regField.id!)
+    }
+    
+    for regField in regFieldId {
+      
+      let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 5))
+      for _ in iterations.min...iterations.max {
+        let regFieldAnswer = RegFieldAnswer(
+          value: String.randomValue,
+          fieldId: regField)
+        try regFieldAnswer.save()
+      }
     }
     
     return eventId
@@ -53,12 +64,26 @@ final class EventRegFieldsHelper {
       return nil
     }
     
-    let regFields = try RegField.makeQuery().filter(RegField.Keys.regFormId, regForm.id!).all()
-    var regFieldsJSON = try regFields.makeJSON()
-    regFieldsJSON.removeKey("id")
-    regFieldsJSON.removeKey("reg_form_id")
+    var result: JSON = [:]
+    try result.set("id", regForm.id!)
+    try result.set("form_name", regForm.formName)
+    try result.set("description", regForm.description)
     
-    return regFieldsJSON
-    
+    var regFields: [JSON] = []
+    for regField in try RegField.makeQuery().filter(RegField.Keys.regFormId, regForm.id!).all() {
+      var json: JSON = [:]
+      try json.set("field_id", regField.id!)
+      try json.set("should_save", regField.shouldSave)
+      try json.set("required", regField.required)
+      var fields: JSON = [:]
+      try fields.set("name", regField.name)
+      try fields.set("type", regField.type.string)
+      try fields.set("field_answers", try RegFieldAnswer.makeQuery().filter("field_id",regField.id!).all().makeJSON())
+      try json.set("field", fields)
+      regFields.append(json)
+    }
+    try result.set("reg_fields", regFields)
+    //print(result)
+    return result
   }
 }
