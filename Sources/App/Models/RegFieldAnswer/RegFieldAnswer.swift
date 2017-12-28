@@ -36,4 +36,12 @@ extension RegFieldAnswer {
   func field() throws -> RegField? {
     return try children().first()
   }
+  
+  static func fieldAnswers(by fieldId: Identifier) throws -> JSON {
+    return try RegFieldAnswer.makeQuery()
+      .filter(RegFieldAnswer.Keys.fieldId, fieldId)
+      .all()
+      .makeJSON()
+  }
+  
 }

@@ -70,4 +70,31 @@ extension RegField {
   func field() throws -> RegField? {
     return try children().first()
   }
+  
+  func fieldToJSON() throws -> JSON {
+    
+    func getNameAndTypeAndFieldAnswersJSON() throws -> JSON {
+      var json = JSON()
+      try json.set(Keys.name, name)
+      try json.set(Keys.type, type.string)
+      try json.set(AnswersKeys.fieldAnswers, try RegFieldAnswer.fieldAnswers(by: id!))
+      return json
+    }
+    
+    var json = JSON()
+    try json.set(Keys.id, id)
+    try json.set(Keys.shouldSave, shouldSave)
+    try json.set(Keys.required, required)
+    try json.set(AnswersKeys.field, getNameAndTypeAndFieldAnswersJSON())
+    return json
+  }
+}
+
+extension RegField {
+  
+  struct AnswersKeys {
+    static let regFields = "reg_fields"
+    static let field = "field"
+    static let fieldAnswers = "field_answers"
+  }
 }
