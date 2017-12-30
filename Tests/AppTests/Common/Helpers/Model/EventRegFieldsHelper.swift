@@ -31,11 +31,11 @@ final class EventRegFieldsHelper {
       let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 2)]
       let regField = RegField(
         regFormId: regFormId,
-        shouldSave: Bool.randomValue,
         required: Bool.randomValue,
         name: String.randomValue,
         type: RegField.FieldType(regFieldType.randomValue),
-        placeholder: String.randomValue)
+        placeholder: String.randomValue,
+        defaultValue: String.randomValue)
       try regField.save()
       try regField.rules.add(rule1)
       if Bool.randomValue {
@@ -67,24 +67,27 @@ final class EventRegFieldsHelper {
     var result: JSON = [:]
     try result.set("id", regForm.id!)
     try result.set("form_name", regForm.formName)
-    try result.set("event_id", regForm.eventId.int!)
-    try result.set("description", regForm.description)
-    
+
     var regFields: [JSON] = []
     for regField in try RegField.makeQuery().filter(RegField.Keys.regFormId, regForm.id!).all() {
       var json: JSON = [:]
       try json.set("id", regField.id!)
-      try json.set("should_save", regField.shouldSave)
       try json.set("required", regField.required)
       var fields: JSON = [:]
       try fields.set("name", regField.name)
       try fields.set("type", regField.type.string)
-      try fields.set("field_answers", try RegFieldAnswer.makeQuery().filter("field_id", regField.id!).all().makeJSON())
+      try fields.set("placeholder", regField.placeholder)
+      try fields.set("default_value", regField.defaultValue)
+      var fieldAnswers = try RegFieldAnswer.makeQuery().filter("field_id", regField.id!).all().makeJSON()
+      fieldAnswers.removeKey("field_id")
+      
+      try fields.set("field_answers", fieldAnswers)
       try json.set("field", fields)
       regFields.append(json)
     }
     try result.set("reg_fields", regFields)
-    //print(result)
+    print("*** Expected Result ***")
+    print(try result.serialize(prettyPrint: true).makeString())
     return result
   }
 }

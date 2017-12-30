@@ -54,7 +54,4 @@ extension EventRegAnswer {
     return try children().first()
   }
   
-//  func eventRegAnswers() throws -> [EventRegAnswer] {
-//    return ...
-//  }
 }

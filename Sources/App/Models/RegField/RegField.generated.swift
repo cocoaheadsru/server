@@ -13,11 +13,11 @@ extension RegField {
   struct Keys {
     static let id = "id"
     static let regFormId = "reg_form_id"
-    static let shouldSave = "should_save"
     static let required = "required"
     static let type = "type"
     static let name = "name"
     static let placeholder = "placeholder"
+    static let defaultValue = "default_value"
   }
 }
 
@@ -47,11 +47,11 @@ extension RegField: Updateable {
   public static var updateableKeys: [UpdateableKey<RegField>] {
     return [
       UpdateableKey(Keys.regFormId, Identifier.self) { $0.regFormId = $1 },
-      UpdateableKey(Keys.shouldSave, Bool.self) { $0.shouldSave = $1 },
       UpdateableKey(Keys.required, Bool.self) { $0.required = $1 },
       UpdateableKey(Keys.type, String.self) { $0.type = FieldType($1) },
       UpdateableKey(Keys.name, String.self) { $0.name = $1 },
-      UpdateableKey(Keys.placeholder, String.self) { $0.placeholder = $1 }
+      UpdateableKey(Keys.placeholder, String.self) { $0.placeholder = $1 },
+      UpdateableKey(Keys.defaultValue, String.self) { $0.defaultValue = $1 }
     ]
   }
 }
@@ -61,11 +61,11 @@ extension RegField: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       regFormId: try json.get(Keys.regFormId),
-      shouldSave: try json.get(Keys.shouldSave),
       required: try json.get(Keys.required),
       name: try json.get(Keys.name),
       type: FieldType(try json.get(Keys.type)),
-      placeholder: try json.get(Keys.placeholder)
+      placeholder: try json.get(Keys.placeholder),
+      defaultValue: try json.get(Keys.defaultValue)
     )
   }
 }
@@ -76,11 +76,11 @@ extension RegField: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
-      builder.bool(Keys.shouldSave)
       builder.bool(Keys.required)
       builder.enum(Keys.type, options: ["checkbox", "radio", "string"])
       builder.string(Keys.name)
       builder.string(Keys.placeholder)
+      builder.string(Keys.defaultValue)
     }
   }
 
@@ -95,11 +95,11 @@ extension RegField: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.regFormId, regFormId)
-    try json.set(Keys.shouldSave, shouldSave)
     try json.set(Keys.required, required)
     try json.set(Keys.type, type.string)
     try json.set(Keys.name, name)
     try json.set(Keys.placeholder, placeholder)
+    try json.set(Keys.defaultValue, defaultValue)
     return json
   }
 }
