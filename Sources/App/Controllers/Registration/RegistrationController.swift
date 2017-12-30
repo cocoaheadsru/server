@@ -8,21 +8,21 @@ final class  RegistrationController {
     guard let eventId = req.parameters["id"]?.int else {
       return try Response(
         status: .badRequest,
-        message: "EventId parameters is missing in URL request"
+        message: "ERROR: EventId parameters is missing in URL request"
       )
     }
     
     guard let regForm = try RegForm.getRegFormBy(eventId) else {
       return try Response(
-        status: .notFound,
-        message: "Can't find RegForm by event_id: \(eventId)"
+        status: .ok,
+        message: "ERROR: Can't find RegForm by event_id: \(eventId)"
       )
     }
     
     guard let regFields = try RegField.getEventRegFieldBy(regForm.id!), regFields.count > 0 else {
       return try Response(
-        status: .notFound,
-        message: "Can't find RegFields by event_id: \(eventId) and regform_id: \(regForm.id?.int ?? 0)"
+        status: .ok,
+        message: "ERROR: Can't find RegFields by event_id: \(eventId) and regform_id: \(regForm.id?.int ?? 0)"
       )
     }
     

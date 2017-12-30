@@ -21,8 +21,8 @@ class RegistrationControllerTests: TestCase {
     let wrongEventId = -1
     try drop
       .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
-      .assertStatus(is: .notFound)
-      .assertJSON("message", contains: "Can't find RegForm by event_id:")
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "ERROR: Can't find RegForm by event_id:")
   }
   
   func testThatRegFormGetBadReguestForBadEventId() throws {
@@ -30,7 +30,7 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
       .assertStatus(is: .badRequest)
-      .assertJSON("message", contains: "EventId parameters is missing in URL request")
+      .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
   }
   
   func testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable() throws {
@@ -44,8 +44,8 @@ class RegistrationControllerTests: TestCase {
       //act
       .userAuthorizedTestResponse(to: .get, at: "event/\(eventId.int ?? 0)/form")
       //assert
-      .assertStatus(is: .notFound)
-      .assertJSON("message", contains: "Can't find RegFields by event_id:")
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "ERROR: Can't find RegFields by event_id:")
   }
   
   func testThatRegFormAndRegFieldsFetchedByEventId() throws {
@@ -77,6 +77,22 @@ class RegistrationControllerTests: TestCase {
       .assertJSON("reg_fields", equals: exp )
   }
 
+  func testThatUserRegFormAnswersGetNotFoundForWrongEventId() throws {
+    let wrongEventId = -1
+    try drop
+      .userAuthorizedTestResponse(to: .post, at: "event/\(wrongEventId)/register")
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "ERROR: Can't find answers for event_id:")
+  }
+  
+  func testThatUserRegFormAnswersGetBadReguestForBadEventId() throws {
+    let wrongEventId = "1,3"
+    try drop
+      .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/register")
+      .assertStatus(is: .badRequest)
+      .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
+  }
+  
   func testThatUserRegFormAnswersSavedForEventId() throws {
   
     let eventId = 0
@@ -88,8 +104,6 @@ class RegistrationControllerTests: TestCase {
       at: "event/\(eventId)/register",
       body: answers)
     .assertStatus(is: .ok)
-    
-    
   }
 
 }
