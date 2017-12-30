@@ -67,6 +67,7 @@ class RegistrationControllerTests: TestCase {
 
     let expected = try eventRegFields.makeResponse().json!
     let exp: JSON = try expected.get("reg_fields")
+   
     try drop
       //act
       .userAuthorizedTestResponse(to: .get, at: "event/\(eventId.int ?? 0)/form")
@@ -75,6 +76,22 @@ class RegistrationControllerTests: TestCase {
       .assertJSON("form_name", equals: regForm.formName)
       .assertJSON("reg_fields", equals: exp )
   }
+
+  func testThatUserRegFormAnswersSavedForEventId() throws {
+  
+    let eventId = 0
+    let answers = Body()
+
+    try drop
+    .userAuthorizedTestResponse(
+      to: .post,
+      at: "event/\(eventId)/register",
+      body: answers)
+    .assertStatus(is: .ok)
+    
+    
+  }
+
 }
 
 extension RegistrationControllerTests {
