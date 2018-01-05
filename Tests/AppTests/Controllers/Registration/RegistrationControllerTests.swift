@@ -7,14 +7,18 @@ import Fluent
 @testable import App
 
 class RegistrationControllerTests: TestCase {
-  //swiftlint:disable force_try
-  let drop = try! Droplet.testable()
-  //swiftlint:enable force_try
-  let controller = RegistrationController()
+  ///swiftlint:disable force_try
+  var drop: Droplet! //= try! Droplet.testable()
+  ///swiftlint:enable force_try
   
   override func setUp() {
     super.setUp()
-    try? clean()
+    do {
+      try clean()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
   }
   
   func testThatRegFormGetNotFoundForWrongEventId() throws {
@@ -35,7 +39,7 @@ class RegistrationControllerTests: TestCase {
   
   func testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable() throws {
     //arrange
-    guard let eventId = try RegFormHelper.store() else {
+    guard let eventId = try RegFormHelper.store()?.id else {
       XCTFail("Can't store RegFrom and get event_id")
       return
     }
@@ -50,7 +54,7 @@ class RegistrationControllerTests: TestCase {
   
   func testThatRegFormAndRegFieldsFetchedByEventId() throws {
     //arrange
-    guard let eventId = try EventRegFieldsHelper.store() else {
+    guard let eventId = try EventRegFieldsHelper.store()?.id else {
       XCTFail("Can't store RegFiedld and get event_id")
       return
     }
@@ -82,7 +86,7 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(to: .post, at: "event/\(wrongEventId)/register")
       .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: Can't find answers for event_id:")
+      .assertJSON("message", contains: "ERROR: Can't find RegForm by event_id")
   }
   
   func testThatUserRegFormAnswersGetBadReguestForBadEventId() throws {
@@ -95,28 +99,39 @@ class RegistrationControllerTests: TestCase {
   
   func testThatUserRegFormAnswersSavedForEventId() throws {
   
-    let eventId = 0
-    let answers = Body()
-
+    guard
+      let event = try EventRegAnswerHelper.store(),
+      let eventId = event.id
+      else {
+      XCTFail("Can't store RegFiedld and get event_id")
+      return
+    }
+    
+    guard let userAnswers = try EventRegAnswerHelper.getUserAnswers(for: event) else {
+      XCTFail("Can't get user answer")
+      return
+    }
+    
     try drop
-    .userAuthorizedTestResponse(
-      to: .post,
-      at: "event/\(eventId)/register",
-      body: answers)
-    .assertStatus(is: .ok)
+      .unauthorizedTestResponse(
+        to: .post,
+        at: "event/\(eventId.int!)/register",
+        headers:  [TestConstants.Header.Key.userToken: userAnswers.sessionToken],
+        body: userAnswers.body)
+      .assertStatus(is: .ok)
+    
+    guard let storedAnswers = try EventRegAnswerHelper.getStoredAnswers(by: userAnswers.sessionToken, eventId: eventId) else {
+      XCTFail("Can't get stored user answer")
+      return
+    }
+    
+    XCTAssertEqual(userAnswers.body, storedAnswers)
   }
 
 }
 
 extension RegistrationControllerTests {
   func clean() throws {
-    try Pivot<RegField, Rule>.makeQuery().delete()
-    try RegFieldAnswer.makeQuery().delete()
-    try RegField.makeQuery().delete()
-    try Rule.makeQuery().delete()
-    try RegForm.makeQuery().delete()
-    try Event.makeQuery().delete()
-    try Place.makeQuery().delete()
-    try City.makeQuery().delete()
+    drop = try Droplet.testable()
   }
 }

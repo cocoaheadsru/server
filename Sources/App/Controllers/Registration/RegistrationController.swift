@@ -33,11 +33,33 @@ final class  RegistrationController {
   }
 }
 
+func store(_ req: Request) throws -> ResponseRepresentable {
+  guard let eventId = req.parameters["id"]?.int else {
+    return try Response(
+      status: .badRequest,
+      message: "ERROR: EventId parameters is missing in URL request"
+    )
+  }
+  guard let regForm = try RegForm.getRegFormBy(eventId) else {
+    return try Response(
+      status: .ok,
+      message: "ERROR: Can't find RegForm by event_id: \(eventId)"
+    )
+  }
+  
+ // ERROR: Can't find answers for event_id:"
+  
+  let result = JSON()
+
+  return result
+}
+
 extension RegistrationController: ResourceRepresentable {
   
   func makeResource() -> Resource<RegForm> {
     return Resource(
-      index: index
+      index: index,
+      store: store
     )
   }
 }

@@ -5,10 +5,11 @@ import Fluent
 
 final class EventRegFieldsHelper {
   
-  /// get eventId
-  static func store() throws -> Identifier? {
+  static func store() throws -> App.Event? {
     
-    guard let eventId = try RegFormHelper.store(),
+    guard
+      let event = try RegFormHelper.store(),
+      let eventId = event.id,
       let regForm = try RegFormHelper.fetchRegFormByEventId(eventId),
       let regFormId = regForm.id
       else {
@@ -16,26 +17,15 @@ final class EventRegFieldsHelper {
     }
     
     let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 10))
-    let regFieldType = ["checkbox", "radio", "string"]
-    let regFieldRules = ["phone", "number", "alphanumeric", "email", "string"]
-    var regFieldRuleEntities: [Rule] = []
     var regFieldId: [Identifier] = []
     
-    try regFieldRules.forEach { rule in
-      let regFieldRule = Rule(type: Rule.ValidationRule(rule))
-      try regFieldRule.save()
-      regFieldRuleEntities.append(regFieldRule)
+    guard let regFieldRuleEntities = Rule.rules else {
+      return nil
     }
     
     for _ in iterations.min...iterations.max {
       let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 2)]
-      let regField = RegField(
-        regFormId: regFormId,
-        required: Bool.randomValue,
-        name: String.randomValue,
-        type: RegField.FieldType(regFieldType.randomValue),
-        placeholder: String.randomValue,
-        defaultValue: String.randomValue)
+      let regField = try RegField(regFormId: regFormId)
       try regField.save()
       try regField.rules.add(rule1)
       if Bool.randomValue {
@@ -56,14 +46,17 @@ final class EventRegFieldsHelper {
       }
     }
     
-    return eventId
+    return event
   }
   
-  static func fetchRegFieldsByEventId(_ eventId: Identifier) throws  -> JSON? {
+  typealias RegFields = JSON
+  
+  static func fetchRegFieldsByEventId(_ eventId: Identifier) throws  -> RegFields? {
+    
     guard let regForm = try RegFormHelper.fetchRegFormByEventId(eventId) else {
       return nil
     }
-    
+
     var result: JSON = [:]
     try result.set("id", regForm.id!)
     try result.set("form_name", regForm.formName)
