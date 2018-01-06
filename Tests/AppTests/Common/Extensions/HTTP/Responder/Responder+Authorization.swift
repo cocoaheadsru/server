@@ -61,7 +61,7 @@ extension Responder {
     line: UInt = #line
     ) throws -> HTTP.Response {
     var userHeaders = headers
-    userHeaders["user-token"] = "user"
+    //userHeaders["user-token"] = "user"
     return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,

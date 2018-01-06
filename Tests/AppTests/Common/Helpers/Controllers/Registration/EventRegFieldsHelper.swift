@@ -16,7 +16,7 @@ final class EventRegFieldsHelper {
         return nil
     }
     
-    let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 10))
+    let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 5))
     var regFieldId: [Identifier] = []
     
     guard let regFieldRuleEntities = Rule.rules else {
@@ -37,8 +37,7 @@ final class EventRegFieldsHelper {
     
     for regField in regFieldId {
       
-      let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 2, max: 5))
-      for _ in iterations.min...iterations.max {
+      for _ in 1...Int.random(min: 2, max: 5) {
         let regFieldAnswer = RegFieldAnswer(
           value: String.randomValue,
           fieldId: regField)

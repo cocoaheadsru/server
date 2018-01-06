@@ -14,6 +14,9 @@ struct TestConstants {
       static let userToken: HeaderKey = "user-token"
     }
     
+    struct Value {
+      static let applicationJson = "application/json"
+    }
   }
   
 }

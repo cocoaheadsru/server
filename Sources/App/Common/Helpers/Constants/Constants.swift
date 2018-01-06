@@ -12,6 +12,7 @@ struct Constants {
     struct Key {
       static let clientToken: HeaderKey = "client-token"
       static let contentType: HeaderKey = "Content-Type"
+      static let userToken: HeaderKey = "user-token"
     }
     
     struct Value {

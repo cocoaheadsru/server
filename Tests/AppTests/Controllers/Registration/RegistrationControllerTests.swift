@@ -112,19 +112,31 @@ class RegistrationControllerTests: TestCase {
       return
     }
     
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+    
     try drop
-      .unauthorizedTestResponse(
+      .userAuthorizedTestResponse(
         to: .post,
         at: "event/\(eventId.int!)/register",
-        headers:  [TestConstants.Header.Key.userToken: userAnswers.sessionToken],
+        headers: headers,
         body: userAnswers.body)
       .assertStatus(is: .ok)
+      .assertJSON("message", contains: "OK: stored")
     
     guard let storedAnswers = try EventRegAnswerHelper.getStoredAnswers(by: userAnswers.sessionToken, eventId: eventId) else {
       XCTFail("Can't get stored user answer")
       return
     }
     
+    print("User session-token:\(userAnswers.sessionToken)")
+    print("*** EXPECTED JSON ***")
+    print(try userAnswers.body.serialize(prettyPrint: true).makeString())
+    print("*** STORED JSON ***")
+    print(try storedAnswers.serialize(prettyPrint: true).makeString())
+  
     XCTAssertEqual(userAnswers.body, storedAnswers)
   }
 

@@ -43,7 +43,7 @@ extension RegForm {
     return try RegField.makeQuery().filter(RegField.Keys.regFormId, id).all()
   }
   
-  static func getRegFormBy(_ eventId: Int) throws -> RegForm? {
+  static func getRegForm(by eventId: Int) throws -> RegForm? {
     return try RegForm.makeQuery().filter(Keys.eventId, eventId).first()
   }
   
