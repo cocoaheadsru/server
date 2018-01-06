@@ -97,7 +97,7 @@ class RegistrationControllerTests: TestCase {
       .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
   }
   
-  func testThatUserRegFormAnswersSavedForEventId() throws {
+  func testThatUserRegFormAnswersStoredForEvent() throws {
   
     guard
       let event = try EventRegAnswerHelper.store(),
@@ -140,6 +140,48 @@ class RegistrationControllerTests: TestCase {
     XCTAssertEqual(userAnswers.body, storedAnswers)
   }
 
+  func testThatUserRegFormAnswersStoredForEventOnlyOnce() throws {
+    guard
+      let event = try EventRegAnswerHelper.store(),
+      let eventId = event.id
+      else {
+        XCTFail("Can't store RegFiedld and get event_id")
+        return
+    }
+    
+    guard let userAnswers = try EventRegAnswerHelper.getUserAnswers(for: event) else {
+      XCTFail("Can't get user answer")
+      return
+    }
+    
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+    
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/\(eventId.int!)/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "OK: stored")
+    
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/\(eventId.int!)/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "ERROR: User with session '\(userAnswers.sessionToken)' has alredy applied")
+    
+    print("User session-token:\(userAnswers.sessionToken)")
+    print("*** EXPECTED JSON ***")
+    print(try userAnswers.body.serialize(prettyPrint: true).makeString())    
+  }
+  
 }
 
 extension RegistrationControllerTests {

@@ -93,6 +93,14 @@ final class  RegistrationController {
       )
     }
     
+    guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
+      return try Response(
+        status: .ok,
+        message: "ERROR: User with session '\(session)' has alredy applied"
+      )
+    }
+    
+    
     let eventReg = EventReg(regFormId: regFormId, userId: userId)
     try eventReg.save()
     guard let eventRegId = eventReg.id else {

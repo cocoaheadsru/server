@@ -48,4 +48,17 @@ extension EventReg {
   func eventRegAnswers() throws -> [EventRegAnswer] {
     return try EventRegAnswer.makeQuery().filter(EventRegAnswer.Keys.regId, id).all()
   }
+  
+  static func duplicationCheck(regFormId: Identifier, userId: Identifier) throws -> Bool{
+   let result = try EventReg.makeQuery()
+      .filter(EventReg.Keys.regFormId,regFormId)
+      .filter(EventReg.Keys.userId,userId)
+      .filter(EventReg.Keys.status, in: [
+        EventReg.RegistrationStatus.waiting.string,
+        EventReg.RegistrationStatus.approved.string])
+      .all().count
+    
+    return result == 0
+  }
+  
 }
