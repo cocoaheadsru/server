@@ -99,8 +99,7 @@ final class  RegistrationController {
         message: "ERROR: User with session '\(session)' has alredy applied"
       )
     }
-    
-    
+  
     let eventReg = EventReg(regFormId: regFormId, userId: userId)
     try eventReg.save()
     guard let eventRegId = eventReg.id else {

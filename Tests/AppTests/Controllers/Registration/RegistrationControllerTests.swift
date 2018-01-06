@@ -179,7 +179,7 @@ class RegistrationControllerTests: TestCase {
     
     print("User session-token:\(userAnswers.sessionToken)")
     print("*** EXPECTED JSON ***")
-    print(try userAnswers.body.serialize(prettyPrint: true).makeString())    
+    print(try userAnswers.body.serialize(prettyPrint: true).makeString())
   }
   
 }
