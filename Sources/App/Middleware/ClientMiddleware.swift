@@ -8,7 +8,7 @@ final class ClientMiddleware: Middleware {
   }
 
   func respond(to request: Request, chainingTo next: Responder) throws -> Response {
-    guard request.headers[Constants.Header.Key.clientToken] == token else {
+    guard request.headers.clientToken == token else {
       return Response(status: .unauthorized)
     }
 

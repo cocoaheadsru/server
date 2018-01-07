@@ -19,7 +19,7 @@ final class  RegistrationController {
       )
     }
     
-    guard let regFields = try RegField.getEventRegFieldBy(regForm.id!), regFields.count > 0 else {
+    guard let regFields = try RegField.getEventRegField(by: regForm.id!), regFields.count > 0 else {
       return try Response(
         status: .ok,
         message: "ERROR: Can't find RegFields by event_id: \(eventId) and regform_id: \(regForm.id?.int ?? 0)"
@@ -48,10 +48,10 @@ final class  RegistrationController {
       )
     }
     
-    guard let session = req.headers[Constants.Header.Key.userToken] else {
+    guard let session = req.headers.userToken else {
       return try Response(
         status: .badRequest,
-        message: "ERROR: EventId parameters is missing in URL request"
+        message: "ERROR: User token is missing in header"
       )
     }
     
@@ -63,7 +63,7 @@ final class  RegistrationController {
     }
     
     guard
-      let contentType = req.headers[Constants.Header.Key.contentType],
+      let contentType = req.headers.contentType,
       contentType.contains(Constants.Header.Value.applicationJson),
       let bytes = req.body.bytes else  {
         return try Response(
@@ -73,8 +73,6 @@ final class  RegistrationController {
     }
     
     let json = try JSON(bytes: bytes)
-//    print("**** Recived request ****")
-//    print(try json.serialize(prettyPrint: true).makeString())
     
     guard
       let fields = json[Keys.fields]?.array,

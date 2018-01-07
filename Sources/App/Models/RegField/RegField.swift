@@ -59,7 +59,7 @@ extension RegField {
     return siblings()
   }
   
-  static func getEventRegFieldBy(_ regFormId: Identifier) throws -> [RegField]? {
+  static func getEventRegField(by regFormId: Identifier) throws -> [RegField]? {
     return try RegField.makeQuery().filter(RegField.Keys.regFormId, regFormId).all()
   }
   

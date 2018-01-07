@@ -8,13 +8,6 @@ struct Constants {
   }
   
   struct Header {
-    
-    struct Key {
-      static let clientToken: HeaderKey = "client-token"
-      static let contentType: HeaderKey = "Content-Type"
-      static let userToken: HeaderKey = "user-token"
-    }
-    
     struct Value {
       static let applicationJson = "application/json"
     }
