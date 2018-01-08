@@ -112,6 +112,13 @@ final class  RegistrationController {
       let fieldId = try field.get(EventRegAnswer.Keys.fieldId) as Identifier
       let userAnswers = try field.get(Keys.userAnswers) as [JSON]
       
+      guard try checkRequired(fieldId: fieldId, answerCount: userAnswers.count) else {
+        return try Response(
+          status: .ok,
+          message: "ERROR: The field must have at least one answer. Field id is '\(fieldId.int!)'"
+        )
+      }
+      
       guard try checkRadio(fieldId: fieldId, answerCount: userAnswers.count) else {
         return try Response(
           status: .ok,

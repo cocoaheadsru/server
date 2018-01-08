@@ -211,6 +211,37 @@ class RegistrationControllerTests: TestCase {
       .assertJSON("message", contains: "ERROR: The answer to field with type radio should be only one")
     
   }
+  
+  func testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer() throws {
+    guard
+      let event = try EventRegAnswerHelper.store(),
+      let eventId = event.id
+      else {
+        XCTFail("Can't store RegFiedld and get event_id")
+        return
+    }
+    
+    guard let userAnswers = try EventRegAnswerHelper.getUserWrongRequiredAnswers(for: event) else {
+      XCTFail("Can't get user answer")
+      return
+    }
+    
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+    
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/\(eventId.int!)/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "ERROR: The field must have at least one answer")
+    
+  }
+  
 }
 
 extension RegistrationControllerTests {

@@ -1,4 +1,5 @@
 import Vapor
+import Foundation
 @testable import App
 
 extension Session {
@@ -7,7 +8,7 @@ extension Session {
     if randomInit {
       self.init(
         userId: userId,
-        token: String.randomValue,
+        token:  UUID().uuidString,
         timestamp: Int.randomValue(min: 1514917307-31556926, max: 1514917307)
       )
     } else {

@@ -23,10 +23,9 @@ final class EventRegFieldsHelper {
     }
     
     let count = RegField.FieldType.count
-    for i in 0...Int.randomValue(min: count, max: 10)  {
+    for i in 0...Int.randomValue(min: count, max: 10) {
       let rule1 = regFieldRuleEntities[Int.randomValue(min: 0, max: 2)]
-      //we use 'i % count' to use during a test all field types 
-      let regField = try RegField(fieldTypeNumber: i % count, regFormId: regFormId)
+      let regField = try RegField(fieldTypeNumber: i % count, regFormId: regFormId) // we use 'i % count' to use during a test all field types
       try regField.save()
       try regField.rules.add(rule1)
       if Bool.randomValue {

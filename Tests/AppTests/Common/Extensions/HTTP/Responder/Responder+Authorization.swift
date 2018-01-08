@@ -60,7 +60,7 @@ extension Responder {
     file: StaticString = #file,
     line: UInt = #line
     ) throws -> HTTP.Response {
-    var userHeaders = headers
+    let userHeaders = headers
     //userHeaders["user-token"] = "user"
     return try self.clientAuthorizedTestResponse(
       to: method,

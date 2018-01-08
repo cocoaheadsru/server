@@ -13,7 +13,7 @@ final class EventRegAnswerHelper {
     return try EventRegFieldsHelper.store()
   }
   
-  static func  getUserAnswers(correctRadio: Bool = true, for event: App.Event) throws -> UserAnswer? {
+  private static func  _getUserAnswers(correctRadio: Bool = true, correctRequired: Bool = true, for event: App.Event) throws -> UserAnswer? {
     
     let user = try User.all().randomValue
     guard
@@ -42,7 +42,14 @@ final class EventRegAnswerHelper {
       
       var userAnswers = [JSON]()
       
+      if !correctRequired && regField.required {
+        try field.set("user_answers", userAnswers)
+        fields.append(field)
+        continue
+      }
+      
       for regFieldAnswer in  regFieldAnswers {
+      
         var userAnswer = JSON()
         try userAnswer.set("id", try regFieldAnswer.get("id") as Int)
         try userAnswer.set("value", String.randomValue)
@@ -128,8 +135,16 @@ final class EventRegAnswerHelper {
     return body
   }
   
+  static func getUserAnswers(for event: App.Event) throws -> UserAnswer? {
+    return try _getUserAnswers(for: event)
+  }
+  
   static func getUserWrongRadioAnswers(for event: App.Event) throws -> UserAnswer? {
-    return try getUserAnswers(correctRadio: false, for: event)
+    return try _getUserAnswers(correctRadio: false, for: event)
+  }
+  
+  static func getUserWrongRequiredAnswers(for event: App.Event) throws -> UserAnswer? {
+    return try _getUserAnswers(correctRequired: false, for: event)
   }
   
 }
