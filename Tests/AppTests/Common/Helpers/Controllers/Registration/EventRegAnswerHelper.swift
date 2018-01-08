@@ -13,15 +13,15 @@ final class EventRegAnswerHelper {
     return try EventRegFieldsHelper.store()
   }
   
-  static func  getUserAnswers(for event: App.Event) throws -> UserAnswer? {
+  static func  getUserAnswers(correctRadio: Bool = true, for event: App.Event) throws -> UserAnswer? {
     
     let user = try User.all().randomValue
     guard
       let sessionToken = try Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token,
       let regForm = try event.registrationForm(),
       let regFormId = regForm.id?.int
-    else {
-      return nil
+      else {
+        return nil
     }
     let regFields = try regForm.eventRegFields()
     
@@ -47,6 +47,11 @@ final class EventRegAnswerHelper {
         try userAnswer.set("id", try regFieldAnswer.get("id") as Int)
         try userAnswer.set("value", String.randomValue)
         userAnswers.append(userAnswer)
+        
+        if correctRadio && regField.type == RegField.FieldType.radio {
+          break
+        }
+        
       }
       
       try field.set("user_answers", userAnswers)
@@ -68,8 +73,8 @@ final class EventRegAnswerHelper {
         .filter(EventReg.Keys.regFormId, regFormId)
         .filter(EventReg.Keys.userId, userId)
         .first()?.id
-    else {
-      return nil
+      else {
+        return nil
     }
     
     let result = try EventRegAnswer.database?.raw(
@@ -102,10 +107,10 @@ final class EventRegAnswerHelper {
         .all()
         .makeJSON()
         .array
-      else {
-        return nil
+        else {
+          return nil
       }
-
+      
       var userAnswers = [JSON]()
       for fieldAnswer in fieldAnswers {
         var userAnswer = JSON()
@@ -113,7 +118,7 @@ final class EventRegAnswerHelper {
         try userAnswer.set("value", try fieldAnswer.get(EventRegAnswer.Keys.answerValue) as String)
         userAnswers.append(userAnswer)
       }
-
+      
       try field.set("user_answers", userAnswers)
       fields.append(field)
       
@@ -121,6 +126,10 @@ final class EventRegAnswerHelper {
     
     try body.set("fields", fields)
     return body
+  }
+  
+  static func getUserWrongRadioAnswers(for event: App.Event) throws -> UserAnswer? {
+    return try getUserAnswers(correctRadio: false, for: event)
   }
   
 }

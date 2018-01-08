@@ -112,6 +112,13 @@ final class  RegistrationController {
       let fieldId = try field.get(EventRegAnswer.Keys.fieldId) as Identifier
       let userAnswers = try field.get(Keys.userAnswers) as [JSON]
       
+      guard try checkRadio(fieldId: fieldId, answerCount: userAnswers.count) else {
+        return try Response(
+          status: .ok,
+          message: "ERROR: The answer to field with type radio should be only one. Field id is '\(fieldId.int!)'"
+        )
+      }
+      
       for userAnswer in userAnswers {
         let answerId = try userAnswer.get("id") as Identifier
         let answerValue = try userAnswer.get("value") as String

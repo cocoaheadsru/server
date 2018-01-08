@@ -3,7 +3,7 @@ import Vapor
 
 extension RegField {
   
-  convenience init(_ randomInit: Bool = true, regFormId: Identifier) throws {
+  convenience init(_ randomInit: Bool = true,  fieldTypeNumber: Int = Int.random(min: 0, max: FieldType.count-1), regFormId: Identifier) throws {
     let regFieldType = ["checkbox", "radio", "string"]
     
     if randomInit {
@@ -11,7 +11,7 @@ extension RegField {
         regFormId: regFormId,
         required: Bool.randomValue,
         name: String.randomValue,
-        type: RegField.FieldType(regFieldType.randomValue),
+        type: RegField.FieldType(regFieldType[fieldTypeNumber]),
         placeholder: String.randomValue,
         defaultValue: String.randomValue)
     } else {
@@ -25,4 +25,8 @@ extension RegField {
     }
   }
   
+}
+
+extension RegField.FieldType {
+  static let count = 3
 }
