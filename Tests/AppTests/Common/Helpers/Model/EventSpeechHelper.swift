@@ -34,8 +34,7 @@ class EventSpeechHelper {
     let speech = Speech(
       eventId: eventId,
       title: String.randomValue,
-      description: String.randomValue,
-      photoUrl: String.randomValue
+      description: String.randomValue
     )
     try speech.save()
     

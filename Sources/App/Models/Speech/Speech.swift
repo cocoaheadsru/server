@@ -11,16 +11,13 @@ final class Speech: Model {
   var eventId: Identifier
   var title: String?
   var description: String
-  var photoUrl: String?
   
   init(eventId: Identifier,
        title: String?,
-       description: String,
-       photoUrl: String?) {
+       description: String) {
     self.eventId = eventId
     self.title = title
     self.description = description
-    self.photoUrl = photoUrl
   }
   
   // sourcery:inline:auto:Speech.AutoModelGeneratable
@@ -28,7 +25,6 @@ final class Speech: Model {
     eventId = try row.get(Keys.eventId)
     title = try row.get(Keys.title)
     description = try row.get(Keys.description)
-    photoUrl = try row.get(Keys.photoUrl)
   }
 
   func makeRow() throws -> Row {
@@ -36,7 +32,6 @@ final class Speech: Model {
     try row.set(Keys.eventId, eventId)
     try row.set(Keys.title, title)
     try row.set(Keys.description, description)
-    try row.set(Keys.photoUrl, photoUrl)
     return row
   }
   // sourcery:end
@@ -48,12 +43,12 @@ extension Speech {
     return try parent(id: eventId).get()
   }
   
-  // sourcery: nestedJSONField
+  // sourcery: nestedJSONRepresentableField
   func speakers() throws -> [Speaker] {
     return try children().all()
   }
   
-  // sourcery: nestedJSONField
+  // sourcery: nestedJSONRepresentableField
   func contents() throws -> [Content] {
     return try children().all()
   }

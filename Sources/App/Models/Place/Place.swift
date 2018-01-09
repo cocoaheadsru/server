@@ -54,7 +54,7 @@ final class Place: Model {
 
 extension Place {
   
-  // sourcery: nestedJSONField
+  // sourcery: nestedJSONRepresentableField
   func city() throws -> City? {
     return try parent(id: cityId).get()
   }

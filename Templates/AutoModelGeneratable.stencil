@@ -52,7 +52,7 @@ extension {{ type.name }} {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     static let {{ variable.name }} = "{{ variable.name|camelToSnakeCase }}"
     {% endfor %}
-    {% for method in type.methods|annotated:"nestedJSONField" %}
+    {% for method in type.methods where method|annotated:"nestedJSONField" or method|annotated:"nestedJSONRepresentableField" %}
     static let {{ method.callName }} = "{{ method.callName|camelToSnakeCase }}"
     {% endfor %}
   }
@@ -121,8 +121,12 @@ extension {{ type.name }}: JSONRepresentable {
     try json.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
     {% endfor %}
-    {% for method in type.methods|annotated:"nestedJSONField" %}
+    {% for method in type.methods %}
+    {% if method|annotated:"nestedJSONRepresentableField" %}
     try json.set(Keys.{{ method.callName }}, {{ method.callName }}(){% if method.isOptionalReturnType %}?{% endif %}.makeJSON())
+    {% elif method|annotated:"nestedJSONField" %}
+    try json.set(Keys.{{ method.callName }}, {{ method.callName }}(){% if method.isOptionalReturnType %}!{% endif %})
+    {% endif %}
     {% endfor %}
     return json
   }

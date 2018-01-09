@@ -21,6 +21,8 @@ extension Event {
     static let endDate = "end_date"
     static let hide = "hide"
     static let place = "place"
+    static let status = "status"
+    static let speakersPhotos = "speakers_photos"
   }
 }
 
@@ -60,6 +62,8 @@ extension Event: JSONRepresentable {
     try json.set(Keys.endDate, endDate)
     try json.set(Keys.hide, hide)
     try json.set(Keys.place, place()?.makeJSON())
+    try json.set(Keys.status, status())
+    try json.set(Keys.speakersPhotos, speakersPhotos())
     return json
   }
 }

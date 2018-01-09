@@ -63,7 +63,7 @@ final class Event: Model {
 
 extension Event {
   
-  // sourcery: nestedJSONField
+  // sourcery: nestedJSONRepresentableField
   func place() throws -> Place? {
     return try parent(id: placeId).get()
   }
@@ -72,8 +72,31 @@ extension Event {
     return try Speech.makeQuery().filter(Speech.Keys.eventId, id).all()
   }
   
+  // sourcery: nestedJSONField
   func status() -> String {
+//    $session = Session::findOne(['token' => $token]);
+//    $eventRegForm = EventRegForm::findOne(['event_id' => $this->id]);
+//    $registraion = EventReg::find()->andWhere(['!=', 'status', 'canceled'])->andWhere(['user_id' => $session->user_id, 'event_form' => $eventRegForm->id])->one();
+//
+//    if (!empty($registraion->status)) {
+//      return $registraion->status;
+//    }
+//    else if(!$this->is_registration_open) {
+//      return "registrationClosed";
+//    }
+//    return "canRegister";
     return ""
+  }
+  
+  // sourcery: nestedJSONField
+  func speakersPhotos() throws -> [String] {
+    let photoPaths = try speeches().flatMap { speech in
+        return try speech.speakers().flatMap { speaker in
+            return try speaker.user()?.photo
+        }
+    }
+    let photoURLs = photoPaths.map { "http://upapi.ru/photos/" + $0 }
+    return photoURLs
   }
   
   func registrationForm() throws -> RegForm? {
