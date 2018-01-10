@@ -74,18 +74,22 @@ extension Event {
   
   // sourcery: nestedJSONField
   func status() -> String {
-//    $session = Session::findOne(['token' => $token]);
-//    $eventRegForm = EventRegForm::findOne(['event_id' => $this->id]);
-//    $registraion = EventReg::find()->andWhere(['!=', 'status', 'canceled'])->andWhere(['user_id' => $session->user_id, 'event_form' => $eventRegForm->id])->one();
-//
-//    if (!empty($registraion->status)) {
-//      return $registraion->status;
-//    }
-//    else if(!$this->is_registration_open) {
-//      return "registrationClosed";
-//    }
-//    return "canRegister";
-    return ""
+    let token = "???"
+    let userId = try! Session.makeQuery().filter(Session.Keys.token, token).first()?.userId
+    let eventRegForm = try! RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
+    let registration = try! EventReg
+        .makeQuery()
+        .filter(EventReg.Keys.status, .notEquals, "canceled")
+        .filter(EventReg.Keys.userId, .equals, userId)
+        .filter(EventReg.Keys.regFormId, .equals, eventRegForm?.id)
+        .first()
+    
+    if let status = registration?.status.string {
+      return status
+    } else if !isRegistrationOpen {
+      return "registrationClosed"
+    }
+    return "canRegister"
   }
   
   // sourcery: nestedJSONField

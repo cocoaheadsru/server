@@ -39,8 +39,8 @@ final class EventController {
   ) throws -> [Event] {
     return try Event
       .makeQuery()
-      .filter("end_date", comparison, timestamp)
-      .sort("start_date", .descending)
+      .filter(Event.Keys.endDate, comparison, timestamp)
+      .sort(Event.Keys.startDate, .descending)
       .all()
   }
   
