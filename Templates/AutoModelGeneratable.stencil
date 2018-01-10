@@ -11,9 +11,9 @@ extension {{ type.name }} {
   init(row: Row) throws {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    {{ variable.name }} = {{ variable.unwrappedTypeName }}(try row.get(Keys.{{ variable.name }}))
+    {{ variable.name }} = {{ variable.unwrappedTypeName }}(try{% if variable.isOptional %}?{% endif %} row.get(Keys.{{ variable.name }}))
     {% else %}
-    {{ variable.name }} = try row.get(Keys.{{ variable.name }})
+    {{ variable.name }} = try{% if variable.isOptional %}?{% endif %} row.get(Keys.{{ variable.name }})
     {% endif %}
     {% endfor %}
   }
@@ -22,9 +22,9 @@ extension {{ type.name }} {
     var row = Row()
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    try row.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    try{% if variable.isOptional %}?{% endif %} row.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% else %}
-    try row.set(Keys.{{ variable.name }}, {{ variable.name }})
+    try{% if variable.isOptional %}?{% endif %} row.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
     {% endfor %}
     return row
@@ -99,7 +99,7 @@ extension {{ type.name }}: JSONInitializable {
     self.init(
       {% for parameter in type.initializers.first.parameters %}
       {% for variable in type.storedVariables where variable|annotated:"enum" and parameter.unwrappedTypeName == variable.unwrappedTypeName and parameter.name == variable.name %}
-      {{ parameter.name }}: {{ parameter.unwrappedTypeName }}(try json.get(Keys.{{ parameter.name }})){% empty %}{{ parameter.name }}: try json.get(Keys.{{ parameter.name }}){% endfor %}{% if not forloop.last %},{% endif %}
+      {{ parameter.name }}: {{ parameter.unwrappedTypeName }}(try{% if parameter.typeName.isOptional %}?{% endif %} json.get(Keys.{{ parameter.name }})){% empty %}{{ parameter.name }}: try{% if parameter.typeName.isOptional %}?{% endif %} json.get(Keys.{{ parameter.name }}){% endfor %}{% if not forloop.last %},{% endif %}
       {% endfor %}
     )
   }
@@ -116,9 +116,9 @@ extension {{ type.name }}: JSONRepresentable {
     try json.set(Keys.id, id)
     {% for variable in type.storedVariables where variable.name != "storage" and variable|!annotated:"ignoreInJSON" %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    try{% if variable.isOptional %}?{% endif %} json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% else %}
-    try json.set(Keys.{{ variable.name }}, {{ variable.name }})
+    try{% if variable.isOptional %}?{% endif %} json.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
     {% endfor %}
     {% for method in type.methods %}
@@ -166,7 +166,7 @@ extension {{ type.name }}: Updateable {
 
 
 {% macro PlainType variable %}
-      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }})
+      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }}{% if variable.isOptional %}, optional: true{% endif %})
 {% endmacro %}
 
 {% macro PrepareEnum variable %}

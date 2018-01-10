@@ -26,7 +26,7 @@ extension Speech: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
-      builder.string(Keys.title)
+      builder.string(Keys.title, optional: true)
       builder.string(Keys.description)
     }
   }
@@ -41,7 +41,7 @@ extension Speech: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.title, title)
+    try? json.set(Keys.title, title)
     try json.set(Keys.description, description)
     try json.set(Keys.speakers, speakers().makeJSON())
     try json.set(Keys.contents, contents().makeJSON())

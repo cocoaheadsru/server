@@ -23,14 +23,14 @@ final class Speech: Model {
   // sourcery:inline:auto:Speech.AutoModelGeneratable
   init(row: Row) throws {
     eventId = try row.get(Keys.eventId)
-    title = try row.get(Keys.title)
+    title = try? row.get(Keys.title)
     description = try row.get(Keys.description)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.eventId, eventId)
-    try row.set(Keys.title, title)
+    try? row.set(Keys.title, title)
     try row.set(Keys.description, description)
     return row
   }

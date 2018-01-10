@@ -19,13 +19,13 @@ final class Client: Model {
   
   // sourcery:inline:auto:Client.AutoModelGeneratable
   init(row: Row) throws {
-    userId = try row.get(Keys.userId)
+    userId = try? row.get(Keys.userId)
     pushToken = try row.get(Keys.pushToken)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Keys.userId, userId)
+    try? row.set(Keys.userId, userId)
     try row.set(Keys.pushToken, pushToken)
     return row
   }

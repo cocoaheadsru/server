@@ -22,7 +22,7 @@ extension Migration: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       version: try json.get(Keys.version),
-      applyTime: try json.get(Keys.applyTime)
+      applyTime: try? json.get(Keys.applyTime)
     )
   }
 }
@@ -33,7 +33,7 @@ extension Migration: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.string(Keys.version)
-      builder.int(Keys.applyTime)
+      builder.int(Keys.applyTime, optional: true)
     }
   }
 
@@ -48,7 +48,7 @@ extension Migration: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.version, version)
-    try json.set(Keys.applyTime, applyTime)
+    try? json.set(Keys.applyTime, applyTime)
     return json
   }
 }

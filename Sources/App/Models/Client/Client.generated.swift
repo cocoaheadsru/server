@@ -24,7 +24,7 @@ extension Client: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       pushToken: try json.get(Keys.pushToken),
-      userId: try json.get(Keys.userId)
+      userId: try? json.get(Keys.userId)
     )
   }
 }
@@ -61,7 +61,7 @@ extension Client: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.userId, userId)
+    try? json.set(Keys.userId, userId)
     try json.set(Keys.pushToken, pushToken)
     return json
   }
