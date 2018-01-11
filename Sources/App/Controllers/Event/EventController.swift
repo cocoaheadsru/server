@@ -43,18 +43,13 @@ final class EventController {
       .sort(Event.Keys.startDate, .descending)
       .all()
   }
-  
-  func show(_ req: Request, event: Event) throws -> ResponseRepresentable {
-    return event
-  }
 }
 
 extension EventController: ResourceRepresentable {
   
   func makeResource() -> Resource<Event> {
     return Resource(
-      index: index,
-      show: show
+      index: index
     )
   }
 }

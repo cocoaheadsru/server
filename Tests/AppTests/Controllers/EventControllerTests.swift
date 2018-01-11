@@ -27,27 +27,6 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(city)
   }
   
-  func testThatShowEventReturnsOkStatus() throws {
-    let event = try storeAndFetchEvent()
-    let request = Request.makeTest(method: .get)
-    let res = try eventContoller.show(request, event: event).makeResponse()
-    XCTAssertEqual(res.status, .ok)
-  }
-  
-  func testThatShowEventReturnsJSONWithAllRequiredFields() throws {
-    let event = try storeAndFetchEvent()
-    let request = Request.makeTest(method: .get)
-    let res = try eventContoller.show(request, event: event).makeResponse()
-    assertEventHasRequiredFields(json: res.json)
-  }
-  
-  func testThatShowEventReturnsJSONWithExpectedFields() throws {
-    let event = try storeAndFetchEvent()
-    let request = Request.makeTest(method: .get)
-    let res = try eventContoller.show(request, event: event).makeResponse()
-    try assertEventHasExpectedFields(json: res.json, event: event)
-  }
-  
   func testThatIndexEventsFailsForEmptyQueryParameters() throws {
     let req = Request.makeTest(method: .get)
     let res = try eventContoller.index(req).makeResponse()
@@ -177,31 +156,7 @@ class EventControllerTests: TestCase {
   }
   
   // MARK: Endpoint tests
-  
-  func testThatGetEventByIdRouteReturnsOkStatus() throws {
-    let eventId = try storeEvent()
-    guard let id = eventId?.int else {
-      XCTFail()
-      return
-    }
     
-    try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event/\(id)")
-      .assertStatus(is: .ok)
-  }
-  
-  func testThatGetEventByIdRouteFailsForEmptyTable() throws {
-    try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event/\(Int.randomValue)")
-      .assertStatus(is: .notFound)
-  }
-  
-  func testThatGetEventByIdRouteFailsForIncorrectIdValue() throws {
-    try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event/\(EventHelper.invalidQueryValueParameter)")
-      .assertStatus(is: .notFound)
-  }
-  
   func testThatGetEventsBeforeTimestampRouteReturnsOkStatus() throws {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "event", query: "before=\(Int.randomTimestamp)")
