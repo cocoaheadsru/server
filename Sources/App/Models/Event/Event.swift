@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable
+// sourcery: Preparation, Timestampable
 final class Event: Model {
     
   let storage = Storage()
@@ -62,6 +62,25 @@ final class Event: Model {
 }
 
 extension Event {
+    
+    func makeJSON(with req: Request) throws -> JSON {
+        var json = JSON()
+        try json.set(Keys.id, id)
+        try json.set(Keys.title, title)
+        try json.set(Keys.description, description)
+        try json.set(Keys.photoUrl, photoUrl)
+        try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
+        try json.set(Keys.startDate, startDate)
+        try json.set(Keys.endDate, endDate)
+        try json.set(Keys.hide, hide)
+        try json.set(Keys.place, place()?.makeJSON())
+        try json.set(Keys.status, status(token: req.headers["token"]))
+        try json.set(Keys.speakersPhotos, speakersPhotos())
+        return json
+    }
+}
+
+extension Event {
   
   // sourcery: nestedJSONRepresentableField
   func place() throws -> Place? {
@@ -73,20 +92,23 @@ extension Event {
   }
   
   // sourcery: nestedJSONField
-  func status() -> String {
-    let token = "???"
-    let userId = try! Session.makeQuery().filter(Session.Keys.token, token).first()?.userId
-    let eventRegForm = try! RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
-    let registration = try! EventReg
+  func status(token: String?) throws -> String {
+    if let token = token {
+      let userId = try Session.makeQuery().filter(Session.Keys.token, token).first()?.userId
+      let eventRegForm = try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
+      let registration = try EventReg
         .makeQuery()
         .filter(EventReg.Keys.status, .notEquals, "canceled")
         .filter(EventReg.Keys.userId, .equals, userId)
         .filter(EventReg.Keys.regFormId, .equals, eventRegForm?.id)
         .first()
+      
+      if let status = registration?.status.string {
+        return status
+      }
+    }
     
-    if let status = registration?.status.string {
-      return status
-    } else if !isRegistrationOpen {
+    if !isRegistrationOpen {
       return "registrationClosed"
     }
     return "canRegister"

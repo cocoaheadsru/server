@@ -13,10 +13,12 @@ final class EventController {
     
     if let timestamp = query["before"]?.int {
       let events = try fetchEvents(before: timestamp)
-      return try events.makeJSON()
+      let json = try prepareJSON(for: events, with: req)
+      return try json.makeResponse()
     } else if let timestamp = query["after"]?.int {
       let events = try fetchEvents(after: timestamp)
-      return try events.makeJSON()
+      let json = try prepareJSON(for: events, with: req)
+      return try json.makeResponse()
     } else {
       return try Response(
         status: .badRequest,
@@ -42,6 +44,16 @@ final class EventController {
       .filter(Event.Keys.endDate, comparison, timestamp)
       .sort(Event.Keys.startDate, .descending)
       .all()
+  }
+  
+  private func prepareJSON(
+    for events: [Event],
+    with req: Request
+  ) throws -> JSON {
+    let jsonArray: [StructuredData] = try events.map {
+      try $0.makeJSON(with: req).wrapped
+    }
+    return JSON(.array(jsonArray))
   }
 }
 

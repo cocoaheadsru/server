@@ -233,7 +233,6 @@ extension EventControllerTests {
     XCTAssertEqual(json?["start_date"]?.int, event.startDate)
     XCTAssertEqual(json?["end_date"]?.int, event.endDate)
     XCTAssertEqual(json?["hide"]?.bool, event.hide)
-    XCTAssertEqual(json?["status"]?.string, event.status())
     XCTAssertEqual(json?["speakers_photos"]?.array?.count, try event.speakersPhotos().count)
     XCTAssertEqual(json?["speakers_photos"]?.array?.first?.string, try event.speakersPhotos().first)
 

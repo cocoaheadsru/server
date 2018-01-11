@@ -26,8 +26,6 @@ extension Event {
   }
 }
 
-extension Event: ResponseRepresentable { }
-
 extension Event: Preparation {
 
   static func prepare(_ database: Database) throws {
@@ -46,25 +44,6 @@ extension Event: Preparation {
 
   static func revert(_ database: Database) throws {
     try database.delete(self)
-  }
-}
-
-extension Event: JSONRepresentable {
-
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Keys.id, id)
-    try json.set(Keys.title, title)
-    try json.set(Keys.description, description)
-    try json.set(Keys.photoUrl, photoUrl)
-    try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
-    try json.set(Keys.startDate, startDate)
-    try json.set(Keys.endDate, endDate)
-    try json.set(Keys.hide, hide)
-    try json.set(Keys.place, place()?.makeJSON())
-    try json.set(Keys.status, status())
-    try json.set(Keys.speakersPhotos, speakersPhotos())
-    return json
   }
 }
 
