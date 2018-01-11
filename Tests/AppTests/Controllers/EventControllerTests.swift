@@ -198,7 +198,9 @@ extension EventControllerTests {
     XCTAssertNotNil(json?["end_date"])
     XCTAssertNotNil(json?["hide"])
     XCTAssertNotNil(json?["place"])
-    
+    XCTAssertNotNil(json?["status"])
+    XCTAssertNotNil(json?["speakers_photos"])
+
     let placeJSON = json?["place"]?.makeJSON()
     XCTAssertNotNil(placeJSON?["id"])
     XCTAssertNotNil(placeJSON?["latitude"])
@@ -231,7 +233,10 @@ extension EventControllerTests {
     XCTAssertEqual(json?["start_date"]?.int, event.startDate)
     XCTAssertEqual(json?["end_date"]?.int, event.endDate)
     XCTAssertEqual(json?["hide"]?.bool, event.hide)
-    
+    XCTAssertEqual(json?["status"]?.string, event.status())
+    XCTAssertEqual(json?["speakers_photos"]?.array?.count, try event.speakersPhotos().count)
+    XCTAssertEqual(json?["speakers_photos"]?.array?.first?.string, try event.speakersPhotos().first)
+
     let placeJSON = json?["place"]?.makeJSON()
     XCTAssertEqual(placeJSON?["id"]?.int, place.id?.int)
     XCTAssertEqual(placeJSON?["latitude"]?.double, place.latitude)
