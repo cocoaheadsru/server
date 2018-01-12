@@ -9,7 +9,7 @@ final class EventReg: Model {
   
   // sourcery: relatedModel = RegForm
   var regFormId: Identifier
-  // sourcery: relation = parent, relatedModel = User
+  // sourcery: relatedModel = User
   var userId: Identifier
   // sourcery: enum, waiting, rejected, approved, canceled
   var status: RegistrationStatus = .waiting

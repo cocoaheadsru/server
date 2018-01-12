@@ -7,7 +7,7 @@ final class Session: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = User, unique = true
+  // sourcery: relatedModel = User, unique = true
   var userId: Identifier
   var token: String
   var actual: Bool

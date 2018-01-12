@@ -7,7 +7,7 @@ final class EventRegAnswer: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = EventReg
+  // sourcery: relatedModel = EventReg
   var regId: Identifier
   // sourcery: relatedModel = EventRegField
   var fieldId: Identifier

@@ -7,7 +7,7 @@ final class RegForm: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = Event
+  // sourcery: relatedModel = Event
   var eventId: Identifier
   var formName: String
   var description: String

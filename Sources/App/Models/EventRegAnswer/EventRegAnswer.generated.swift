@@ -36,7 +36,7 @@ extension EventRegAnswer: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
+      builder.foreignId(for: EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
       builder.foreignId(for: EventRegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
       builder.foreignId(for: RegFieldAnswer.self, optional: false, unique: false, foreignIdKey: Keys.answerId)
       builder.string(Keys.answerValue)

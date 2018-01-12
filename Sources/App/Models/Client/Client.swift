@@ -8,7 +8,7 @@ final class Client: Model {
   
   let storage = Storage()
 
-  // sourcery: relation = foreignId, relatedModel = User
+  // sourcery: relatedModel = User
   var userId: Identifier?
   var pushToken: String
 

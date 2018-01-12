@@ -25,7 +25,7 @@ extension Speech: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
+      builder.foreignId(for: Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
       builder.string(Keys.title, optional: true)
       builder.string(Keys.description)
     }

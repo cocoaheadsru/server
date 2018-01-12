@@ -7,7 +7,7 @@ final class Creator: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = foreignId, relatedModel = User
+  // sourcery: relatedModel = User
   var userId: Identifier
   var position: Int
   var photoUrl: String

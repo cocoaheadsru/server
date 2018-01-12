@@ -155,11 +155,6 @@ extension {{ type.name }}: Updateable {
 {% endmacro %}
 
 
-{% macro ParentRelation variable isOptional %}
-      builder.parent({{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
-{% endmacro %}
-
-
 {% macro ForeignRelation variable isOptional %}
       builder.foreignId(for: {{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
 {% endmacro %}
@@ -183,26 +178,10 @@ extension {{ type.name }}: Preparation {
       builder.id()
       {% for variable in type.storedVariables where variable.name != "storage"  %}
           {% if variable.typeName|lowercase|contains:"identifier" %} 
-              {% if variable|annotated:"relation" %}
-                  {% if variable.annotations.relation == "parent" %}
-                      {% if variable.typeName.isOptional %}
-                          {% call ParentRelation variable "true" %}
-                      {% else %}
-                          {% call ParentRelation variable "false" %}
-                      {% endif %}
-                  {% else %}
-                      {% if variable.typeName.isOptional %}
-                          {% call ForeignRelation variable "true" %}
-                      {% else %}
-                          {% call ForeignRelation variable "false" %}
-                      {% endif %}
-                  {% endif %}
+              {% if variable.typeName.isOptional %}
+                  {% call ForeignRelation variable "true" %}
               {% else %}
-                  {% if variable.typeName.isOptional %}
-                      {% call ForeignRelation variable "true" %}
-                  {% else %}
-                      {% call ForeignRelation variable "false" %}
-                  {% endif %}
+                  {% call ForeignRelation variable "false" %}
               {% endif %}
           {% elif variable|annotated:"enum" or variable.type.kind == "enum" %}
               {% call PrepareEnum variable %}
