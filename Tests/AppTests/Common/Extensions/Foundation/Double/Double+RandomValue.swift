@@ -1,4 +1,5 @@
 import Foundation
+import libc
 
 extension Double {
   /// Random double value,
@@ -6,12 +7,17 @@ extension Double {
   static var randomValue: Double {
     let r = random(min: 1.111, max: 333.333)
     let divisor = pow(10.0, 4.0)
-    return Darwin.round(r * divisor) / divisor
+    #if os(Linux)
+      return libc.round(r * divisor) / divisor
+    #else
+      return Darwin.round(r * divisor) / divisor
+    #endif
   }
 
   static func random(min: Double, max: Double) -> Double {
+    let bigRand = Int.random(min: 0, max: Int(Int32.max)-1)
     // Random number from 0 to 1.0, inclusive
-    let random = Double(arc4random()) / 0xFFFFFFFF
+    let random = Double(bigRand) / 0xFFFFFFFF
     return random * (max - min) + min
   }
 }
