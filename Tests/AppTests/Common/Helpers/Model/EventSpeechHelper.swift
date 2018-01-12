@@ -18,13 +18,6 @@ class EventSpeechHelper {
     }
     return parameter
   }
-
-  static func cleanSpeechTable() throws {
-    try App.Content.makeQuery().delete()
-    try Speaker.makeQuery().delete()
-    try User.makeQuery().delete()
-    try Speech.makeQuery().delete()
-  }
   
   static func storeSpeech(
     forEventId eventId: Identifier,

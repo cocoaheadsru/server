@@ -19,12 +19,6 @@ class EventHelper {
     return parameter
   }
   
-  static func cleanEventTable() throws {
-    try Event.makeQuery().delete()
-    try Place.makeQuery().delete()
-    try City.makeQuery().delete()
-  }
-  
   static func storeEvent(before timestamp: Int) throws -> Identifier? {
     let t = Int.random(min: 5000, max: timestamp - 1)
     return try storeEvent(timestamp: t)

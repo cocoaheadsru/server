@@ -4,13 +4,19 @@ import Testing
 @testable import App
 
 class EventSpeechControllerTests: TestCase {
-  let drop = try! Droplet.testable()
+  //swiftlint:disable force_try
+  var drop: Droplet!
+  ///swiftlint:enable force_try
   let eventSpeechContoller = EventSpeechController()
   
   override func setUp() {
     super.setUp()
-    try! cleanSpeechTable()
-    try! cleanEventTable()
+    do {
+      drop = try Droplet.testable()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
   }
     
   func testThatIndexSpeechesReturnsOkStatus() throws {
@@ -191,15 +197,7 @@ class EventSpeechControllerTests: TestCase {
 }
 
 extension EventSpeechControllerTests {
-  
-  fileprivate func cleanEventTable() throws {
-    try EventHelper.cleanEventTable()
-  }
-  
-  fileprivate func cleanSpeechTable() throws {
-    try EventSpeechHelper.cleanSpeechTable()
-  }
-  
+
   fileprivate func storeEvent() throws -> Identifier? {
     return try EventHelper.storeEvent()
   }

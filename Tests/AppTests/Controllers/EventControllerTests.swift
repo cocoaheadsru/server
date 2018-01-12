@@ -4,12 +4,19 @@ import Testing
 @testable import App
 
 class EventControllerTests: TestCase {
-  let drop = try! Droplet.testable()
+  //swiftlint:disable force_try
+  var drop: Droplet!
+  ///swiftlint:enable force_try
   let eventContoller = EventController()
   
   override func setUp() {
     super.setUp()
-    try! cleanEventTable()
+    do {
+      drop = try Droplet.testable()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
   }
   
   func testThatEventHasPlaceRelation() throws {
@@ -261,11 +268,6 @@ extension EventControllerTests {
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     return res
-  }
-  
-  fileprivate func cleanEventTable() throws {
-    try EventSpeechHelper.cleanSpeechTable()
-    try EventHelper.cleanEventTable()
   }
   
   fileprivate func storeEvent() throws -> Identifier? {
