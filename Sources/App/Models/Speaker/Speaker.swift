@@ -7,9 +7,7 @@ final class Speaker: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = User
   var userId: Identifier
-  // sourcery: relatedModel = Speech
   var speechId: Identifier
   
   init(userId: Identifier, speechId: Identifier) {

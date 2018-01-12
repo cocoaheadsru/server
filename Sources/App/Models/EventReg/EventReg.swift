@@ -7,9 +7,7 @@ final class EventReg: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = RegForm
   var regFormId: Identifier
-  // sourcery: relatedModel = User
   var userId: Identifier
   // sourcery: enum, waiting, rejected, approved, canceled
   var status: RegistrationStatus = .waiting

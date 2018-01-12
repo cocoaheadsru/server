@@ -7,9 +7,7 @@ final class SocialAccount: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = User
   var userId: Identifier
-  // sourcery: relatedModel = Social
   var socialId: Identifier
   var socialUserId: String
   

@@ -7,7 +7,6 @@ final class EventRegField: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = RegForm
   var regFormId: Identifier
   // sourcery: relatedModel = RegField
   var fieldId: Identifier

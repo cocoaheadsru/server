@@ -7,7 +7,7 @@ final class Event: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = Place, ignoreInJSON
+  // sourcery: ignoreInJSON
   var placeId: Identifier
   var title: String
   var description: String

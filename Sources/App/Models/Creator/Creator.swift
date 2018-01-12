@@ -7,7 +7,6 @@ final class Creator: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = User
   var userId: Identifier
   var position: Int
   var photoUrl: String

@@ -7,7 +7,7 @@ final class Place: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = City, ignoreInJSON
+  // sourcery: ignoreInJSON
   var cityId: Identifier
   var title: String
   var address: String

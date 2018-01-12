@@ -7,7 +7,7 @@ final class Content: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = Speech, ignoreInJSON
+  // sourcery: ignoreInJSON
   var speechId: Identifier
   // sourcery: enum, video, slide
   var type: ContentType
