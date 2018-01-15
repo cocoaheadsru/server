@@ -41,21 +41,21 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsOkStatusForBeforeQueryKey() throws {
-    let query = "before=\(Int.randomValue)"
+    let query = "before=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexEventsReturnsOkStatusForAfterQueryKey() throws {
-    let query = "after=\(Int.randomValue)"
+    let query = "after=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexEventsFailsForIncorrectQueryKey() throws {
-    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Int.randomValue)"
+    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .badRequest)
@@ -69,20 +69,18 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsJSONArray() throws {
-    let resAfter = try fetchEvents(after: Int.randomValue)
-    let resBefore = try fetchEvents(before: Int.randomValue)
+    let resAfter = try fetchPastEvents()
+    let resBefore = try fetchComingEvents()
     XCTAssertNotNil(resAfter.json?.array)
     XCTAssertNotNil(resBefore.json?.array)
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields() throws {
-    let timestamp = Int.randomTimestamp
-    
-    try storeEvent(after: timestamp)
-    try storeEvent(before: timestamp)
+    try storeComingEvent()
+    try storePastEvent()
 
-    let resAfter = try fetchEvents(after: timestamp)
-    let resBefore = try fetchEvents(before: timestamp)
+    let resAfter = try fetchComingEvents()
+    let resBefore = try fetchPastEvents()
     
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
@@ -92,10 +90,8 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields() throws {
-    let timestamp = Int.randomTimestamp
-    
-    let eventId1 = try storeEvent(after: timestamp)
-    let eventId2 = try storeEvent(before: timestamp)
+    let eventId1 = try storeComingEvent()
+    let eventId2 = try storePastEvent()
     
     guard
       let event1 = try findEvent(by: eventId1),
@@ -105,8 +101,8 @@ class EventControllerTests: TestCase {
       return
     }
     
-    let resAfter = try fetchEvents(after: timestamp)
-    let resBefore = try fetchEvents(before: timestamp)
+    let resAfter = try fetchComingEvents()
+    let resBefore = try fetchPastEvents()
     
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
@@ -116,45 +112,42 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastEvents() throws {
-    let timestamp = Int.randomTimestamp
     let expectedEventsCount = Int.random(min: 1, max: 20)
     
     for _ in 0..<expectedEventsCount {
-      try storeEvent(before: timestamp)
+      try storePastEvent()
     }
     
-    let res = try fetchEvents(before: timestamp)
+    let res = try fetchPastEvents()
     let actualEventsCount = res.json?.array?.count
     XCTAssertEqual(actualEventsCount, expectedEventsCount)
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfFutureEvents() throws {
-    let timestamp = Int.randomTimestamp
     let expectedEventsCount = Int.random(min: 1, max: 20)
 
     for _ in 0..<expectedEventsCount {
-      try storeEvent(after: timestamp)
+      try storeComingEvent()
     }
     
-    let res = try fetchEvents(after: timestamp)
+    let res = try fetchComingEvents()
     let actualEventsCount = res.json?.array?.count
     XCTAssertEqual(actualEventsCount, expectedEventsCount)
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastAndFutureEvents() throws {
-    let timestamp = Int.randomTimestamp
     let expectedPastEventsCount = Int.random(min: 1, max: 20)
     let expectedFutureEventsCount = Int.random(min: 1, max: 20)
 
     for _ in 0..<expectedPastEventsCount {
-      try storeEvent(before: timestamp)
+      try storePastEvent()
     }
     for _ in 0..<expectedFutureEventsCount {
-      try storeEvent(after: timestamp)
+      try storeComingEvent()
     }
     
-    let resBefore = try fetchEvents(before: timestamp)
-    let resAfter = try fetchEvents(after: timestamp)
+    let resBefore = try fetchPastEvents()
+    let resAfter = try fetchComingEvents()
 
     let actualPastEventsCount = resBefore.json?.array?.count
     let actualFutureEventsCount = resAfter.json?.array?.count
@@ -166,18 +159,18 @@ class EventControllerTests: TestCase {
     
   func testThatGetEventsBeforeTimestampRouteReturnsOkStatus() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: "before=\(Int.randomTimestamp)")
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: "before=\(Date.randomValue.mysqlString)")
       .assertStatus(is: .ok)
   }
   
   func testThatGetEventsAfterTimestampRouteReturnsOkStatus() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: "after=\(Int.randomTimestamp)")
+      .clientAuthorizedTestResponse(to: .get, at: "event", query: "after=\(Date.randomValue.mysqlString)")
       .assertStatus(is: .ok)
   }
   
   func testThatGetEventsRouteFailsWithWrongQueryParameterKey() throws {
-    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Int.randomTimestamp)"
+    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Date.randomValue.mysqlString)"
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "event", query: query)
       .assertStatus(is: .badRequest)
@@ -237,8 +230,8 @@ extension EventControllerTests {
     XCTAssertEqual(json?["description"]?.string, event.description)
     XCTAssertEqual(json?["photo_url"]?.string, event.photoUrl)
     XCTAssertEqual(json?["is_registration_open"]?.bool, event.isRegistrationOpen)
-    XCTAssertEqual(json?["start_date"]?.int, event.startDate)
-    XCTAssertEqual(json?["end_date"]?.int, event.endDate)
+    XCTAssertEqual(json?["start_date"]?.string, event.startDate.mysqlString)
+    XCTAssertEqual(json?["end_date"]?.string, event.endDate.mysqlString)
     XCTAssertEqual(json?["hide"]?.bool, event.hide)
     XCTAssertEqual(json?["speakers_photos"]?.array?.count, try event.speakersPhotos().count)
     XCTAssertEqual(json?["speakers_photos"]?.array?.first?.string, try event.speakersPhotos().first)
@@ -256,15 +249,15 @@ extension EventControllerTests {
     XCTAssertEqual(cityJSON?["city_name"]?.string, city.cityName)
   }
   
-  fileprivate func fetchEvents(before timestamp: Int) throws -> Response {
-    let query = "before=\(timestamp)"
+  fileprivate func fetchPastEvents() throws -> Response {
+    let query = "before=\(Date().mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     return res
   }
   
-  fileprivate func fetchEvents(after timestamp: Int) throws -> Response {
-    let query = "after=\(timestamp)"
+  fileprivate func fetchComingEvents() throws -> Response {
+    let query = "after=\(Date().mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     return res
@@ -275,25 +268,16 @@ extension EventControllerTests {
   }
   
   @discardableResult
-  fileprivate func storeEvent(after timestamp: Int) throws -> Identifier? {
-    return try EventHelper.storeEvent(after: timestamp)
+  fileprivate func storeComingEvent() throws -> Identifier? {
+    return try EventHelper.storeComingEvent()
   }
   
   @discardableResult
-  fileprivate func storeEvent(before timestamp: Int) throws -> Identifier? {
-    return try EventHelper.storeEvent(before: timestamp)
+  fileprivate func storePastEvent() throws -> Identifier? {
+    return try EventHelper.storePastEvent()
   }
   
   fileprivate func findEvent(by id: Identifier?) throws -> App.Event? {
     return try EventHelper.findEvent(by: id)
-  }
-  
-  fileprivate func storeAndFetchEvent() throws -> App.Event {
-    let eventId = try storeEvent()
-    guard let event = try findEvent(by: eventId) else {
-      XCTFail()
-      fatalError()
-    }
-    return event
   }
 }

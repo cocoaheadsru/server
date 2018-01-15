@@ -36,8 +36,8 @@ extension Event: Preparation {
       builder.string(Keys.description)
       builder.string(Keys.photoUrl)
       builder.bool(Keys.isRegistrationOpen)
-      builder.int(Keys.startDate)
-      builder.int(Keys.endDate)
+      builder.date(Keys.startDate)
+      builder.date(Keys.endDate)
       builder.bool(Keys.hide)
     }
   }

@@ -13,8 +13,8 @@ final class Event: Model {
   var description: String
   var photoUrl: String
   var isRegistrationOpen: Bool = true
-  var startDate: Int
-  var endDate: Int
+  var startDate: Date
+  var endDate: Date
   var hide: Bool = false
   
   init(title: String,
@@ -22,7 +22,8 @@ final class Event: Model {
        photoUrl: String,
        placeId: Identifier,
        isRegistrationOpen: Bool = true,
-       startDate: Int, endDate: Int,
+       startDate: Date,
+       endDate: Date,
        hide: Bool = false) {
     self.title = title
     self.description = description
@@ -70,8 +71,8 @@ extension Event {
         try json.set(Keys.description, description)
         try json.set(Keys.photoUrl, photoUrl)
         try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
-        try json.set(Keys.startDate, startDate)
-        try json.set(Keys.endDate, endDate)
+        try json.set(Keys.startDate, startDate.mysqlString)
+        try json.set(Keys.endDate, endDate.mysqlString)
         try json.set(Keys.hide, hide)
         try json.set(Keys.place, place()?.makeJSON())
         try json.set(Keys.status, status(token: req.headers["token"]))

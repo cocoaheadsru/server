@@ -3,6 +3,11 @@ import Fluent
 
 final class EventController {
   
+  enum Timeline {
+    case beforeDate(Date)
+    case afterDate(Date)
+  }
+  
   func index(_ req: Request) throws -> ResponseRepresentable {
     guard let query = req.query else {
       return try Response(
@@ -11,14 +16,10 @@ final class EventController {
       )
     }
     
-    if let timestamp = query["before"]?.int {
-      let events = try fetchEvents(before: timestamp)
-      let json = try prepareJSON(for: events, with: req)
-      return try json.makeResponse()
-    } else if let timestamp = query["after"]?.int {
-      let events = try fetchEvents(after: timestamp)
-      let json = try prepareJSON(for: events, with: req)
-      return try json.makeResponse()
+    if let date = query["before"]?.date {
+      return try sendEvents(.beforeDate(date), req: req)
+    } else if let date = query["after"]?.date {
+      return try sendEvents(.afterDate(date), req: req)
     } else {
       return try Response(
         status: .badRequest,
@@ -26,22 +27,28 @@ final class EventController {
       )
     }
   }
-  
-  private func fetchEvents(before timestamp: Int) throws -> [Event] {
-    return try fetchEvents(that: .lessThanOrEquals, timestamp: timestamp)
+    
+  private func sendEvents(_ eventsTimeline: Timeline, req: Request) throws -> Response {
+    let events = try fetchEvents(using: eventsTimeline)
+    return try prepareJSON(for: events, with: req).makeResponse()
   }
   
-  private func fetchEvents(after timestamp: Int) throws -> [Event] {
-    return try fetchEvents(that: .greaterThanOrEquals, timestamp: timestamp)
+  private func fetchEvents(using eventsTimeline: Timeline) throws -> [Event] {
+    switch eventsTimeline {
+    case .beforeDate(let date):
+      return try fetchEvents(that: .lessThanOrEquals, date: date)
+    case .afterDate(let date):
+      return try fetchEvents(that: .greaterThanOrEquals, date: date)
+    }
   }
   
   private func fetchEvents(
     that comparison: Filter.Comparison,
-    timestamp: Int
+    date: Date
   ) throws -> [Event] {
     return try Event
       .makeQuery()
-      .filter(Event.Keys.endDate, comparison, timestamp)
+      .filter(Event.Keys.endDate, comparison, date)
       .sort(Event.Keys.startDate, .descending)
       .all()
   }

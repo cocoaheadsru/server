@@ -1,4 +1,5 @@
 import Vapor
+import Foundation
 @testable import App
 
 class EventHelper {
@@ -13,23 +14,21 @@ class EventHelper {
   
   static var invalidQueryValueParameter: String {
     let parameter = String.randomValue
-    if parameter.int != nil {
+    if DateFormatter.mysql.date(from: parameter) != nil {
       return self.invalidQueryValueParameter
     }
     return parameter
   }
   
-  static func storeEvent(before timestamp: Int) throws -> Identifier? {
-    let t = Int.random(min: 5000, max: timestamp - 1)
-    return try storeEvent(timestamp: t)
+  static func storePastEvent() throws -> Identifier? {
+    return try storeEvent(date: Date.randomValueInPast)
   }
   
-  static func storeEvent(after timestamp: Int) throws -> Identifier? {
-    let t = Int.random(min: timestamp + 1, max: timestamp * 2)
-    return try storeEvent(timestamp: t)
+  static func storeComingEvent() throws -> Identifier? {
+    return try storeEvent(date: Date.randomValueInFuture)
   }
   
-  static func storeEvent(timestamp: Int = Int.randomTimestamp) throws -> Identifier? {
+  static func storeEvent(date: Date = Date.randomValue) throws -> Identifier? {
     let city = City(
       cityName: String.randomValue
     )
@@ -51,8 +50,8 @@ class EventHelper {
       photoUrl: String.randomValue,
       placeId: (place.id)!,
       isRegistrationOpen: Bool.randomValue,
-      startDate: timestamp - 5000,
-      endDate: timestamp,
+      startDate: date.fiveHoursAgo,
+      endDate: date,
       hide: Bool.randomValue
     )
     try event.save()
