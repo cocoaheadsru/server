@@ -31,23 +31,10 @@ class EventSpeechControllerTests: TestCase {
     XCTAssertEqual(res.status, .ok)
   }
   
-  func testThatIndexSpeechesFailsForEmptyTable() throws {
-    let res = try fetchSpeeches(by: Int.randomValue)
-    XCTAssertEqual(res.status, .notFound)
-  }
-  
   func testThatIndexSpeechesFailsWithIncorrectParameter() throws {
     let req = Request.makeTest(method: .get)
     try req.parameters.set(EventSpeechHelper.invalidParameterKey, Int.randomValue)
-    let res = try eventSpeechContoller.index(req: req).makeResponse()
-    XCTAssertEqual(res.status, .badRequest)
-  }
-  
-  func testThatIndexSpeechesFailsWithNonIntParameterValue() throws {
-    let req = Request.makeTest(method: .get)
-    try req.parameters.set("id", EventSpeechHelper.invalidParameterValue)
-    let res = try eventSpeechContoller.index(req: req).makeResponse()
-    XCTAssertEqual(res.status, .badRequest)
+    XCTAssertThrowsError(try eventSpeechContoller.index(req: req).makeResponse())
   }
   
   func testThatIndexSpeechesReturnsJSONWithAllRequiredFields() throws {
@@ -191,6 +178,18 @@ class EventSpeechControllerTests: TestCase {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "/event/\(id)/speech")
       .assertStatus(is: .ok)
+  }
+  
+  func testThatGetSpeechesRouteFailsForEmptyTable() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "/event/\(Int.randomValue)/speech")
+      .assertStatus(is: .notFound)
+  }
+  
+  func testThatGetSpeechesRouteFailsWithNonIntParameterValue() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "/event/\(EventSpeechHelper.invalidParameterValue)/speech")
+      .assertStatus(is: .badRequest)
   }
 }
 

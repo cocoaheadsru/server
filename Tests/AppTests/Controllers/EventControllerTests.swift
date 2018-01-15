@@ -34,12 +34,6 @@ class EventControllerTests: TestCase {
     XCTAssertNotNil(city)
   }
   
-  func testThatIndexEventsFailsForEmptyQueryParameters() throws {
-    let req = Request.makeTest(method: .get)
-    let res = try eventContoller.index(req).makeResponse()
-    XCTAssertEqual(res.status, .badRequest)
-  }
-  
   func testThatIndexEventsReturnsOkStatusForBeforeQueryKey() throws {
     let query = "before=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
@@ -52,20 +46,6 @@ class EventControllerTests: TestCase {
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .ok)
-  }
-  
-  func testThatIndexEventsFailsForIncorrectQueryKey() throws {
-    let query = "\(EventHelper.invalidQueryKeyParameter)=\(Date.randomValue.mysqlString)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
-    XCTAssertEqual(res.status, .badRequest)
-  }
-  
-  func testThatIndexEventsFailsForNonDateQueryValue() throws {
-    let query = "before=\(EventHelper.invalidQueryValueParameter)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
-    XCTAssertEqual(res.status, .badRequest)
   }
   
   func testThatIndexEventsReturnsJSONArray() throws {
@@ -157,6 +137,12 @@ class EventControllerTests: TestCase {
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "event", query: "after=\(Date.randomValue.mysqlString)")
       .assertStatus(is: .ok)
+  }
+  
+  func testThatGetEventsRouteFailsForEmptyQueryParameters() throws {
+    try drop
+      .clientAuthorizedTestResponse(to: .get, at: "event")
+      .assertStatus(is: .badRequest)
   }
   
   func testThatGetEventsRouteFailsWithWrongQueryParameterKey() throws {

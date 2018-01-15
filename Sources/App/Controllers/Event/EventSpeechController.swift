@@ -4,16 +4,10 @@ final class EventSpeechController {
 
   func index(req: Request) throws -> ResponseRepresentable {
     guard let id = req.parameters["id"]?.int else {
-      return try Response(
-        status: .badRequest,
-        message: "Id parameter is missing."
-      )
+      throw Abort(.badRequest, reason: "Id parameter is missing.")
     }
     guard let event = try Event.find(id) else {
-      return try Response(
-        status: .notFound,
-        message: "Event with given id not found."
-      )
+      throw Abort(.notFound, reason: "Event with given id not found.")
     }
     
     let speeches = try event.speeches()

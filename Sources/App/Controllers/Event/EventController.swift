@@ -10,10 +10,7 @@ final class EventController {
   
   func index(_ req: Request) throws -> ResponseRepresentable {
     guard let query = req.query else {
-      return try Response(
-        status: .badRequest,
-        message: "Query parameters is missing in URL request"
-      )
+      throw Abort(.badRequest, reason: "Query parameters is missing in URL request")
     }
     
     if let date = query["before"]?.date {
@@ -21,10 +18,7 @@ final class EventController {
     } else if let date = query["after"]?.date {
       return try sendEvents(.afterDate(date), req: req)
     } else {
-      return try Response(
-        status: .badRequest,
-        message: "Query parameter is not correct in URL request"
-      )
+      throw Abort(.badRequest, reason: "Query parameter is not correct in URL request")
     }
   }
     
