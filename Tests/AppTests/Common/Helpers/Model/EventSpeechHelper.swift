@@ -20,7 +20,7 @@ class EventSpeechHelper {
   }
   
   static func storeSpeech(
-    forEventId eventId: Identifier,
+    for eventId: Identifier,
     speakersCount: Int = 2,
     contentCount: Int = 2
   ) throws {

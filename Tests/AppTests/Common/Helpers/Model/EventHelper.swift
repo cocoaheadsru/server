@@ -60,6 +60,6 @@ class EventHelper {
   }
 
   static func findEvent(by id: Identifier?) throws -> App.Event? {
-    return try Event.makeQuery().find(id)
+    return try Event.find(id)
   }
 }

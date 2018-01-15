@@ -25,14 +25,14 @@ class EventSpeechControllerTests: TestCase {
       return
     }
     
-    try storeSpeech(forEventId: eventId)
+    try storeSpeech(for: eventId)
 
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexSpeechesFailsForEmptyTable() throws {
-    let res = try fetchSpeeches(parameterId: Int.randomValue)
+    let res = try fetchSpeeches(by: Int.randomValue)
     XCTAssertEqual(res.status, .notFound)
   }
   
@@ -56,9 +56,9 @@ class EventSpeechControllerTests: TestCase {
       return
     }
     
-    try storeSpeech(forEventId: eventId)
+    try storeSpeech(for: eventId)
 
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     
     XCTAssertNotNil(speechJSON)
@@ -94,9 +94,9 @@ class EventSpeechControllerTests: TestCase {
       return
     }
     
-    try storeSpeech(forEventId: eventId)
+    try storeSpeech(for: eventId)
     
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     
     guard
@@ -138,11 +138,9 @@ class EventSpeechControllerTests: TestCase {
     }
     
     let expectedSpeechesCount = Int.random(min: 1, max: 6)
-    for _ in 0..<expectedSpeechesCount {
-      try storeSpeech(forEventId: eventId)
-    }
+    try storeSpeeches(count: expectedSpeechesCount, for: eventId)
     
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     let arrayJSON = res.json?.array
     
     XCTAssertEqual(arrayJSON?.count, expectedSpeechesCount)
@@ -155,9 +153,9 @@ class EventSpeechControllerTests: TestCase {
     }
     
     let expectedSpeakersCount = Int.random(min: 1, max: 6)
-    try storeSpeech(forEventId: eventId, speakersCount: expectedSpeakersCount)
+    try storeSpeech(for: eventId, speakersCount: expectedSpeakersCount)
     
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     let speakersArrayJSON = speechJSON?["speakers"]?.array
     
@@ -171,9 +169,9 @@ class EventSpeechControllerTests: TestCase {
     }
     
     let expectedContentsCount = Int.random(min: 1, max: 6)
-    try storeSpeech(forEventId: eventId, contentCount: expectedContentsCount)
+    try storeSpeech(for: eventId, contentCount: expectedContentsCount)
     
-    let res = try fetchSpeeches(parameterId: id)
+    let res = try fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     let contentsArrayJSON = speechJSON?["contents"]?.array
     
@@ -188,7 +186,7 @@ class EventSpeechControllerTests: TestCase {
       return
     }
     
-    try storeSpeech(forEventId: eventId)
+    try storeSpeech(for: eventId)
     
     try drop
       .clientAuthorizedTestResponse(to: .get, at: "/event/\(id)/speech")
@@ -196,32 +194,38 @@ class EventSpeechControllerTests: TestCase {
   }
 }
 
-extension EventSpeechControllerTests {
+fileprivate extension EventSpeechControllerTests {
 
-  fileprivate func storeEvent() throws -> Identifier? {
+  func storeEvent() throws -> Identifier? {
     return try EventHelper.storeEvent()
   }
   
-  fileprivate func fetchSpeeches(parameterId: Int) throws -> Response {
+  func fetchSpeeches(by id: Int) throws -> Response {
     let req = Request.makeTest(method: .get)
-    try req.parameters.set("id", parameterId)
+    try req.parameters.set("id", id)
     let res = try eventSpeechContoller.index(req: req).makeResponse()
     return res
   }
   
-  fileprivate func storeSpeech(
-    forEventId eventId: Identifier,
+  func storeSpeech(
+    for eventId: Identifier,
     speakersCount: Int = 2,
     contentCount: Int = 2
   ) throws {
     try EventSpeechHelper.storeSpeech(
-      forEventId: eventId,
+      for: eventId,
       speakersCount: speakersCount,
       contentCount: contentCount
     )
   }
   
-  fileprivate func findEvent(by id: Identifier?) throws -> App.Event? {
+  func storeSpeeches(count: Int, for eventId: Identifier) throws {
+    for _ in 0..<count {
+      try storeSpeech(for: eventId)
+    }
+  }
+  
+  func findEvent(by id: Identifier?) throws -> App.Event? {
     return try EventHelper.findEvent(by: id)
   }
 }

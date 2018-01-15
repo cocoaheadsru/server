@@ -61,7 +61,7 @@ class EventControllerTests: TestCase {
     XCTAssertEqual(res.status, .badRequest)
   }
   
-  func testThatIndexEventsFailsForNonIntQueryValue() throws {
+  func testThatIndexEventsFailsForNonDateQueryValue() throws {
     let query = "before=\(EventHelper.invalidQueryValueParameter)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
@@ -113,46 +113,36 @@ class EventControllerTests: TestCase {
   
   func testThatIndexEventsReturnsCorrectNumberOfPastEvents() throws {
     let expectedEventsCount = Int.random(min: 1, max: 20)
-    
-    for _ in 0..<expectedEventsCount {
-      try storePastEvent()
-    }
+    try storePastEvents(count: expectedEventsCount)
     
     let res = try fetchPastEvents()
     let actualEventsCount = res.json?.array?.count
     XCTAssertEqual(actualEventsCount, expectedEventsCount)
   }
   
-  func testThatIndexEventsReturnsCorrectNumberOfFutureEvents() throws {
+  func testThatIndexEventsReturnsCorrectNumberOfComingEvents() throws {
     let expectedEventsCount = Int.random(min: 1, max: 20)
-
-    for _ in 0..<expectedEventsCount {
-      try storeComingEvent()
-    }
+    try storeComingEvents(count: expectedEventsCount)
     
     let res = try fetchComingEvents()
     let actualEventsCount = res.json?.array?.count
     XCTAssertEqual(actualEventsCount, expectedEventsCount)
   }
   
-  func testThatIndexEventsReturnsCorrectNumberOfPastAndFutureEvents() throws {
+  func testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents() throws {
     let expectedPastEventsCount = Int.random(min: 1, max: 20)
-    let expectedFutureEventsCount = Int.random(min: 1, max: 20)
-
-    for _ in 0..<expectedPastEventsCount {
-      try storePastEvent()
-    }
-    for _ in 0..<expectedFutureEventsCount {
-      try storeComingEvent()
-    }
+    let expectedComingEventsCount = Int.random(min: 1, max: 20)
+    
+    try storePastEvents(count: expectedPastEventsCount)
+    try storeComingEvents(count: expectedComingEventsCount)
     
     let resBefore = try fetchPastEvents()
     let resAfter = try fetchComingEvents()
 
     let actualPastEventsCount = resBefore.json?.array?.count
-    let actualFutureEventsCount = resAfter.json?.array?.count
+    let actualComingEventsCount = resAfter.json?.array?.count
     XCTAssertEqual(actualPastEventsCount, expectedPastEventsCount)
-    XCTAssertEqual(actualFutureEventsCount, expectedFutureEventsCount)
+    XCTAssertEqual(actualComingEventsCount, expectedComingEventsCount)
   }
   
   // MARK: Endpoint tests
@@ -185,9 +175,9 @@ class EventControllerTests: TestCase {
   }
 }
 
-extension EventControllerTests {
+fileprivate extension EventControllerTests {
   
-  fileprivate func assertEventHasRequiredFields(json: JSON?) {
+  func assertEventHasRequiredFields(json: JSON?) {
     XCTAssertNotNil(json)
     XCTAssertNotNil(json?["id"])
     XCTAssertNotNil(json?["title"])
@@ -215,7 +205,7 @@ extension EventControllerTests {
     XCTAssertNotNil(cityJSON?["city_name"])
   }
   
-  fileprivate func assertEventHasExpectedFields(json: JSON?, event: App.Event) throws {
+  func assertEventHasExpectedFields(json: JSON?, event: App.Event) throws {
     guard let place = try event.place() else {
       XCTFail()
       return
@@ -249,35 +239,47 @@ extension EventControllerTests {
     XCTAssertEqual(cityJSON?["city_name"]?.string, city.cityName)
   }
   
-  fileprivate func fetchPastEvents() throws -> Response {
+  func fetchPastEvents() throws -> Response {
     let query = "before=\(Date().mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     return res
   }
   
-  fileprivate func fetchComingEvents() throws -> Response {
+  func fetchComingEvents() throws -> Response {
     let query = "after=\(Date().mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
     let res = try eventContoller.index(req).makeResponse()
     return res
   }
   
-  fileprivate func storeEvent() throws -> Identifier? {
+  func storeEvent() throws -> Identifier? {
     return try EventHelper.storeEvent()
   }
   
   @discardableResult
-  fileprivate func storeComingEvent() throws -> Identifier? {
+  func storeComingEvent() throws -> Identifier? {
     return try EventHelper.storeComingEvent()
   }
   
+  func storeComingEvents(count: Int) throws {
+    for _ in 0..<count {
+      try storeComingEvent()
+    }
+  }
+  
   @discardableResult
-  fileprivate func storePastEvent() throws -> Identifier? {
+  func storePastEvent() throws -> Identifier? {
     return try EventHelper.storePastEvent()
   }
   
-  fileprivate func findEvent(by id: Identifier?) throws -> App.Event? {
+  func storePastEvents(count: Int) throws {
+    for _ in 0..<count {
+      try storePastEvent()
+    }
+  }
+  
+  func findEvent(by id: Identifier?) throws -> App.Event? {
     return try EventHelper.findEvent(by: id)
   }
 }

@@ -89,7 +89,7 @@ extension Event {
   }
   
   func speeches() throws -> [Speech] {
-    return try Speech.makeQuery().filter(Speech.Keys.eventId, id).all()
+    return try children().all()
   }
   
   // sourcery: nestedJSONField
