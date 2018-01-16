@@ -16,6 +16,41 @@ extension ClientMiddlewareTests {
    ("testThatResponseFailWithIncoincidentToken", testThatResponseFailWithIncoincidentToken)
   ]
 }
+extension EventControllerTests {
+  static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
+   ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
+   ("testThatPlaceOfEventHasCityRelation", testThatPlaceOfEventHasCityRelation),
+   ("testThatIndexEventsFailsForEmptyQueryParameters", testThatIndexEventsFailsForEmptyQueryParameters),
+   ("testThatIndexEventsReturnsOkStatusForBeforeQueryKey", testThatIndexEventsReturnsOkStatusForBeforeQueryKey),
+   ("testThatIndexEventsReturnsOkStatusForAfterQueryKey", testThatIndexEventsReturnsOkStatusForAfterQueryKey),
+   ("testThatIndexEventsFailsForIncorrectQueryKey", testThatIndexEventsFailsForIncorrectQueryKey),
+   ("testThatIndexEventsFailsForNonDateQueryValue", testThatIndexEventsFailsForNonDateQueryValue),
+   ("testThatIndexEventsReturnsJSONArray", testThatIndexEventsReturnsJSONArray),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields", testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields", testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastEvents", testThatIndexEventsReturnsCorrectNumberOfPastEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfComingEvents", testThatIndexEventsReturnsCorrectNumberOfComingEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents", testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents),
+   ("testThatGetEventsBeforeTimestampRouteReturnsOkStatus", testThatGetEventsBeforeTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsAfterTimestampRouteReturnsOkStatus", testThatGetEventsAfterTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterKey", testThatGetEventsRouteFailsWithWrongQueryParameterKey),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterValue", testThatGetEventsRouteFailsWithWrongQueryParameterValue)
+  ]
+}
+extension EventSpeechControllerTests {
+  static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
+   ("testThatIndexSpeechesReturnsOkStatus", testThatIndexSpeechesReturnsOkStatus),
+   ("testThatIndexSpeechesFailsForEmptyTable", testThatIndexSpeechesFailsForEmptyTable),
+   ("testThatIndexSpeechesFailsWithIncorrectParameter", testThatIndexSpeechesFailsWithIncorrectParameter),
+   ("testThatIndexSpeechesFailsWithNonIntParameterValue", testThatIndexSpeechesFailsWithNonIntParameterValue),
+   ("testThatIndexSpeechesReturnsJSONWithAllRequiredFields", testThatIndexSpeechesReturnsJSONWithAllRequiredFields),
+   ("testThatIndexSpeechesReturnsJSONWithExpectedFields", testThatIndexSpeechesReturnsJSONWithExpectedFields),
+   ("testThatIndexSpeechesReturnsCorrectSpeechesCount", testThatIndexSpeechesReturnsCorrectSpeechesCount),
+   ("testThatIndexSpeechesReturnsCorrectSpeakersCount", testThatIndexSpeechesReturnsCorrectSpeakersCount),
+   ("testThatIndexSpeechesReturnsCorrectContentsCount", testThatIndexSpeechesReturnsCorrectContentsCount),
+   ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -41,6 +76,8 @@ extension RouteTests {
 // swiftlint:disable trailing_comma
 XCTMain([
   testCase(ClientMiddlewareTests.allTests),
+  testCase(EventControllerTests.allTests),
+  testCase(EventSpeechControllerTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])

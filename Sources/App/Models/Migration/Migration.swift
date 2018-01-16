@@ -18,13 +18,13 @@ final class Migration: Model {
   // sourcery:inline:auto:Migration.AutoModelGeneratable
   init(row: Row) throws {
     version = try row.get(Keys.version)
-    applyTime = try row.get(Keys.applyTime)
+    applyTime = try? row.get(Keys.applyTime)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.version, version)
-    try row.set(Keys.applyTime, applyTime)
+    try? row.set(Keys.applyTime, applyTime)
     return row
   }
   // sourcery:end

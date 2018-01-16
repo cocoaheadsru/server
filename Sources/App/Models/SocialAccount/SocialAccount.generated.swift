@@ -34,8 +34,8 @@ extension SocialAccount: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.parent(Social.self, optional: false, unique: false, foreignIdKey: Keys.socialId)
+      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
+      builder.foreignId(for: Social.self, optional: false, unique: false, foreignIdKey: Keys.socialId)
       builder.string(Keys.socialUserId)
     }
   }

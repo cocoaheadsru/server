@@ -24,7 +24,7 @@ extension EventRegField: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
+      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
       builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
       builder.bool(Keys.shouldSave)
       builder.bool(Keys.required)

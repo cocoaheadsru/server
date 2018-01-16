@@ -20,6 +20,9 @@ extension Event {
     static let startDate = "start_date"
     static let endDate = "end_date"
     static let hide = "hide"
+    static let place = "place"
+    static let status = "status"
+    static let speakersPhotos = "speakers_photos"
   }
 }
 
@@ -33,31 +36,14 @@ extension Event: Preparation {
       builder.string(Keys.description)
       builder.string(Keys.photoUrl)
       builder.bool(Keys.isRegistrationOpen)
-      builder.int(Keys.startDate)
-      builder.int(Keys.endDate)
+      builder.date(Keys.startDate)
+      builder.date(Keys.endDate)
       builder.bool(Keys.hide)
     }
   }
 
   static func revert(_ database: Database) throws {
     try database.delete(self)
-  }
-}
-
-extension Event: JSONRepresentable {
-
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Keys.id, id)
-    try json.set(Keys.placeId, placeId)
-    try json.set(Keys.title, title)
-    try json.set(Keys.description, description)
-    try json.set(Keys.photoUrl, photoUrl)
-    try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
-    try json.set(Keys.startDate, startDate)
-    try json.set(Keys.endDate, endDate)
-    try json.set(Keys.hide, hide)
-    return json
   }
 }
 

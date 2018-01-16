@@ -5,18 +5,24 @@ extension Responder {
   public func unauthorizedTestResponse(
     to method: HTTP.Method,
     at path: String,
+    query: String? = nil,
     hostname: String = "0.0.0.0",
     headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
     file: StaticString = #file,
     line: UInt = #line
     ) throws -> HTTP.Response {
-    return try self.testResponse(
-      to: method,
-      at: path,
-      hostname: hostname,
+    let req = Request.makeTest(
+      method: method,
       headers: headers,
-      body: body,
+      body: body?.makeBody() ?? .data([]),
+      hostname: hostname,
+      path: path,
+      query: query
+    )
+    req.headers[.host] = hostname
+    return try self.testResponse(
+      to: req,
       file: file,
       line: line
     )
@@ -25,6 +31,7 @@ extension Responder {
   public func clientAuthorizedTestResponse(
     to method: HTTP.Method,
     at path: String,
+    query: String? = nil,
     hostname: String = "0.0.0.0",
     headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
@@ -41,6 +48,7 @@ extension Responder {
     return try self.unauthorizedTestResponse(
       to: method,
       at: path,
+      query: query,
       hostname: hostname,
       headers: appHeaders,
       body: body,
@@ -52,6 +60,7 @@ extension Responder {
   public func userAuthorizedTestResponse(
     to method: HTTP.Method,
     at path: String,
+    query: String? = nil,
     hostname: String = "0.0.0.0",
     headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
@@ -63,8 +72,8 @@ extension Responder {
     return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,
-      hostname:
-      hostname,
+      query: query,
+      hostname: hostname,
       headers: userHeaders,
       body: body,
       file: file,

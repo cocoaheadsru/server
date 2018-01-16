@@ -44,7 +44,7 @@ extension Content: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
+      builder.foreignId(for: Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
       builder.enum(Keys.type, options: ["video","slide"])
       builder.string(Keys.title)
       builder.string(Keys.description)
@@ -62,7 +62,6 @@ extension Content: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.speechId, speechId)
     try json.set(Keys.type, type.string)
     try json.set(Keys.title, title)
     try json.set(Keys.description, description)

@@ -18,6 +18,7 @@ extension Place {
     static let description = "description"
     static let latitude = "latitude"
     static let longitude = "longitude"
+    static let city = "city"
   }
 }
 
@@ -45,12 +46,12 @@ extension Place: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.cityId, cityId)
     try json.set(Keys.title, title)
     try json.set(Keys.address, address)
     try json.set(Keys.description, description)
     try json.set(Keys.latitude, latitude)
     try json.set(Keys.longitude, longitude)
+    try json.set(Keys.city, city()?.makeJSON())
     return json
   }
 }

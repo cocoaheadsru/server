@@ -8,7 +8,6 @@ final class Client: Model {
   
   let storage = Storage()
 
-  // sourcery: relation = foreignId, relatedModel = User
   var userId: Identifier?
   var pushToken: String
 
@@ -19,13 +18,13 @@ final class Client: Model {
   
   // sourcery:inline:auto:Client.AutoModelGeneratable
   init(row: Row) throws {
-    userId = try row.get(Keys.userId)
+    userId = try? row.get(Keys.userId)
     pushToken = try row.get(Keys.pushToken)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Keys.userId, userId)
+    try? row.set(Keys.userId, userId)
     try row.set(Keys.pushToken, pushToken)
     return row
   }

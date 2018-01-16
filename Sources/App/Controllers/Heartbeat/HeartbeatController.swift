@@ -34,3 +34,5 @@ extension HeartbeatController: ResourceRepresentable  {
     )
   }
 }
+
+extension HeartbeatController: EmptyInitializable { }
