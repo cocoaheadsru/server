@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 #if os(Linux)
@@ -20,11 +20,8 @@ extension EventControllerTests {
   static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
    ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
    ("testThatPlaceOfEventHasCityRelation", testThatPlaceOfEventHasCityRelation),
-   ("testThatIndexEventsFailsForEmptyQueryParameters", testThatIndexEventsFailsForEmptyQueryParameters),
    ("testThatIndexEventsReturnsOkStatusForBeforeQueryKey", testThatIndexEventsReturnsOkStatusForBeforeQueryKey),
    ("testThatIndexEventsReturnsOkStatusForAfterQueryKey", testThatIndexEventsReturnsOkStatusForAfterQueryKey),
-   ("testThatIndexEventsFailsForIncorrectQueryKey", testThatIndexEventsFailsForIncorrectQueryKey),
-   ("testThatIndexEventsFailsForNonDateQueryValue", testThatIndexEventsFailsForNonDateQueryValue),
    ("testThatIndexEventsReturnsJSONArray", testThatIndexEventsReturnsJSONArray),
    ("testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields", testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields),
    ("testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields", testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields),
@@ -33,6 +30,7 @@ extension EventControllerTests {
    ("testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents", testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents),
    ("testThatGetEventsBeforeTimestampRouteReturnsOkStatus", testThatGetEventsBeforeTimestampRouteReturnsOkStatus),
    ("testThatGetEventsAfterTimestampRouteReturnsOkStatus", testThatGetEventsAfterTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsRouteFailsForEmptyQueryParameters", testThatGetEventsRouteFailsForEmptyQueryParameters),
    ("testThatGetEventsRouteFailsWithWrongQueryParameterKey", testThatGetEventsRouteFailsWithWrongQueryParameterKey),
    ("testThatGetEventsRouteFailsWithWrongQueryParameterValue", testThatGetEventsRouteFailsWithWrongQueryParameterValue)
   ]
@@ -40,15 +38,15 @@ extension EventControllerTests {
 extension EventSpeechControllerTests {
   static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
    ("testThatIndexSpeechesReturnsOkStatus", testThatIndexSpeechesReturnsOkStatus),
-   ("testThatIndexSpeechesFailsForEmptyTable", testThatIndexSpeechesFailsForEmptyTable),
    ("testThatIndexSpeechesFailsWithIncorrectParameter", testThatIndexSpeechesFailsWithIncorrectParameter),
-   ("testThatIndexSpeechesFailsWithNonIntParameterValue", testThatIndexSpeechesFailsWithNonIntParameterValue),
    ("testThatIndexSpeechesReturnsJSONWithAllRequiredFields", testThatIndexSpeechesReturnsJSONWithAllRequiredFields),
    ("testThatIndexSpeechesReturnsJSONWithExpectedFields", testThatIndexSpeechesReturnsJSONWithExpectedFields),
    ("testThatIndexSpeechesReturnsCorrectSpeechesCount", testThatIndexSpeechesReturnsCorrectSpeechesCount),
    ("testThatIndexSpeechesReturnsCorrectSpeakersCount", testThatIndexSpeechesReturnsCorrectSpeakersCount),
    ("testThatIndexSpeechesReturnsCorrectContentsCount", testThatIndexSpeechesReturnsCorrectContentsCount),
-   ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus)
+   ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus),
+   ("testThatGetSpeechesRouteFailsForEmptyTable", testThatGetSpeechesRouteFailsForEmptyTable),
+   ("testThatGetSpeechesRouteFailsWithNonIntParameterValue", testThatGetSpeechesRouteFailsWithNonIntParameterValue)
   ]
 }
 extension HeartbeatControllerTests {
