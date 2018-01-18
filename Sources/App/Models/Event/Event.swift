@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable
+// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable, Updateable
 final class Event: Model {
     
   let storage = Storage()
@@ -76,7 +76,7 @@ extension Event {
     return ""
   }
   
-  func registrationForm() throws -> RegForm? {
+  func regForm() throws -> RegForm? {
     return try children().first()
   }
 }

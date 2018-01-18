@@ -18,6 +18,7 @@ extension RegField {
     static let name = "name"
     static let placeholder = "placeholder"
     static let defaultValue = "default_value"
+    static let fieldAnswers = "field_answers"
   }
 }
 
@@ -94,12 +95,12 @@ extension RegField: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.regFormId, regFormId)
     try json.set(Keys.required, required)
     try json.set(Keys.type, type.string)
     try json.set(Keys.name, name)
     try json.set(Keys.placeholder, placeholder)
     try json.set(Keys.defaultValue, defaultValue)
+    try json.set(Keys.fieldAnswers, fieldAnswers().makeJSON())
     return json
   }
 }

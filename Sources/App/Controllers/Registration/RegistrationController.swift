@@ -1,110 +1,60 @@
 import HTTP
 import Vapor
+import Fluent
 
 final class  RegistrationController {
   
   func index(_ req: Request) throws -> ResponseRepresentable {
     
     guard let eventId = req.parameters["id"]?.int else {
-      return try Response(
-        status: .badRequest,
-        message: "ERROR: EventId parameters is missing in URL request"
-      )
+      throw Abort(.badRequest, reason: "EventId parameters is missing in URL request")
     }
     
     guard let regForm = try RegForm.getRegForm(by: eventId) else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: Can't find RegForm by event_id: \(eventId)"
-      )
+      throw Abort(.internalServerError, reason: "Can't find RegForm by event_id: \(eventId)")
     }
-    
-    guard let regFields = try RegField.getEventRegField(by: regForm.id!), regFields.count > 0 else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: Can't find RegFields by event_id: \(eventId) and regform_id: \(regForm.id?.int ?? 0)"
-      )
-    }
-    
-    var result = try regForm.makeJSON()
-    let regFieldsJSON = try regFields.map { try $0.fieldToJSON() }
-    try result.set(RegField.AnswersKeys.regFields, regFieldsJSON)
-    return result
+  
+    return regForm
   }
   
   func store(_ req: Request) throws -> ResponseRepresentable {
     
-    guard let eventId = req.parameters["id"]?.int else {
-      return try Response(
-        status: .badRequest,
-        message: "ERROR: EventId parameters is missing in URL request"
-      )
-    }
-    
-    guard let regFormId = try RegForm.getRegForm(by: eventId)?.id else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: Can't find RegForm by event_id: \(eventId)"
-      )
-    }
-    
-    guard let session = req.headers.userToken else {
-      return try Response(
-        status: .badRequest,
-        message: "ERROR: User token is missing in header"
-      )
-    }
-    
-    guard let userId = try Session.makeQuery().filter(Session.Keys.token, session).first()?.userId else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: Can't find User with session: \(session)"
-      )
-    }
-    
     guard
-      let contentType = req.headers.contentType,
-      contentType.contains(Constants.Header.Value.applicationJson),
-      let bytes = req.body.bytes else  {
-        return try Response(
-          status: .ok,
-          message: "ERROR: Can't get JSON from Body"
-        )
-    }
-    
-    let json = try JSON(bytes: bytes)
-    
-    guard
-      let fields = json[Keys.fields]?.array,
-      let regFormIdFromBody = json[Keys.regFormId]?.int
+      let token = req.headers.userToken,
+      let session = try Session.find(by: token),
+      let userId = session.user?.id
     else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: Can't convert Body to JSON"
-      )
+      throw Abort(.internalServerError, reason: "Can't find User and get user id by token")
     }
     
-    guard regFormId.int! == regFormIdFromBody else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: RegFormId recived by event_id '\(eventId)' don't matched with reg_form_id: \(regFormIdFromBody) from request's body"
-      )
-    }
-    
-    guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: User with session '\(session)' has alredy applied"
-      )
+    guard
+      let fields = req.json?[Keys.fields]?.array,
+      let regFormId = try req.json?.get(Keys.regFormId) as Identifier!
+    else {
+      throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
   
-    let eventReg = EventReg(regFormId: regFormId, userId: userId)
+    guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
+      throw Abort(.internalServerError, reason: "User with token '\(token)' has alredy registered to this event")
+    }
+  
+    let autoapprove = try AutoapproveController()
+    guard
+      let user = try User.find(userId),
+      let event = try RegForm.find(regFormId)?.event,
+      let grandApprove = try autoapprove.grandApprove(to: user, on: event)
+    else {
+      throw Abort(.internalServerError, reason: "Can't check autoapprove status")
+    }
+    
+    let eventReg = EventReg(
+      regFormId: regFormId,
+      userId: userId,
+      status: grandApprove ? EventReg.RegistrationStatus.approved : EventReg.RegistrationStatus.waiting)
     try eventReg.save()
+    
     guard let eventRegId = eventReg.id else {
-      return try Response(
-        status: .ok,
-        message: "ERROR: can't create eventRegId for regFormId: '\(regFormId.int!)' and userId: '\(userId.int!)"
-      )
+      throw Abort(.internalServerError, reason: "Can't create eventRegId")
     }
     
     for field in fields {
@@ -113,17 +63,11 @@ final class  RegistrationController {
       let userAnswers = try field.get(Keys.userAnswers) as [JSON]
       
       guard try checkRequired(fieldId: fieldId, answerCount: userAnswers.count) else {
-        return try Response(
-          status: .ok,
-          message: "ERROR: The field must have at least one answer. Field id is '\(fieldId.int!)'"
-        )
+        throw Abort(.internalServerError, reason: "The field must have at least one answer. Field id is '\(fieldId.int!)'")
       }
       
       guard try checkRadio(fieldId: fieldId, answerCount: userAnswers.count) else {
-        return try Response(
-          status: .ok,
-          message: "ERROR: The answer to field with type radio should be only one. Field id is '\(fieldId.int!)'"
-        )
+        throw Abort(.internalServerError, reason: "The answer to field with type radio should be only one. Field id is '\(fieldId.int!)'")
       }
       
       for userAnswer in userAnswers {
@@ -142,10 +86,11 @@ final class  RegistrationController {
     
     return try Response(
       status: .ok,
-      message: "OK: stored \(fields.count) fields"
+      message: "OK: stored \(fields.count) fields for user_id '\(userId.int ?? -1)'"
     )
     
   }
+
 }
 
 extension RegistrationController: ResourceRepresentable {

@@ -6,21 +6,61 @@ typealias SessionToken = String
 typealias Body = JSON
 typealias UserAnswer = (body: Body, sessionToken: SessionToken)
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
 final class EventRegAnswerHelper {
   
-  static func store() throws -> App.Event? {
-    try UserSessionHelper.store()
-    return try EventRegFieldsHelper.store()
+  static func store() throws -> RegForm? {
+    try! UserSessionHelper.store()
+    guard
+      let regForm = try! RegFormHelper.store()?.random,
+      let regFields = try! RegFieldHelper.store(for: [regForm]),
+      try! RegFieldAnswerHelper.store(for: regFields) != nil
+    else {
+      return nil
+    }
+    return regForm
   }
   
-  private static func  _getUserAnswers(correctRadio: Bool = true, correctRequired: Bool = true, for event: App.Event) throws -> UserAnswer? {
+  static func generateUserAnswers(for regForm: RegForm) throws -> UserAnswer? {
+    return try _generateUserAnswers(for: regForm)
+  }
+  
+  @discardableResult
+  static func generateUserAnswers(with token: SessionToken, for regForm: RegForm) throws -> UserAnswer? {
+    return try _generateUserAnswers(token: token, for: regForm)
+  }
+  
+  static func generateUserWrongRadioAnswers(for regForm: RegForm) throws -> UserAnswer? {
+    return try _generateUserAnswers(correctRadio: false, for: regForm)
+  }
+  
+  static func generateUserWrongRequiredAnswers(for regForm: RegForm) throws -> UserAnswer? {
+    return try _generateUserAnswers(correctRequired: false, for: regForm)
+  }
+  
+  private static func  _generateUserAnswers(
+    correctRadio: Bool = true,
+    correctRequired: Bool = true,
+    token: SessionToken? = nil,
+    for regForm: RegForm) throws -> UserAnswer? {
     
-    let user = try User.all().randomValue
-    guard
-      let sessionToken = try Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token,
-      let regForm = try event.registrationForm(),
-      let regFormId = regForm.id?.int
+    func selectUser(_ token: SessionToken?) throws -> User {
+      guard
+        let token = token,
+        let user = try Session.find(by: token)?.user
       else {
+        return try User.all().randomValue
+      }
+      return user
+    }
+    
+    let user = try selectUser(token)
+    
+    guard
+      let sessionToken = token == nil ? try Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token : token,
+      let regFormId = regForm.id?.int
+    else {
         return nil
     }
     let regFields = try regForm.eventRegFields()
@@ -49,7 +89,7 @@ final class EventRegAnswerHelper {
       }
       
       for regFieldAnswer in  regFieldAnswers {
-      
+        
         var userAnswer = JSON()
         try userAnswer.set("id", try regFieldAnswer.get("id") as Int)
         try userAnswer.set("value", String.randomValue)
@@ -70,11 +110,11 @@ final class EventRegAnswerHelper {
   
   // MARK: - get stored answer to compare with expected result
   
-  static func getStoredAnswers(by sessionToken: SessionToken, eventId: Identifier) throws -> Body? {
+  static func getStoredAnswers(by sessionToken: SessionToken, regForm: RegForm) throws -> Body? {
     
     guard
-      let userId = try Session.makeQuery().filter(Session.Keys.token, sessionToken).first()?.userId,
-      let regFormId =  try RegForm.getRegForm(by: eventId.int!)?.id!,
+      let userId = try Session.find(by: sessionToken)?.user?.id,
+      let regFormId =  regForm.id,
       let regId = try EventReg
         .makeQuery()
         .filter(EventReg.Keys.regFormId, regFormId)
@@ -133,18 +173,6 @@ final class EventRegAnswerHelper {
     
     try body.set("fields", fields)
     return body
-  }
-  
-  static func getUserAnswers(for event: App.Event) throws -> UserAnswer? {
-    return try _getUserAnswers(for: event)
-  }
-  
-  static func getUserWrongRadioAnswers(for event: App.Event) throws -> UserAnswer? {
-    return try _getUserAnswers(correctRadio: false, for: event)
-  }
-  
-  static func getUserWrongRequiredAnswers(for event: App.Event) throws -> UserAnswer? {
-    return try _getUserAnswers(correctRequired: false, for: event)
   }
   
 }

@@ -22,6 +22,7 @@ extension Config {
   private func setupPreparations() throws {
   
     let entities: [Preparation.Type] = [
+      Autoapprove.self,
       Heartbeat.self,
       User.self,
       Client.self,
@@ -50,6 +51,7 @@ extension Config {
       .forEach {
         preparations.append($0)
       }
+    
   }
   
   // Configure Middleware

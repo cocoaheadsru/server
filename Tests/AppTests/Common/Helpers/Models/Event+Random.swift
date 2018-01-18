@@ -3,15 +3,23 @@ import Vapor
 
 extension App.Event {
   
-  convenience init(_ randomInit: Bool = true, placeId: Identifier) {
+  convenience init(_ randomInit: Bool = true, endDate: Int? = nil, placeId: Identifier) {
+    
     if randomInit {
+      
+      var date = Int(Date().timeIntervalSince1970)
+      
+      if endDate != nil {
+        date = endDate!
+      }
+    
       self.init(
         title: String.randomValue,
         description: String.randomValue,
         photoUrl: String.randomValue,
         placeId: placeId,
-        startDate: Int.randomValue,
-        endDate: Int.randomValue
+        startDate: date,
+        endDate: date
       )
     } else {
       self.init(

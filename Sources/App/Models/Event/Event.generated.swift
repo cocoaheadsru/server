@@ -26,6 +26,22 @@ extension Event {
 
 extension Event: ResponseRepresentable { }
 
+extension Event: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<Event>] {
+    return [
+      UpdateableKey(Keys.placeId, Identifier.self) { $0.placeId = $1 },
+      UpdateableKey(Keys.title, String.self) { $0.title = $1 },
+      UpdateableKey(Keys.description, String.self) { $0.description = $1 },
+      UpdateableKey(Keys.photoUrl, String.self) { $0.photoUrl = $1 },
+      UpdateableKey(Keys.isRegistrationOpen, Bool.self) { $0.isRegistrationOpen = $1 },
+      UpdateableKey(Keys.startDate, Int.self) { $0.startDate = $1 },
+      UpdateableKey(Keys.endDate, Int.self) { $0.endDate = $1 },
+      UpdateableKey(Keys.hide, Bool.self) { $0.hide = $1 }
+    ]
+  }
+}
+
 extension Event: Preparation {
 
   static func prepare(_ database: Database) throws {

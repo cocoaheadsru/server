@@ -7,7 +7,7 @@ final class RegForm: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = Event
+  // sourcery: relation = parent, relatedModel = Event, ignoreInJSON
   var eventId: Identifier
   var formName: String
   var description: String
@@ -38,9 +38,18 @@ final class RegForm: Model {
 }
 
 extension RegForm {
+  // TODO: - change to nestedJSONRepresentableField
+  // sourcery: nestedJSONField
+  func regFields() throws -> [RegField] {
+    return try children().all()
+  }
   
   func eventRegFields() throws -> [RegField] {
     return try RegField.makeQuery().filter(RegField.Keys.regFormId, id).all()
+  }
+  
+  var event: Event? {
+    return try? parent(id: eventId).get()!
   }
   
   static func getRegForm(by eventId: Int) throws -> RegForm? {

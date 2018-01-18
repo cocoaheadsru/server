@@ -6,27 +6,30 @@ import Fluent
 @testable import Vapor
 @testable import App
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
 class RegistrationControllerTests: TestCase {
-  ///swiftlint:disable force_try
-  var drop: Droplet! //= try! Droplet.testable()
-  ///swiftlint:enable force_try
+ 
+  var drop: Droplet!
   
   override func setUp() {
     super.setUp()
     do {
-      try clean()
+      drop = try Droplet.testable()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
     }
   }
   
+  // MARK: - Registration Form building
+  
   func testThatRegFormGetNotFoundForWrongEventId() throws {
     let wrongEventId = -1
     try drop
       .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
-      .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: Can't find RegForm by event_id:")
+      .assertStatus(is: .internalServerError)
+      .assertJSON("reason", contains: "Can't find RegForm by event_id:")
   }
   
   func testThatRegFormGetBadReguestForBadEventId() throws {
@@ -34,123 +37,226 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
       .assertStatus(is: .badRequest)
-      .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
-  }
-  
-  func testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable() throws {
-    //arrange
-    guard let eventId = try RegFormHelper.store()?.id else {
-      XCTFail("Can't store RegFrom and get event_id")
-      return
-    }
-    
-    try drop
-      //act
-      .userAuthorizedTestResponse(to: .get, at: "event/\(eventId.int ?? 0)/form")
-      //assert
-      .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: Can't find RegFields by event_id:")
-  }
-  
-  func testThatRegFormAndRegFieldsFetchedByEventId() throws {
-    //arrange
-    guard let eventId = try EventRegFieldsHelper.store()?.id else {
-      XCTFail("Can't store RegFiedld and get event_id")
-      return
-    }
-    
-    guard let eventRegFields = try EventRegFieldsHelper.fetchRegFieldsByEventId(eventId) else {
-        XCTFail("Can't fetch RegField by event_id: \(eventId)")
-        return
-    }
-    
-    guard let regForm = try RegFormHelper.fetchRegFormByEventId(eventId) else {
-      XCTFail("Can't fetch RegForm by event_id: \(eventId)")
-      return
-    }
-
-    let expected = try eventRegFields.makeResponse().json!
-    let exp: JSON = try expected.get("reg_fields")
-   
-    try drop
-      //act
-      .userAuthorizedTestResponse(to: .get, at: "event/\(eventId.int ?? 0)/form")
-      //assert
-      .assertStatus(is: .ok)
-      .assertJSON("form_name", equals: regForm.formName)
-      .assertJSON("reg_fields", equals: exp )
+      .assertJSON("reason", contains: "EventId parameters is missing in URL request")
   }
 
-  func testThatUserRegFormAnswersGetNotFoundForWrongEventId() throws {
-    let wrongEventId = -1
-    try drop
-      .userAuthorizedTestResponse(to: .post, at: "event/\(wrongEventId)/register")
-      .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: Can't find RegForm by event_id")
+  func testThatRegFormHasExpectedFields() throws {
+    guard let regForm = try! RegFormHelper.store()?.first else {
+      XCTFail("Can't get RegForms")
+      return
+    }
+    XCTAssertTrue(try RegFormHelper.assertRegFromHasExpectedFields(regForm.makeJSON()))
   }
   
-  func testThatUserRegFormAnswersGetBadReguestForBadEventId() throws {
-    let wrongEventId = "1,3"
-    try drop
-      .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/register")
-      .assertStatus(is: .badRequest)
-      .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
+  func testThatRegFieldLinkedWithRegFormAndHasExpectedFields() throws {
+    guard let regForms = try! RegFormHelper.store() else {
+      XCTFail("Can't get RegForms")
+      return
+    }
+    
+    guard let regField = try! RegFieldHelper.store(for: regForms)?.first else {
+      XCTFail("Can't get RegField")
+      return
+    }
+    
+    XCTAssertTrue(try RegFieldHelper.assertRegFieldHasExpectedFields(regField.makeJSON()))
   }
+  
+  func testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields() throws {
+    guard let regForms = try! RegFormHelper.store() else {
+      XCTFail("Can't get RegForms")
+      return
+    }
+    
+    guard let regFields = try! RegFieldHelper.store(for: regForms) else {
+      XCTFail("Can't get RegFields")
+      return
+    }
+    
+    guard let regFiedAnswer = try! RegFieldAnswerHelper.store(for: regFields)?.first else {
+      XCTFail("Can't get RegFiedAnswer")
+      return
+    }
+    
+    XCTAssertTrue(try RegFieldAnswerHelper.assertRegFieldAnswerHasExpectedFields(regFiedAnswer.makeJSON()))
+  }
+  
+  func testThatRegFormFetchedByEventId() throws {
+    //arrange
+    
+    guard let regForm = try! RegFormHelper.store()?.random else {
+      XCTFail("Can't get RegForms")
+      return
+    }
+  
+    guard let regFields = try! RegFieldHelper.store(for: [regForm]) else {
+      XCTFail("Can't get RegFields")
+      return
+    }
+    
+    guard try! RegFieldAnswerHelper.store(for: regFields) != nil else {
+      XCTFail("Can't get RegFiedAnswer")
+      return
+    }
+    
+    guard let eventId = regForm.eventId.int else {
+      XCTFail("Can't get eventId for RegForm with id \(regForm.id?.int ?? -1)")
+      return
+    }
+    
+    let expected = try regForm.makeResponse().json!
+
+    try! drop
+      //act
+      .userAuthorizedTestResponse(to: .get, at: "event/\(eventId)/form")
+      //assert
+      .assertStatus(is: .ok)
+      .assertJSON("", equals: expected)
+  }
+
+  // MARK: - User's registaion answer handle
   
   func testThatUserRegFormAnswersStoredForEvent() throws {
-  
-    guard
-      let event = try EventRegAnswerHelper.store(),
-      let eventId = event.id
-      else {
-      XCTFail("Can't store RegFiedld and get event_id")
-      return
-    }
+
+    let regForm = try! prepareRegFieldAnswers()
     
-    guard let userAnswers = try EventRegAnswerHelper.getUserAnswers(for: event) else {
+    guard let userAnswers = try EventRegAnswerHelper.generateUserAnswers(for: regForm) else {
       XCTFail("Can't get user answer")
       return
     }
-    
+
     let headers: [HeaderKey: String] = [
       TestConstants.Header.Key.userToken: userAnswers.sessionToken,
       TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
     ]
-    
+
     try drop
       .userAuthorizedTestResponse(
         to: .post,
-        at: "event/\(eventId.int!)/register",
+        at: "event/register",
         headers: headers,
         body: userAnswers.body)
       .assertStatus(is: .ok)
       .assertJSON("message", contains: "OK: stored")
-    
-    guard let storedAnswers = try EventRegAnswerHelper.getStoredAnswers(by: userAnswers.sessionToken, eventId: eventId) else {
-      XCTFail("Can't get stored user answer")
+
+    guard let storedAnswers = try EventRegAnswerHelper.getStoredAnswers(by: userAnswers.sessionToken, regForm: regForm) else {
+      XCTFail("Can't get stored user answers")
       return
     }
-    
+
     print("User session-token:\(userAnswers.sessionToken)")
     print("*** EXPECTED JSON ***")
     print(try userAnswers.body.serialize(prettyPrint: true).makeString())
     print("*** STORED JSON ***")
     print(try storedAnswers.serialize(prettyPrint: true).makeString())
-  
+
     XCTAssertEqual(userAnswers.body, storedAnswers)
   }
 
   func testThatUserRegFormAnswersStoredForEventOnlyOnce() throws {
-    guard
-      let event = try EventRegAnswerHelper.store(),
-      let eventId = event.id
-      else {
-        XCTFail("Can't store RegFiedld and get event_id")
-        return
+    
+    let regForm = try! prepareRegFieldAnswers()
+
+    guard let userAnswers = try! EventRegAnswerHelper.generateUserAnswers(for: regForm) else {
+      XCTFail("Can't get user answers")
+      return
+    }
+
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .ok)
+      .assertJSON("message", contains: "OK: stored")
+
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .internalServerError)
+      .assertJSON("reason", contains: "User with token '\(userAnswers.sessionToken)' has alredy registered to this event")
+
+    print("User session-token:\(userAnswers.sessionToken)")
+    print("*** EXPECTED JSON ***")
+    print(try userAnswers.body.serialize(prettyPrint: true).makeString())
+  }
+
+  func testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer() throws {
+    let regForm = try! prepareRegFieldAnswers()
+
+    guard let userAnswers = try EventRegAnswerHelper.generateUserWrongRadioAnswers(for: regForm) else {
+      XCTFail("Can't get user with wrong radio answers")
+      return
+    }
+
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .internalServerError)
+      .assertJSON("reason", contains: "The answer to field with type radio should be only one")
+  }
+
+  func testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer() throws {
+   
+    let regForm = try! prepareRegFieldAnswers()
+
+    guard let userAnswers = try! EventRegAnswerHelper.generateUserWrongRequiredAnswers(for: regForm) else {
+      XCTFail("Can't get user with the empty required fields answers")
+      return
+    }
+
+    let headers: [HeaderKey: String] = [
+      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
+      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
+    ]
+
+    try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        headers: headers,
+        body: userAnswers.body)
+      .assertStatus(is: .internalServerError)
+      .assertJSON("reason", contains: "The field must have at least one answer")
+
+  }
+  
+  // MARK: - Autoapprove
+  
+  static let approveRules: ApproveRules = (visits: 2, notAppears: 2, appearMonths: 6)
+  
+  func testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod() throws {
+    
+    try! EventRegHelper.store()
+    guard let userToken = try! EventRegHelper.generateUserForGrantApprove(RegistrationControllerTests.approveRules) else {
+      XCTFail("Can't generateUserForGrantAutoapprove")
+      return
+    }
+
+    guard let regForm = try! EventRegHelper.generateNewEventAndRegForm() else {
+      XCTFail("Can't get regForm for new event")
+      return
     }
     
-    guard let userAnswers = try EventRegAnswerHelper.getUserAnswers(for: event) else {
-      XCTFail("Can't get user answer")
+    guard let userAnswers = try! EventRegAnswerHelper.generateUserAnswers(with: userToken, for: regForm) else {
+      XCTFail("Can't get user with the empty required fields answers")
       return
     }
     
@@ -162,37 +268,31 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(
         to: .post,
-        at: "event/\(eventId.int!)/register",
+        at: "event/register",
         headers: headers,
         body: userAnswers.body)
       .assertStatus(is: .ok)
       .assertJSON("message", contains: "OK: stored")
     
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/\(eventId.int!)/register",
-        headers: headers,
-        body: userAnswers.body)
-      .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: User with session '\(userAnswers.sessionToken)' has alredy applied")
+    XCTAssertTrue(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
     
-    print("User session-token:\(userAnswers.sessionToken)")
-    print("*** EXPECTED JSON ***")
-    print(try userAnswers.body.serialize(prettyPrint: true).makeString())
   }
   
-  func testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer() throws {
-    guard
-      let event = try EventRegAnswerHelper.store(),
-      let eventId = event.id
-      else {
-        XCTFail("Can't store RegFiedld and get event_id")
-        return
+  func testThatUserDontGetApproveIfNotHasEnoughVisits() throws {
+    
+    try! EventRegHelper.store()
+    guard let userToken = try! EventRegHelper.generateUserWithNotEnoughVisits(RegistrationControllerTests.approveRules) else {
+      XCTFail("Can't generateUserForGrantAutoapprove")
+      return
     }
     
-    guard let userAnswers = try EventRegAnswerHelper.getUserWrongRadioAnswers(for: event) else {
-      XCTFail("Can't get user answer")
+    guard let regForm = try! EventRegHelper.generateNewEventAndRegForm() else {
+      XCTFail("Can't get regForm for new event")
+      return
+    }
+    
+    guard let userAnswers = try! EventRegAnswerHelper.generateUserAnswers(with: userToken, for: regForm) else {
+      XCTFail("Can't get user with the empty required fields answers")
       return
     }
     
@@ -204,25 +304,31 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(
         to: .post,
-        at: "event/\(eventId.int!)/register",
+        at: "event/register",
         headers: headers,
         body: userAnswers.body)
       .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: The answer to field with type radio should be only one")
+      .assertJSON("message", contains: "OK: stored")
+    
+    XCTAssertFalse(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
     
   }
-  
-  func testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer() throws {
-    guard
-      let event = try EventRegAnswerHelper.store(),
-      let eventId = event.id
-      else {
-        XCTFail("Can't store RegFiedld and get event_id")
-        return
+
+  func testThatUserDontGetApproveIfHasManyOmissions() throws {
+    
+    try! EventRegHelper.store()
+    guard let userToken = try! EventRegHelper.generateUserWithManyOmissions(RegistrationControllerTests.approveRules) else {
+      XCTFail("Can't generateUserForGrantAutoapprove")
+      return
     }
     
-    guard let userAnswers = try EventRegAnswerHelper.getUserWrongRequiredAnswers(for: event) else {
-      XCTFail("Can't get user answer")
+    guard let regForm = try! EventRegHelper.generateNewEventAndRegForm() else {
+      XCTFail("Can't get regForm for new event")
+      return
+    }
+    
+    guard let userAnswers = try! EventRegAnswerHelper.generateUserAnswers(with: userToken, for: regForm) else {
+      XCTFail("Can't get user with the empty required fields answers")
       return
     }
     
@@ -234,18 +340,45 @@ class RegistrationControllerTests: TestCase {
     try drop
       .userAuthorizedTestResponse(
         to: .post,
-        at: "event/\(eventId.int!)/register",
+        at: "event/register",
         headers: headers,
         body: userAnswers.body)
       .assertStatus(is: .ok)
-      .assertJSON("message", contains: "ERROR: The field must have at least one answer")
+      .assertJSON("message", contains: "OK: stored")
+    
+    XCTAssertFalse(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
     
   }
+  
+// MARK: - Canceled registration
+//  func testThatCanceleRegistrationGetNotFoundForWrongEventId() throws {
+//    let wrongEventId = -1
+//    try drop
+//      .userAuthorizedTestResponse(to: .delete, at: "event/\(wrongEventId)/register")
+//      .assertStatus(is: .internalServerError)
+//      .assertJSON("message", contains: "ERROR: Can't find Registraion by event_id:")
+//  }
+//
+//  func testThatCanceleRegistrationBadReguestForBadEventId() throws {
+//    let wrongEventId = "1,3"
+//    try drop
+//      .userAuthorizedTestResponse(to: .delete, at: "event/\(wrongEventId)/register")
+//      .assertStatus(is: .badRequest)
+//      .assertJSON("message", contains: "ERROR: EventId parameters is missing in URL request")
+//  }
   
 }
 
 extension RegistrationControllerTests {
-  func clean() throws {
-    drop = try Droplet.testable()
+  
+  func prepareRegFieldAnswers() throws -> RegForm {
+    guard
+      let regForm = try EventRegAnswerHelper.store()
+      else {
+        XCTFail("Can't prepare stage to RegFormAnswer")
+        fatalError()
+    }
+    return regForm
   }
+
 }

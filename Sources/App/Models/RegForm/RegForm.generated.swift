@@ -15,6 +15,7 @@ extension RegForm {
     static let eventId = "event_id"
     static let formName = "form_name"
     static let description = "description"
+    static let regFields = "reg_fields"
   }
 }
 
@@ -41,9 +42,9 @@ extension RegForm: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.eventId, eventId)
     try json.set(Keys.formName, formName)
     try json.set(Keys.description, description)
+    try json.set(Keys.regFields, regFields().makeJSON())
     return json
   }
 }

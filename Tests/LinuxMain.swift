@@ -32,8 +32,15 @@ extension RegistrationControllerTests {
   static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
    ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
    ("testThatRegFormGetBadReguestForBadEventId", testThatRegFormGetBadReguestForBadEventId),
-   ("testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable", testThatRegFieldsGetNotFoundMessageForEmptyRegFieldTable),
-   ("testThatRegFormAndRegFieldsFetchedByEventId", testThatRegFormAndRegFieldsFetchedByEventId)
+   ("testThatRegFormHasExpectedFields", testThatRegFormHasExpectedFields),
+   ("testThatRegFieldLinkedWithRegFormAndHasExpectedFields", testThatRegFieldLinkedWithRegFormAndHasExpectedFields),
+   ("testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields", testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields),
+   ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId),
+   ("testThatUserRegFormAnswersStoredForEvent", testThatUserRegFormAnswersStoredForEvent),
+   ("testThatUserRegFormAnswersStoredForEventOnlyOnce", testThatUserRegFormAnswersStoredForEventOnlyOnce),
+   ("testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer", testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer),
+   ("testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer", testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer),
+   ("testThatUserHasAutoapproveIfHave2VisitAndDidNotAppearLessThan2In6Months", testThatUserHasAutoapproveIfHave2VisitAndDidNotAppearLessThan2In6Months)
   ]
 }
 extension RouteTests {

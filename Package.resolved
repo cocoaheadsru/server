@@ -200,6 +200,24 @@
         }
       },
       {
+        "package": "Validation",
+        "repositoryURL": "https://github.com/vapor/validation.git",
+        "state": {
+          "branch": null,
+          "revision": "e5a7e54ef7a611b168806191df5d6b6782fd43ed",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "ValidationProvider",
+        "repositoryURL": "https://github.com/vapor/validation-provider.git",
+        "state": {
+          "branch": null,
+          "revision": "26e51591a40bb11383c3a0f8039c4b8c0cbe1a1f",
+          "version": "1.2.0"
+        }
+      },
+      {
         "package": "Vapor",
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {

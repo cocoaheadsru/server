@@ -7,24 +7,24 @@ final class RegFieldAnswer: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = RegField
-  var fieldId: Identifier
+  // sourcery: relation = parent, relatedModel = RegField, ignoreInJSON
+  var regFieldId: Identifier
   var value: String
   
-  init(value: String, fieldId: Identifier) {
+  init(value: String, regFieldId: Identifier) {
     self.value = value
-    self.fieldId = fieldId
+    self.regFieldId = regFieldId
   }
   
   // sourcery:inline:auto:RegFieldAnswer.AutoModelGeneratable
   init(row: Row) throws {
-    fieldId = try row.get(Keys.fieldId)
+    regFieldId = try row.get(Keys.regFieldId)
     value = try row.get(Keys.value)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Keys.fieldId, fieldId)
+    try row.set(Keys.regFieldId, regFieldId)
     try row.set(Keys.value, value)
     return row
   }
@@ -32,14 +32,10 @@ final class RegFieldAnswer: Model {
 }
 
 extension RegFieldAnswer {
-  
-  func field() throws -> RegField? {
-    return try children().first()
-  }
-  
+
   static func fieldAnswers(by fieldId: Identifier) throws -> JSON {
     return try RegFieldAnswer.makeQuery()
-      .filter(RegFieldAnswer.Keys.fieldId, fieldId)
+      .filter(RegFieldAnswer.Keys.regFieldId, fieldId)
       .all()
       .makeJSON()
   }

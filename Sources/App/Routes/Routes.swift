@@ -14,6 +14,6 @@ extension Droplet {
     
     try resource("heartbeat", HeartbeatController.self)
     try resource("event/:id/form", RegistrationController.self)
-    try resource("event/:id/register", RegistrationController.self)
+    try resource("event/register", RegistrationController.self)
   }
 }

@@ -7,8 +7,8 @@ final class RegField: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = RegForm
-  var regFormId: Identifier
+  // sourcery: relation = parent, relatedModel = RegForm, ignoreInJSON
+  var regFormId: Identifier 
   var required: Bool
   // sourcery: enum,string,radio,checkbox
   var type: FieldType
@@ -50,17 +50,20 @@ final class RegField: Model {
     try row.set(Keys.defaultValue, defaultValue)
     return row
   }
+  
 // sourcery:end
 }
 
 extension RegField {
   
+ // sourcery: nestedJSONField
+ func fieldAnswers() throws -> [RegFieldAnswer] {
+  //print("\nRegField.foreignIdKey: \(RegField.foreignIdKey)\n")
+  return try children().all()
+ }
+  
   var rules: Siblings<RegField, Rule, Pivot<RegField, Rule>> {
     return siblings()
-  }
-  
-  static func getEventRegField(by regFormId: Identifier) throws -> [RegField]? {
-    return try RegField.makeQuery().filter(RegField.Keys.regFormId, regFormId).all()
   }
   
   func regForm() throws -> RegForm? {
@@ -81,7 +84,7 @@ extension RegField {
       try json.set(Keys.defaultValue, defaultValue)
       
       var fieldAnswers = try RegFieldAnswer.fieldAnswers(by: id!)
-      fieldAnswers.removeKey(RegFieldAnswer.Keys.fieldId)
+      fieldAnswers.removeKey(RegFieldAnswer.Keys.regFieldId)
       
       try json.set(AnswersKeys.fieldAnswers, fieldAnswers)
       return json
