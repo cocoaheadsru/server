@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Vapor
@@ -22,9 +22,9 @@ extension EventReg {
 
   enum RegistrationStatus {
     case approved
-    case notAppeared
-    case rejected
     case waiting
+    case rejected
+    case notAppeared
     case canceled
 
     var string: String {
@@ -34,9 +34,9 @@ extension EventReg {
     init(_ string: String) {
       switch string {
       case "approved": self = .approved
-      case "notAppeared": self = .notAppeared
-      case "rejected": self = .rejected
       case "waiting": self = .waiting
+      case "rejected": self = .rejected
+      case "notAppeared": self = .notAppeared
       default: self = .canceled
       }
     }
@@ -61,9 +61,9 @@ extension EventReg: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
-      builder.parent(User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.enum(Keys.status, options: ["approved", "notAppeared", "rejected", "waiting", "canceled"])
+      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId, foreignKeyName: self.entity + "_" + Keys.regFormId)
+      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId, foreignKeyName: self.entity + "_" + Keys.userId)
+      builder.enum(Keys.status, options: ["approved", "waiting", "rejected", "notAppeared", "canceled"])
     }
   }
 

@@ -2,7 +2,9 @@ import Vapor
 import Foundation
 @testable import App
 
-final class EventHelper {
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
+final class ApproveHelper {
   
   @discardableResult
   static func store(places: [Place] = [], cities: [City] = []) throws -> [App.Event]? {
@@ -43,11 +45,8 @@ final class EventHelper {
           return nil
       }
       
-      let date1Int = Int(date1.timeIntervalSince1970)
-      let date2Int = Int(date2.timeIntervalSince1970)
-      
-      let event1 = App.Event.init(endDate: date1Int, placeId: placeId.randomValue)
-      let event2 = App.Event.init(endDate: date2Int, placeId: placeId.randomValue)
+      let event1 = App.Event.init(endDate: date1, placeId: placeId.randomValue)
+      let event2 = App.Event.init(endDate: date2, placeId: placeId.randomValue)
       
       try! event1.save()
       try! event2.save()
@@ -56,10 +55,7 @@ final class EventHelper {
       events.append(event2)
     }
     
-    
-    
     return events
   }
   
 }
-

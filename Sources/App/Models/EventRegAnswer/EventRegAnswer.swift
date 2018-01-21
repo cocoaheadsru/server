@@ -6,38 +6,34 @@ import FluentProvider
 final class EventRegAnswer: Model {
     
   let storage = Storage()
-  
-  // sourcery: relation = parent, relatedModel = EventReg
-  var regId: Identifier
-  // sourcery: relatedModel = RegField
-  var fieldId: Identifier
-  // sourcery: relatedModel = RegFieldAnswer
-  var answerId: Identifier
+  var eventRegId: Identifier
+  var regFieldId: Identifier
+  var regFieldAnswerId: Identifier
   var answerValue: String
   
-  init(regId: Identifier,
-       fieldId: Identifier,
-       answerId: Identifier,
+  init(eventRegId: Identifier,
+       regFieldId: Identifier,
+       regFieldAnswerId: Identifier,
        answerValue: String) {
-    self.regId = regId
-    self.fieldId = fieldId
-    self.answerId = answerId
+    self.eventRegId = eventRegId
+    self.regFieldId = regFieldId
+    self.regFieldAnswerId = regFieldAnswerId
     self.answerValue = answerValue
   }
   
   // sourcery:inline:auto:EventRegAnswer.AutoModelGeneratable
   init(row: Row) throws {
-    regId = try row.get(Keys.regId)
-    fieldId = try row.get(Keys.fieldId)
-    answerId = try row.get(Keys.answerId)
+    eventRegId = try row.get(Keys.eventRegId)
+    regFieldId = try row.get(Keys.regFieldId)
+    regFieldAnswerId = try row.get(Keys.regFieldAnswerId)
     answerValue = try row.get(Keys.answerValue)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Keys.regId, regId)
-    try row.set(Keys.fieldId, fieldId)
-    try row.set(Keys.answerId, answerId)
+    try row.set(Keys.eventRegId, eventRegId)
+    try row.set(Keys.regFieldId, regFieldId)
+    try row.set(Keys.regFieldAnswerId, regFieldAnswerId)
     try row.set(Keys.answerValue, answerValue)
     return row
   }
@@ -47,7 +43,7 @@ final class EventRegAnswer: Model {
 extension EventRegAnswer {
   
   func eventRegistration() throws -> EventReg? {
-    return try parent(id: regId).get()
+    return try parent(id: eventRegId).get()
   }
   
   func answer() throws -> RegFieldAnswer? {

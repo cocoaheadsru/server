@@ -7,7 +7,6 @@ final class GiveSpeech: Model {
   
   let storage = Storage()
 
-  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   var title: String
   var description: String

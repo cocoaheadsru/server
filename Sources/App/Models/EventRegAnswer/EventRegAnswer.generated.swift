@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Vapor
@@ -12,9 +12,9 @@ extension EventRegAnswer {
 
   struct Keys {
     static let id = "id"
-    static let regId = "reg_id"
-    static let fieldId = "field_id"
-    static let answerId = "answer_id"
+    static let eventRegId = "event_reg_id"
+    static let regFieldId = "reg_field_id"
+    static let regFieldAnswerId = "reg_field_answer_id"
     static let answerValue = "answer_value"
   }
 }
@@ -23,9 +23,9 @@ extension EventRegAnswer: JSONInitializable {
 
   convenience init(json: JSON) throws {
     self.init(
-      regId: try json.get(Keys.regId),
-      fieldId: try json.get(Keys.fieldId),
-      answerId: try json.get(Keys.answerId),
+      eventRegId: try json.get(Keys.eventRegId),
+      regFieldId: try json.get(Keys.regFieldId),
+      regFieldAnswerId: try json.get(Keys.regFieldAnswerId),
       answerValue: try json.get(Keys.answerValue)
     )
   }
@@ -36,9 +36,9 @@ extension EventRegAnswer: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(EventReg.self, optional: false, unique: false, foreignIdKey: Keys.regId)
-      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
-      builder.foreignId(for: RegFieldAnswer.self, optional: false, unique: false, foreignIdKey: Keys.answerId)
+      builder.foreignId(for: EventReg.self, optional: false, unique: false, foreignIdKey: Keys.eventRegId, foreignKeyName: self.entity + "_" + Keys.eventRegId)
+      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.regFieldId, foreignKeyName: self.entity + "_" + Keys.regFieldId)
+      builder.foreignId(for: RegFieldAnswer.self, optional: false, unique: false, foreignIdKey: Keys.regFieldAnswerId, foreignKeyName: self.entity + "_" + Keys.regFieldAnswerId)
       builder.string(Keys.answerValue)
     }
   }
@@ -53,9 +53,9 @@ extension EventRegAnswer: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.regId, regId)
-    try json.set(Keys.fieldId, fieldId)
-    try json.set(Keys.answerId, answerId)
+    try json.set(Keys.eventRegId, eventRegId)
+    try json.set(Keys.regFieldId, regFieldId)
+    try json.set(Keys.regFieldAnswerId, regFieldAnswerId)
     try json.set(Keys.answerValue, answerValue)
     return json
   }

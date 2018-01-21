@@ -3,7 +3,7 @@ import FluentProvider
 
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation, fromJSON, Updateable
-final class Autoapprove: Model {
+final class Approve: Model {
   
   let storage = Storage()
   
@@ -17,8 +17,7 @@ final class Autoapprove: Model {
     self.appearMonths = appearMonths
   }
   
-
-// sourcery:inline:auto:Autoapprove.AutoModelGeneratable
+// sourcery:inline:auto:Approve.AutoModelGeneratable
   init(row: Row) throws {
     visits = try row.get(Keys.visits)
     notAppears = try row.get(Keys.notAppears)

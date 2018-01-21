@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Vapor
@@ -32,7 +32,7 @@ extension RegFieldAnswer: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(RegField.self, optional: false, unique: false, foreignIdKey: Keys.regFieldId)
+      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.regFieldId, foreignKeyName: self.entity + "_" + Keys.regFieldId)
       builder.string(Keys.value)
     }
   }

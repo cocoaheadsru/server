@@ -9,7 +9,7 @@ identifier_name:
 force_try:
   severity: warning 
 
-line_length: 150
+line_length: 180
 
 trailing_whitespace: 
   ignores_empty_lines: true 

@@ -22,12 +22,11 @@ extension Config {
   private func setupPreparations() throws {
   
     let entities: [Preparation.Type] = [
-      Autoapprove.self,
+      Approve.self,
       Heartbeat.self,
       User.self,
       Client.self,
       Session.self,
-      Migration.self,
       City.self,
       Place.self,
       Event.self,
@@ -37,8 +36,8 @@ extension Config {
       RegField.self,
       RegFieldAnswer.self,
       EventRegAnswer.self,
-      Speaker.self,
       Speech.self,
+      Speaker.self,
       Content.self,
       Creator.self,
       GiveSpeech.self,

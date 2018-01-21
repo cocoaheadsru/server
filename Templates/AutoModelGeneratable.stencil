@@ -1,9 +1,8 @@
 {# Defining macros for each annotation #}
 
-
 {% macro AddEntity type %}
 extension {{ type.name }} {
-  static var entity: String = "{{ type.name|lowerFirst|camelToSnakeCase }}"
+  static var entity: String = "{{ type.name|lowerFirstLetter|camelToSnakeCase }}"
 }
 {% endmacro %}
 
@@ -11,9 +10,9 @@ extension {{ type.name }} {
   init(row: Row) throws {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    {{ variable.name }} = {{ variable.unwrappedTypeName }}(try row.get(Keys.{{ variable.name }}))
+    {{ variable.name }} = {{ variable.unwrappedTypeName }}(try{% if variable.isOptional %}?{% endif %} row.get(Keys.{{ variable.name }}))
     {% else %}
-    {{ variable.name }} = try row.get(Keys.{{ variable.name }})
+    {{ variable.name }} = try{% if variable.isOptional %}?{% endif %} row.get(Keys.{{ variable.name }})
     {% endif %}
     {% endfor %}
   }
@@ -22,9 +21,9 @@ extension {{ type.name }} {
     var row = Row()
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    try row.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    try{% if variable.isOptional %}?{% endif %} row.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% else %}
-    try row.set(Keys.{{ variable.name }}, {{ variable.name }})
+    try{% if variable.isOptional %}?{% endif %} row.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
     {% endfor %}
     return row
@@ -52,7 +51,7 @@ extension {{ type.name }} {
     {% for variable in type.storedVariables where variable.name != "storage"  %}
     static let {{ variable.name }} = "{{ variable.name|camelToSnakeCase }}"
     {% endfor %}
-    {% for method in type.methods|annotated:"nestedJSONField" %}
+    {% for method in type.methods where method|annotated:"nestedJSONField" or method|annotated:"nestedJSONRepresentableField" %}
     static let {{ method.callName }} = "{{ method.callName|camelToSnakeCase }}"
     {% endfor %}
   }
@@ -99,7 +98,7 @@ extension {{ type.name }}: JSONInitializable {
     self.init(
       {% for parameter in type.initializers.first.parameters %}
       {% for variable in type.storedVariables where variable|annotated:"enum" and parameter.unwrappedTypeName == variable.unwrappedTypeName and parameter.name == variable.name %}
-      {{ parameter.name }}: {{ parameter.unwrappedTypeName }}(try json.get(Keys.{{ parameter.name }})){% empty %}{{ parameter.name }}: try json.get(Keys.{{ parameter.name }}){% endfor %}{% if not forloop.last %},{% endif %}
+      {{ parameter.name }}: {{ parameter.unwrappedTypeName }}(try{% if parameter.typeName.isOptional %}?{% endif %} json.get(Keys.{{ parameter.name }})){% empty %}{{ parameter.name }}: try{% if parameter.typeName.isOptional %}?{% endif %} json.get(Keys.{{ parameter.name }}){% endfor %}{% if not forloop.last %},{% endif %}
       {% endfor %}
     )
   }
@@ -116,13 +115,17 @@ extension {{ type.name }}: JSONRepresentable {
     try json.set(Keys.id, id)
     {% for variable in type.storedVariables where variable.name != "storage" and variable|!annotated:"ignoreInJSON" %}
     {% if variable|annotated:"enum" or variable.type.kind == "enum" %}
-    try json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
+    try{% if variable.isOptional %}?{% endif %} json.set(Keys.{{ variable.name }}, {{ variable.name }}.string)
     {% else %}
-    try json.set(Keys.{{ variable.name }}, {{ variable.name }})
+    try{% if variable.isOptional %}?{% endif %} json.set(Keys.{{ variable.name }}, {{ variable.name }})
     {% endif %}
     {% endfor %}
-    {% for method in type.methods|annotated:"nestedJSONField" %}
+    {% for method in type.methods %}
+    {% if method|annotated:"nestedJSONRepresentableField" %}
     try json.set(Keys.{{ method.callName }}, {{ method.callName }}(){% if method.isOptionalReturnType %}?{% endif %}.makeJSON())
+    {% elif method|annotated:"nestedJSONField" %}
+    try json.set(Keys.{{ method.callName }}, {{ method.callName }}(){% if method.isOptionalReturnType %}!{% endif %})
+    {% endif %}
     {% endfor %}
     return json
   }
@@ -151,18 +154,16 @@ extension {{ type.name }}: Updateable {
 {% endmacro %}
 
 
-{% macro ParentRelation variable isOptional %}
-      builder.parent({{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+{% macro ExplicitForeignRelation variable %}
+      builder.foreignId(for: {{ variable.annotations.relatedModel }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }}, foreignKeyName: self.entity + "_" + Keys.{{ variable.name }})
 {% endmacro %}
 
-
-{% macro ForeignRelation variable isOptional %}
-      builder.foreignId(for: {{ variable.annotations.relatedModel|default:"Provide relatedModel" }}.self, optional: {{ isOptional }}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+{% macro ImplicitForeignRelation variable %}
+      builder.foreignId(for: {{ variable.name|replace:"Id",""|upperFirstLetter }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }}, foreignKeyName: self.entity + "_" + Keys.{{ variable.name }})
 {% endmacro %}
-
 
 {% macro PlainType variable %}
-      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }})
+      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }}{% if variable.isOptional %}, optional: true{% endif %})
 {% endmacro %}
 
 {% macro PrepareEnum variable %}
@@ -179,26 +180,10 @@ extension {{ type.name }}: Preparation {
       builder.id()
       {% for variable in type.storedVariables where variable.name != "storage"  %}
           {% if variable.typeName|lowercase|contains:"identifier" %} 
-              {% if variable|annotated:"relation" %}
-                  {% if variable.annotations.relation == "parent" %}
-                      {% if variable.typeName.isOptional %}
-                          {% call ParentRelation variable "true" %}
-                      {% else %}
-                          {% call ParentRelation variable "false" %}
-                      {% endif %}
-                  {% else %}
-                      {% if variable.typeName.isOptional %}
-                          {% call ForeignRelation variable "true" %}
-                      {% else %}
-                          {% call ForeignRelation variable "false" %}
-                      {% endif %}
-                  {% endif %}
+              {% if variable|annotated:"relatedModel" %}
+                  {% call ExplicitForeignRelation variable %}
               {% else %}
-                  {% if variable.typeName.isOptional %}
-                      {% call ForeignRelation variable "true" %}
-                  {% else %}
-                      {% call ForeignRelation variable "false" %}
-                  {% endif %}
+                  {% call ImplicitForeignRelation variable %}
               {% endif %}
           {% elif variable|annotated:"enum" or variable.type.kind == "enum" %}
               {% call PrepareEnum variable %}

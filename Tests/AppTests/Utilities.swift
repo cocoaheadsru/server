@@ -5,23 +5,25 @@ import XCTest
 import Testing
 import FluentProvider
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
 extension Droplet {
   static func testable() throws -> Droplet {
     
     func recreateDatabase(_ config: Config) throws {
       let dbName = config["mysql", "database"]?.string ?? ""
-      let driver = try config.resolveDriver()
-      let connection = try driver.makeConnection(.readWrite)
-      try connection.raw("DROP DATABASE IF EXISTS \(dbName)")
+      let driver = try! config.resolveDriver()
+      let connection = try! driver.makeConnection(.readWrite)
+      try! connection.raw("DROP DATABASE IF EXISTS \(dbName)")
       print("Database '\(dbName)' successfully dropped")
-      try connection.raw("CREATE DATABASE \(dbName)")
+      try! connection.raw("CREATE DATABASE \(dbName)")
       print("Database '\(dbName)' successfully created")
     }
-    
-    let config = try Config(arguments: ["vapor", "--env=test"])
+
+    let config = try! Config(arguments: ["vapor", "--env=test"])
     try config.setup()
     try recreateDatabase(config)
-    let drop = try Droplet(config)
+    let drop = try! Droplet(config)
     try drop.setup()
     return drop
   }

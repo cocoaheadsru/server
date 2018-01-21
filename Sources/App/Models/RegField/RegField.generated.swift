@@ -1,4 +1,4 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Vapor
@@ -76,7 +76,7 @@ extension RegField: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.parent(RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
+      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId, foreignKeyName: self.entity + "_" + Keys.regFormId)
       builder.bool(Keys.required)
       builder.enum(Keys.type, options: ["checkbox", "radio", "string"])
       builder.string(Keys.name)

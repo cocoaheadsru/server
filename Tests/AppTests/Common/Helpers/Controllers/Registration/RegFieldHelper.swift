@@ -1,8 +1,9 @@
 import Vapor
 import Fluent
-
 @testable import App
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
 final class RegFieldHelper {
   
   static func assertRegFieldHasExpectedFields(_ regFields: JSON) throws -> Bool {
@@ -30,8 +31,8 @@ final class RegFieldHelper {
       let count = RegField.FieldType.count
       for i in 0...Int.randomValue(min: count, max: 4) {
         // we use 'i % count' to cover during the test all field types
-        let regField = try RegField(fieldTypeNumber: i % count, regFormId: regFormId)
-        try regField.save()
+        let regField = RegField(fieldTypeNumber: i % count, regFormId: regFormId)
+        try! regField.save()
         regFields.append(regField)
       }
     }

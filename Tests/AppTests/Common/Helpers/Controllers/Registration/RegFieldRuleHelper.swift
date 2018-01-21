@@ -15,14 +15,13 @@ final class RegFieldRuleHelper {
     return true
   }
   
-
   static func addRules(to regFields: [RegField]) throws -> [RegField]? {
   
     guard let rules = Rule.rules else {
       return nil
     }
     
-    var result : [RegField]! = []
+    var result: [RegField]! = []
     for regField in regFields {
       let rule1 = rules[Int.randomValue(min: 0, max: 2)]
       try regField.rules.add(rule1)
@@ -36,7 +35,4 @@ final class RegFieldRuleHelper {
     return result
   }
   
-  
-  
 }
-

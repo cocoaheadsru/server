@@ -3,6 +3,8 @@ import Vapor
 
 typealias  EventId = Identifier
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 final class RegFormHelper {
   
   static func assertRegFromHasExpectedFields(_ regForm: JSON) throws -> Bool {

@@ -7,9 +7,7 @@ final class EventReg: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = RegForm
   var regFormId: Identifier
-  // sourcery: relation = parent, relatedModel = User
   var userId: Identifier
   // sourcery: enum, waiting, rejected, approved, canceled, notAppeared
   var status: RegistrationStatus = .waiting
@@ -46,19 +44,25 @@ extension EventReg {
   }
   
   func eventRegAnswers() throws -> [EventRegAnswer] {
-    return try EventRegAnswer.makeQuery().filter(EventRegAnswer.Keys.regId, id).all()
+    return try EventRegAnswer
+      .makeQuery()
+      .filter(EventRegAnswer.Keys.eventRegId, id)
+      .all()
   }
   
   static func duplicationCheck(regFormId: Identifier, userId: Identifier) throws -> Bool {
-   let result = try EventReg.makeQuery()
+   return try EventReg.makeQuery()
       .filter(EventReg.Keys.regFormId, regFormId)
       .filter(EventReg.Keys.userId, userId)
       .filter(EventReg.Keys.status, in: [
         EventReg.RegistrationStatus.waiting.string,
         EventReg.RegistrationStatus.approved.string])
-      .all().count
-    
-    return result == 0
+      .all().count == 0
+  }
+  
+  func willDelete() throws {
+    try  eventRegAnswers()
+      .forEach { try  $0.delete() }
   }
   
 }

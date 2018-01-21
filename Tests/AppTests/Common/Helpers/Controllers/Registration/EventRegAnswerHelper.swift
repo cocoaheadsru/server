@@ -22,21 +22,59 @@ final class EventRegAnswerHelper {
     return regForm
   }
   
+  static func store(_ userAnswers: UserAnswer, eventReg: EventReg) throws {
+    
+    struct Keys {
+      static let regFields = "reg_fields"
+      static let regFormId = "reg_form_id"
+      static let fields = "fields"
+      static let userAnswers = "user_answers"
+    }
+    
+    guard let eventRegId = eventReg.id else {
+      throw Abort(.internalServerError, reason: "Can't create eventRegId")
+    }
+    
+    guard let fields = userAnswers.body[Keys.fields]?.array else {
+      throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
+    }
+    
+    for field in fields {
+      
+      let fieldId = try! field.get(EventRegAnswer.Keys.regFieldId) as Identifier
+      let userAnswers = try field.get(Keys.userAnswers) as [JSON]
+      
+      for userAnswer in userAnswers {
+        let answerId = try! userAnswer.get("id") as Identifier
+        let answerValue = try! userAnswer.get("value") as String
+        
+        let eventRegAnswer = EventRegAnswer(
+          eventRegId: eventRegId,
+          regFieldId: fieldId,
+          regFieldAnswerId: answerId,
+          answerValue: answerValue)
+        
+        try! eventRegAnswer.save()
+      }
+    }
+    
+  }
+  
   static func generateUserAnswers(for regForm: RegForm) throws -> UserAnswer? {
-    return try _generateUserAnswers(for: regForm)
+    return try! _generateUserAnswers(for: regForm)
   }
   
   @discardableResult
   static func generateUserAnswers(with token: SessionToken, for regForm: RegForm) throws -> UserAnswer? {
-    return try _generateUserAnswers(token: token, for: regForm)
+    return try! _generateUserAnswers(token: token, for: regForm)
   }
   
   static func generateUserWrongRadioAnswers(for regForm: RegForm) throws -> UserAnswer? {
-    return try _generateUserAnswers(correctRadio: false, for: regForm)
+    return try! _generateUserAnswers(correctRadio: false, for: regForm)
   }
   
   static func generateUserWrongRequiredAnswers(for regForm: RegForm) throws -> UserAnswer? {
-    return try _generateUserAnswers(correctRequired: false, for: regForm)
+    return try! _generateUserAnswers(correctRequired: false, for: regForm)
   }
   
   private static func  _generateUserAnswers(
@@ -48,14 +86,14 @@ final class EventRegAnswerHelper {
     func selectUser(_ token: SessionToken?) throws -> User {
       guard
         let token = token,
-        let user = try Session.find(by: token)?.user
+        let user = try! Session.find(by: token)?.user
       else {
-        return try User.all().randomValue
+        return try! User.all().randomValue
       }
       return user
     }
     
-    let user = try selectUser(token)
+    let user = try! selectUser(token)
     
     guard
       let sessionToken = token == nil ? try Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token : token,
@@ -63,7 +101,7 @@ final class EventRegAnswerHelper {
     else {
         return nil
     }
-    let regFields = try regForm.eventRegFields()
+    let regFields = try! regForm.eventRegFields()
     
     var body = JSON()
     var fields = [JSON]()
@@ -74,9 +112,9 @@ final class EventRegAnswerHelper {
         return nil
       }
       var field = JSON()
-      try field.set(EventRegAnswer.Keys.fieldId, fieldId)
+      try field.set(EventRegAnswer.Keys.regFieldId, fieldId)
       
-      guard let regFieldAnswers = try RegFieldAnswer.fieldAnswers(by: regField.id!).array else {
+      guard let regFieldAnswers = try! RegFieldAnswer.fieldAnswers(by: regField.id!).array else {
         return nil
       }
       
@@ -91,7 +129,7 @@ final class EventRegAnswerHelper {
       for regFieldAnswer in  regFieldAnswers {
         
         var userAnswer = JSON()
-        try userAnswer.set("id", try regFieldAnswer.get("id") as Int)
+        try userAnswer.set("id", try! regFieldAnswer.get("id") as Int)
         try userAnswer.set("value", String.randomValue)
         userAnswers.append(userAnswer)
         
@@ -113,9 +151,9 @@ final class EventRegAnswerHelper {
   static func getStoredAnswers(by sessionToken: SessionToken, regForm: RegForm) throws -> Body? {
     
     guard
-      let userId = try Session.find(by: sessionToken)?.user?.id,
+      let userId = try! Session.find(by: sessionToken)?.user?.id,
       let regFormId =  regForm.id,
-      let regId = try EventReg
+      let regId = try! EventReg
         .makeQuery()
         .filter(EventReg.Keys.regFormId, regFormId)
         .filter(EventReg.Keys.userId, userId)
@@ -124,33 +162,21 @@ final class EventRegAnswerHelper {
         return nil
     }
     
-    let result = try EventRegAnswer.database?.raw(
-      """
-        SELECT e.field_id
-        FROM event_reg_answer e
-        WHERE reg_id = ?
-        GROUP BY e.field_id
-      """,
-      [regId]
-    )
-    
-    guard let fieldIds = result?.array else {
-      return nil
-    }
-    
     var body = JSON()
     try body.set(EventReg.Keys.regFormId, regFormId.int!)
     var fields = [JSON]()
     
+    let fieldIds = try! getEventRegAnswer(by: regId)
+    
     for fieldId in fieldIds {
-      guard let fieldId = try fieldId.get(EventRegAnswer.Keys.fieldId) as Int? else {
+      guard let fieldId = try! fieldId.get(EventRegAnswer.Keys.regFieldId) as Int? else {
         return nil
       }
       var field = JSON()
-      try field.set(EventRegAnswer.Keys.fieldId, fieldId)
-      guard let fieldAnswers = try EventRegAnswer.makeQuery()
-        .filter(EventRegAnswer.Keys.regId, regId)
-        .filter(EventRegAnswer.Keys.fieldId, fieldId)
+      try! field.set(EventRegAnswer.Keys.regFieldId, fieldId)
+      guard let fieldAnswers = try! EventRegAnswer.makeQuery()
+        .filter(EventRegAnswer.Keys.eventRegId, regId)
+        .filter(EventRegAnswer.Keys.regFieldId, fieldId)
         .all()
         .makeJSON()
         .array
@@ -161,7 +187,7 @@ final class EventRegAnswerHelper {
       var userAnswers = [JSON]()
       for fieldAnswer in fieldAnswers {
         var userAnswer = JSON()
-        try userAnswer.set("id", try fieldAnswer.get(EventRegAnswer.Keys.answerId) as Int)
+        try userAnswer.set("id", try fieldAnswer.get(EventRegAnswer.Keys.regFieldAnswerId) as Int)
         try userAnswer.set("value", try fieldAnswer.get(EventRegAnswer.Keys.answerValue) as String)
         userAnswers.append(userAnswer)
       }
@@ -173,6 +199,24 @@ final class EventRegAnswerHelper {
     
     try body.set("fields", fields)
     return body
+  }
+  
+  private static func getEventRegAnswer(by regId: Identifier) throws -> [Node] {
+    let result = try! EventRegAnswer.database?.raw(
+      """
+      SELECT e.\(EventRegAnswer.Keys.regFieldId)
+      FROM \(EventRegAnswer.entity) e
+      WHERE \(EventRegAnswer.Keys.eventRegId) = ?
+      GROUP BY e.\(EventRegAnswer.Keys.regFieldId)
+      """,
+      [regId]
+    )
+    
+    guard let fieldIds = result?.array else {
+      fatalError()
+    }
+    
+    return fieldIds
   }
   
 }

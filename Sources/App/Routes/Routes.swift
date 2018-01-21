@@ -13,7 +13,9 @@ extension Droplet {
     }
     
     try resource("heartbeat", HeartbeatController.self)
-    try resource("event/:id/form", RegistrationController.self)
+    try resource("event", EventController.self)
+    try resource("event/:id/speech", EventSpeechController.self)
+    try resource("event/:id/form", RegistrationFormController.self)
     try resource("event/register", RegistrationController.self)
   }
 }

@@ -1,14 +1,14 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Vapor
 import FluentProvider
 
-extension Autoapprove {
-  static var entity: String = "autoapprove"
+extension Approve {
+  static var entity: String = "approve"
 }
 
-extension Autoapprove {
+extension Approve {
 
   struct Keys {
     static let id = "id"
@@ -18,9 +18,9 @@ extension Autoapprove {
   }
 }
 
-extension Autoapprove: Updateable {
+extension Approve: Updateable {
 
-  public static var updateableKeys: [UpdateableKey<Autoapprove>] {
+  public static var updateableKeys: [UpdateableKey<Approve>] {
     return [
       UpdateableKey(Keys.visits, Int.self) { $0.visits = $1 },
       UpdateableKey(Keys.notAppears, Int.self) { $0.notAppears = $1 },
@@ -29,7 +29,7 @@ extension Autoapprove: Updateable {
   }
 }
 
-extension Autoapprove: JSONInitializable {
+extension Approve: JSONInitializable {
 
   convenience init(json: JSON) throws {
     self.init(
@@ -40,7 +40,7 @@ extension Autoapprove: JSONInitializable {
   }
 }
 
-extension Autoapprove: Preparation {
+extension Approve: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
@@ -56,7 +56,7 @@ extension Autoapprove: Preparation {
   }
 }
 
-extension Autoapprove: JSONRepresentable {
+extension Approve: JSONRepresentable {
 
   func makeJSON() throws -> JSON {
     var json = JSON()

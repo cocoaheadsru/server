@@ -2,19 +2,19 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Timestampable, ResponseRepresentable, Updateable
+// sourcery: Preparation, Timestampable, Updateable
 final class Event: Model {
     
   let storage = Storage()
   
-  // sourcery: relatedModel = Place, ignoreInJSON
+  // sourcery: ignoreInJSON
   var placeId: Identifier
   var title: String
   var description: String
   var photoUrl: String
   var isRegistrationOpen: Bool = true
-  var startDate: Int
-  var endDate: Int
+  var startDate: Date
+  var endDate: Date
   var hide: Bool = false
   
   init(title: String,
@@ -22,7 +22,8 @@ final class Event: Model {
        photoUrl: String,
        placeId: Identifier,
        isRegistrationOpen: Bool = true,
-       startDate: Int, endDate: Int,
+       startDate: Date,
+       endDate: Date,
        hide: Bool = false) {
     self.title = title
     self.description = description
@@ -62,21 +63,70 @@ final class Event: Model {
 }
 
 extension Event {
+    
+    func makeJSON(with req: Request) throws -> JSON {
+        var json = JSON()
+        try json.set(Keys.id, id)
+        try json.set(Keys.title, title)
+        try json.set(Keys.description, description)
+        try json.set(Keys.photoUrl, photoUrl)
+        try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
+        try json.set(Keys.startDate, startDate.mysqlString)
+        try json.set(Keys.endDate, endDate.mysqlString)
+        try json.set(Keys.hide, hide)
+        try json.set(Keys.place, place()?.makeJSON())
+        try json.set(Keys.status, status(token: req.headers["token"]))
+        try json.set(Keys.speakersPhotos, speakersPhotos())
+        return json
+    }
+}
+
+extension Event {
   
-  // sourcery: nestedJSONField
+  // sourcery: nestedJSONRepresentableField
   func place() throws -> Place? {
     return try parent(id: placeId).get()
   }
-  
+
   func speeches() throws -> [Speech] {
-    return try Speech.makeQuery().filter(Speech.Keys.eventId, id).all()
+    return try children().all()
   }
   
-  func status() -> String {
-    return ""
+  // sourcery: nestedJSONField
+  func status(token: String?) throws -> String {
+    if let token = token {
+      let userId = try Session.makeQuery().filter(Session.Keys.token, token).first()?.userId
+      let eventRegForm = try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
+      let registration = try EventReg
+        .makeQuery()
+        .filter(EventReg.Keys.status, .notEquals, "canceled")
+        .filter(EventReg.Keys.userId, .equals, userId)
+        .filter(EventReg.Keys.regFormId, .equals, eventRegForm?.id)
+        .first()
+      
+      if let status = registration?.status.string {
+        return status
+      }
+    }
+    
+    if !isRegistrationOpen {
+      return "registrationClosed"
+    }
+    return "canRegister"
   }
   
-  func regForm() throws -> RegForm? {
+  // sourcery: nestedJSONField
+  func speakersPhotos() throws -> [String] {
+    let photoPaths = try speeches().flatMap { speech in
+        return try speech.speakers().flatMap { speaker in
+            return try speaker.user()?.photo
+        }
+    }
+    let photoURLs = photoPaths.map { "http://upapi.ru/photos/" + $0 }
+    return photoURLs
+  }
+  
+  func registrationForm() throws -> RegForm? {
     return try children().first()
   }
 }

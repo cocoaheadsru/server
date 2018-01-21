@@ -41,6 +41,13 @@ final class EventRegHelper {
     
     let regForm = RegForm(eventId: eventId)
     try! regForm.save()
+    
+    guard let regFields = try! RegFieldHelper.store(for: [regForm]) else {
+      return nil
+    }
+    
+    try! RegFieldAnswerHelper.store(for: regFields)
+    
     return regForm
   }
   
@@ -48,7 +55,7 @@ final class EventRegHelper {
   static func store() throws -> [App.Event]? {
     try! UserSessionHelper.store()
     guard
-      let events  = try EventHelper.store(),
+      let events  = try! ApproveHelper.store(),
       let regForm = try! RegFormHelper.store(for: events),
       let regFields = try! RegFieldHelper.store(for: regForm),
       try! RegFieldAnswerHelper.store(for: regFields) != nil
@@ -71,25 +78,25 @@ final class EventRegHelper {
   }
   
   static func generateUserForGrantApprove(_ approveRules: ApproveRules) throws -> SessionToken? {
-  
+    
     func fillEventReg(_ event: App.Event, status: EventReg.RegistrationStatus, userId: Identifier, token: String) throws {
-     
-        guard
-          let regForm = try! event.regForm(),
-          let regFormId = regForm.id
-          else {
-            return
-        }
-        event.isRegistrationOpen = false
-        
-        try EventRegAnswerHelper.generateUserAnswers(with: token, for: regForm)
-        
-        let eventReg = EventReg.init(
-          regFormId: regFormId,
-          userId: userId,
-          status: status)
-        try eventReg.save()
       
+      guard
+        let regForm = try! event.registrationForm(),
+        let regFormId = regForm.id,
+        let userAnswers = try EventRegAnswerHelper.generateUserAnswers(with: token, for: regForm)
+        else {
+          return
+      }
+      event.isRegistrationOpen = false
+      
+      let eventReg = EventReg.init(
+        regFormId: regFormId,
+        userId: userId,
+        status: status)
+      try! eventReg.save()
+      
+      try EventRegAnswerHelper.store(userAnswers, eventReg: eventReg)
     }
     
     guard
@@ -105,16 +112,16 @@ final class EventRegHelper {
     
     // MARK: - Visit
     for _ in 1...approveRules.visits {
-    
+      
       guard let event =  shuffledEvents.popLast() else {
-          return nil
+        return nil
       }
       try! fillEventReg(event,
-                       status: EventReg.RegistrationStatus.approved,
-                       userId: userId,
-                       token: token)
+                        status: EventReg.RegistrationStatus.approved,
+                        userId: userId,
+                        token: token)
     }
-  
+    
     // MARK: - Not Appears
     guard approveRules.notAppears > 0 else {
       return token
@@ -138,16 +145,13 @@ final class EventRegHelper {
 extension App.Event {
   
   static func getMonthsAgo(_ months: Int) throws -> [App.Event]? {
-    
-    guard let date = Calendar.current.date(byAdding: .month, value: -months, to: Date())?.timeIntervalSince1970 else {
+    let now = Date()
+    guard let date = Calendar.current.date(byAdding: .month, value: -months, to: now) else {
       return nil
     }
-    let dateInt = Int(date)
-    let now = Date().timeIntervalSince1970
-    let nowInt = Int(now)
-    return try self.makeQuery()
-      .filter(Keys.endDate >= dateInt)
-      .filter(Keys.endDate <  nowInt)
+    return try! self.makeQuery()
+      .filter(Keys.endDate >= date)
+      .filter(Keys.endDate <  now)
       .all()
   }
   

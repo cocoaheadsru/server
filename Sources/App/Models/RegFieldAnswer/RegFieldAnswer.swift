@@ -7,7 +7,7 @@ final class RegFieldAnswer: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = RegField, ignoreInJSON
+  // sourcery: ignoreInJSON
   var regFieldId: Identifier
   var value: String
   

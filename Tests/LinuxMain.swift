@@ -1,9 +1,23 @@
-// Generated using Sourcery 0.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 0.10.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 #if os(Linux)
 import XCTest
 
+extension AutoapproveTest {
+  static var allTests: [(String, (AutoapproveTest) -> () throws -> Void)] = [
+   ("testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod", testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod),
+   ("testThatUserDontGetApproveIfNotHasEnoughVisits", testThatUserDontGetApproveIfNotHasEnoughVisits),
+   ("testThatUserDontGetApproveIfHasManyOmissions", testThatUserDontGetApproveIfHasManyOmissions)
+  ]
+}
+extension CancelRegistrationTest {
+  static var allTests: [(String, (CancelRegistrationTest) -> () throws -> Void)] = [
+   ("testThatCancelRegistrationGetErrorForNotApprovedUser", testThatCancelRegistrationGetErrorForNotApprovedUser),
+   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration),
+   ("testThatCancelRegistrationIsDone", testThatCancelRegistrationIsDone)
+  ]
+}
 extension ClientMiddlewareTests {
   static var allTests: [(String, (ClientMiddlewareTests) -> () throws -> Void)] = [
    ("testThatMiddlewarePresentInConfig", testThatMiddlewarePresentInConfig),
@@ -14,6 +28,49 @@ extension ClientMiddlewareTests {
    ("testThatTokenIsAssignedFromConfigInitialization", testThatTokenIsAssignedFromConfigInitialization),
    ("testThatResponsePassWithCoincidentToken", testThatResponsePassWithCoincidentToken),
    ("testThatResponseFailWithIncoincidentToken", testThatResponseFailWithIncoincidentToken)
+  ]
+}
+extension EventControllerTests {
+  static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
+   ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
+   ("testThatPlaceOfEventHasCityRelation", testThatPlaceOfEventHasCityRelation),
+   ("testThatIndexEventsReturnsOkStatusForBeforeQueryKey", testThatIndexEventsReturnsOkStatusForBeforeQueryKey),
+   ("testThatIndexEventsReturnsOkStatusForAfterQueryKey", testThatIndexEventsReturnsOkStatusForAfterQueryKey),
+   ("testThatIndexEventsReturnsJSONArray", testThatIndexEventsReturnsJSONArray),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields", testThatIndexEventsReturnsJSONArrayEventsHasAllRequiredFields),
+   ("testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields", testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastEvents", testThatIndexEventsReturnsCorrectNumberOfPastEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfComingEvents", testThatIndexEventsReturnsCorrectNumberOfComingEvents),
+   ("testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents", testThatIndexEventsReturnsCorrectNumberOfPastAndComingEvents),
+   ("testThatGetEventsBeforeTimestampRouteReturnsOkStatus", testThatGetEventsBeforeTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsAfterTimestampRouteReturnsOkStatus", testThatGetEventsAfterTimestampRouteReturnsOkStatus),
+   ("testThatGetEventsRouteFailsForEmptyQueryParameters", testThatGetEventsRouteFailsForEmptyQueryParameters),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterKey", testThatGetEventsRouteFailsWithWrongQueryParameterKey),
+   ("testThatGetEventsRouteFailsWithWrongQueryParameterValue", testThatGetEventsRouteFailsWithWrongQueryParameterValue)
+  ]
+}
+extension EventSpeechControllerTests {
+  static var allTests: [(String, (EventSpeechControllerTests) -> () throws -> Void)] = [
+   ("testThatIndexSpeechesReturnsOkStatus", testThatIndexSpeechesReturnsOkStatus),
+   ("testThatIndexSpeechesFailsWithIncorrectParameter", testThatIndexSpeechesFailsWithIncorrectParameter),
+   ("testThatIndexSpeechesReturnsJSONWithAllRequiredFields", testThatIndexSpeechesReturnsJSONWithAllRequiredFields),
+   ("testThatIndexSpeechesReturnsJSONWithExpectedFields", testThatIndexSpeechesReturnsJSONWithExpectedFields),
+   ("testThatIndexSpeechesReturnsCorrectSpeechesCount", testThatIndexSpeechesReturnsCorrectSpeechesCount),
+   ("testThatIndexSpeechesReturnsCorrectSpeakersCount", testThatIndexSpeechesReturnsCorrectSpeakersCount),
+   ("testThatIndexSpeechesReturnsCorrectContentsCount", testThatIndexSpeechesReturnsCorrectContentsCount),
+   ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus),
+   ("testThatGetSpeechesRouteFailsForEmptyTable", testThatGetSpeechesRouteFailsForEmptyTable),
+   ("testThatGetSpeechesRouteFailsWithNonIntParameterValue", testThatGetSpeechesRouteFailsWithNonIntParameterValue)
+  ]
+}
+extension GetRegFormTests {
+  static var allTests: [(String, (GetRegFormTests) -> () throws -> Void)] = [
+   ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
+   ("testThatRegFormGetBadReguestForBadEventId", testThatRegFormGetBadReguestForBadEventId),
+   ("testThatRegFormHasExpectedFields", testThatRegFormHasExpectedFields),
+   ("testThatRegFieldLinkedWithRegFormAndHasExpectedFields", testThatRegFieldLinkedWithRegFormAndHasExpectedFields),
+   ("testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields", testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields),
+   ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
 extension HeartbeatControllerTests {
@@ -30,17 +87,10 @@ extension HeartbeatControllerTests {
 }
 extension RegistrationControllerTests {
   static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
-   ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
-   ("testThatRegFormGetBadReguestForBadEventId", testThatRegFormGetBadReguestForBadEventId),
-   ("testThatRegFormHasExpectedFields", testThatRegFormHasExpectedFields),
-   ("testThatRegFieldLinkedWithRegFormAndHasExpectedFields", testThatRegFieldLinkedWithRegFormAndHasExpectedFields),
-   ("testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields", testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields),
-   ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId),
    ("testThatUserRegFormAnswersStoredForEvent", testThatUserRegFormAnswersStoredForEvent),
    ("testThatUserRegFormAnswersStoredForEventOnlyOnce", testThatUserRegFormAnswersStoredForEventOnlyOnce),
    ("testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer", testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer),
-   ("testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer", testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer),
-   ("testThatUserHasAutoapproveIfHave2VisitAndDidNotAppearLessThan2In6Months", testThatUserHasAutoapproveIfHave2VisitAndDidNotAppearLessThan2In6Months)
+   ("testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer", testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer)
   ]
 }
 extension RouteTests {
@@ -54,7 +104,12 @@ extension RouteTests {
 }
 
 XCTMain([
+  testCase(AutoapproveTest.allTests),
+  testCase(CancelRegistrationTest.allTests),
   testCase(ClientMiddlewareTests.allTests),
+  testCase(EventControllerTests.allTests),
+  testCase(EventSpeechControllerTests.allTests),
+  testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests)

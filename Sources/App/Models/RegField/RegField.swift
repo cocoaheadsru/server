@@ -7,8 +7,8 @@ final class RegField: Model {
     
   let storage = Storage()
   
-  // sourcery: relation = parent, relatedModel = RegForm, ignoreInJSON
-  var regFormId: Identifier 
+  // sourcery: ignoreInJSON
+  var regFormId: Identifier
   var required: Bool
   // sourcery: enum,string,radio,checkbox
   var type: FieldType
@@ -56,9 +56,8 @@ final class RegField: Model {
 
 extension RegField {
   
- // sourcery: nestedJSONField
+ // sourcery: nestedJSONRepresentableField
  func fieldAnswers() throws -> [RegFieldAnswer] {
-  //print("\nRegField.foreignIdKey: \(RegField.foreignIdKey)\n")
   return try children().all()
  }
   
