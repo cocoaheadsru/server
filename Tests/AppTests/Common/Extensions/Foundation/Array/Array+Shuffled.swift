@@ -7,7 +7,7 @@ extension Array {
     }
     var result = self
     for i in 0..<(result.count - 1) {
-      let j = Int(arc4random_uniform(UInt32(result.count - i))) + i
+      let j = Int.random(min: 0, max: result.count - 1 - i) + i //Int(arc4random_unifor(UInt32(result.count - i))) + i
       result.swapAt(i, j)
     }
     return result

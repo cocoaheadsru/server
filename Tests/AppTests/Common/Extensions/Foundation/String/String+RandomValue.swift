@@ -35,10 +35,10 @@ extension String {
   }
   
   static var randomPhone: String {
-    let country = "+\(Int.randomValue(min: 1, max: 99))"
+    let country = "\(Int.randomValue(min: 1, max: 99))"
     let region = "(\(Int.randomValue(min: 100, max: 999)))"
-    let city = "(\(Int.randomValue(min: 100, max: 999)))"
-    let building = "(\(Int.randomValue(min: 100, max: 999)))"
+    let city = "\(Int.randomValue(min: 100, max: 999))"
+    let building = "\(Int.randomValue(min: 100, max: 999))"
     return  "+" + country + "-" + region + "-" + city + "-" + building
   }
   
