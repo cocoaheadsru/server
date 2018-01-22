@@ -7,28 +7,28 @@ final class Approve: Model {
   
   let storage = Storage()
   
-  var visits: Int
-  var notAppears: Int
-  var appearMonths: Int
+  var visitedEvents: Int
+  var skippedEvents: Int
+  var forPeriodInMonths: Int
   
-  init(visits: Int = 2, notAppears: Int = 2, appearMonths: Int = 6) {
-    self.visits = visits
-    self.notAppears = notAppears
-    self.appearMonths = appearMonths
+  init(visitedEvents: Int = 2, skippedEvents: Int = 2, forPeriodInMonths: Int = 6) {
+    self.visitedEvents = visitedEvents
+    self.skippedEvents = skippedEvents
+    self.forPeriodInMonths = forPeriodInMonths
   }
   
 // sourcery:inline:auto:Approve.AutoModelGeneratable
   init(row: Row) throws {
-    visits = try row.get(Keys.visits)
-    notAppears = try row.get(Keys.notAppears)
-    appearMonths = try row.get(Keys.appearMonths)
+    visitedEvents = try row.get(Keys.visitedEvents)
+    skippedEvents = try row.get(Keys.skippedEvents)
+    forPeriodInMonths = try row.get(Keys.forPeriodInMonths)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
-    try row.set(Keys.visits, visits)
-    try row.set(Keys.notAppears, notAppears)
-    try row.set(Keys.appearMonths, appearMonths)
+    try row.set(Keys.visitedEvents, visitedEvents)
+    try row.set(Keys.skippedEvents, skippedEvents)
+    try row.set(Keys.forPeriodInMonths, forPeriodInMonths)
     return row
   }
 // sourcery:end

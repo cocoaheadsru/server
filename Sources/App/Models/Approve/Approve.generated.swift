@@ -12,9 +12,9 @@ extension Approve {
 
   struct Keys {
     static let id = "id"
-    static let visits = "visits"
-    static let notAppears = "not_appears"
-    static let appearMonths = "appear_months"
+    static let visitedEvents = "visited_events"
+    static let skippedEvents = "skipped_events"
+    static let forPeriodInMonths = "for_period_in_months"
   }
 }
 
@@ -22,9 +22,9 @@ extension Approve: Updateable {
 
   public static var updateableKeys: [UpdateableKey<Approve>] {
     return [
-      UpdateableKey(Keys.visits, Int.self) { $0.visits = $1 },
-      UpdateableKey(Keys.notAppears, Int.self) { $0.notAppears = $1 },
-      UpdateableKey(Keys.appearMonths, Int.self) { $0.appearMonths = $1 }
+      UpdateableKey(Keys.visitedEvents, Int.self) { $0.visitedEvents = $1 },
+      UpdateableKey(Keys.skippedEvents, Int.self) { $0.skippedEvents = $1 },
+      UpdateableKey(Keys.forPeriodInMonths, Int.self) { $0.forPeriodInMonths = $1 }
     ]
   }
 }
@@ -33,9 +33,9 @@ extension Approve: JSONInitializable {
 
   convenience init(json: JSON) throws {
     self.init(
-      visits: try json.get(Keys.visits),
-      notAppears: try json.get(Keys.notAppears),
-      appearMonths: try json.get(Keys.appearMonths)
+      visitedEvents: try json.get(Keys.visitedEvents),
+      skippedEvents: try json.get(Keys.skippedEvents),
+      forPeriodInMonths: try json.get(Keys.forPeriodInMonths)
     )
   }
 }
@@ -45,9 +45,9 @@ extension Approve: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.int(Keys.visits)
-      builder.int(Keys.notAppears)
-      builder.int(Keys.appearMonths)
+      builder.int(Keys.visitedEvents)
+      builder.int(Keys.skippedEvents)
+      builder.int(Keys.forPeriodInMonths)
     }
   }
 
@@ -61,9 +61,9 @@ extension Approve: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.visits, visits)
-    try json.set(Keys.notAppears, notAppears)
-    try json.set(Keys.appearMonths, appearMonths)
+    try json.set(Keys.visitedEvents, visitedEvents)
+    try json.set(Keys.skippedEvents, skippedEvents)
+    try json.set(Keys.forPeriodInMonths, forPeriodInMonths)
     return json
   }
 }

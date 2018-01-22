@@ -22,7 +22,7 @@ class AutoapproveTest: TestCase {
     }
   }
   
-  static let approveRules: ApproveRules = (visits: 2, notAppears: 2, appearMonths: 6)
+  static let approveRules = ApproveRules(visitedEvents: 2, skippedEvents: 2, forPeriodInMonths: 6)
   
   func testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod() throws {
     

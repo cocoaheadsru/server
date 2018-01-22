@@ -8,14 +8,14 @@ final class  AutoapproveController {
   
   init() throws {
     guard let count = try? Approve.count() else {
-      fatalError()
+      fatalError("There are problems with call Approve.count()")
     }
     
     if count < 1 {
       autoapprove = Approve(
-        visits: 2,
-        notAppears: 2,
-        appearMonths: 6)
+        visitedEvents: 2,
+        skippedEvents: 2,
+        forPeriodInMonths: 6)
       try autoapprove.save()
     } else {
       autoapprove = try Approve.all().first!
@@ -24,24 +24,29 @@ final class  AutoapproveController {
   
   func grandApprove(to user: User, on event: Event) throws -> Bool? {
     
-   let visits = try EventReg
-    .makeQuery()
-    .filter(EventReg.Keys.userId, user.id!)
-    .filter(EventReg.Keys.status, EventReg.RegistrationStatus.approved.string)
-    .count()
+    guard let userId = user.id else {
+      return nil
+    }
+      
+    let visitedEvents = try EventReg
+      .makeQuery()
+      .filter(EventReg.Keys.userId, userId)
+      .filter(EventReg.Keys.status, EventReg.RegistrationStatus.approved.string)
+      .count()
     
-    guard  visits >= autoapprove.visits else {
+    guard visitedEvents >= autoapprove.visitedEvents else {
       return false
     }
     
     guard
-      let date = Calendar.current.date(byAdding: .month, value: -autoapprove.appearMonths, to: Date())
+      let date = Calendar.current.date(byAdding: .month, value: -autoapprove.forPeriodInMonths, to: Date()),
+      let eventId = event.id
     else {
         return nil
     }
     
     let events = try Event.makeQuery()
-      .filter(Event.Keys.id != event.id! )
+      .filter(Event.Keys.id != eventId)
       .filter(Event.Keys.endDate >= date)
       .filter(Event.Keys.endDate < Date())
       .all()
@@ -50,18 +55,18 @@ final class  AutoapproveController {
       .filter(RegForm.Keys.eventId, in: events.array.map { $0.id! })
       .all()
     
-    guard regForms.count >= autoapprove.notAppears else {
+    guard regForms.count >= autoapprove.skippedEvents else {
       return true
     }
     
-    let notAppeareds = try EventReg
+    let skippedEventsCount = try EventReg
       .makeQuery()
       .filter(EventReg.Keys.regFormId, in: regForms.array.map { $0.id!.int })
       .filter(EventReg.Keys.userId, user.id!)
       .filter(EventReg.Keys.status, EventReg.RegistrationStatus.notAppeared.string)
       .count()
     
-    guard notAppeareds >= autoapprove.notAppears else {
+    guard skippedEventsCount >= autoapprove.skippedEvents else {
       return true
     }
     

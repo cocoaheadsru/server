@@ -8,22 +8,16 @@ final class  RegistrationController {
   
   func store(_ req: Request) throws -> ResponseRepresentable {
     
-    guard
-      let token = req.headers.userToken,
-      let session = try Session.find(by: token),
-      let userId = session.user?.id
-    else {
-      throw Abort(.internalServerError, reason: "Can't find User and get user id by token")
-    }
+    let userId = try getUserId(from: req)
     
-    guard
-      let regFormId = try req.json?.get(Keys.regFormId) as Identifier!
-    else {
+    guard let regFormId = try req.json?.get(Keys.regFormId) as Identifier! else {
       throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
   
     guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
-      throw Abort(.internalServerError, reason: "User with token '\(token)' has alredy registered to this event")
+      throw Abort(
+        .internalServerError,
+        reason: "User with token '\(req.headers.userToken ?? "no_token")' has alredy registered to this event")
     }
   
     guard
@@ -47,13 +41,7 @@ final class  RegistrationController {
 
   func cancel(_ req: Request, eventReg: EventReg) throws -> ResponseRepresentable {
     
-    guard
-      let token = req.headers.userToken,
-      let session = try Session.find(by: token),
-      let userId = session.user?.id
-    else {
-        throw Abort(.badRequest, reason: "Can't get a pararms to cancel registration")
-    }
+    let userId = try getUserId(from: req)
     
     guard
       eventReg.status == EventReg.RegistrationStatus.approved,

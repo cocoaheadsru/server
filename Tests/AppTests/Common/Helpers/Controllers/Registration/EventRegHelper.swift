@@ -3,7 +3,7 @@ import Fluent
 import Foundation
 @testable import App
 
-typealias ApproveRules = (visits: Int, notAppears: Int, appearMonths: Int)
+typealias ApproveRules = (visitedEvents: Int, skippedEvents: Int, forPeriodInMonths: Int)
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
@@ -67,13 +67,13 @@ final class EventRegHelper {
   
   static func generateUserWithNotEnoughVisits(_ approveRules: ApproveRules) throws -> SessionToken? {
     var approveRulesWithNoEnoughVisits = approveRules
-    approveRulesWithNoEnoughVisits.visits -= 1
+    approveRulesWithNoEnoughVisits.visitedEvents -= 1
     return try generateUserForGrantApprove(approveRulesWithNoEnoughVisits)
   }
   
   static func generateUserWithManyOmissions(_ approveRules: ApproveRules) throws -> SessionToken? {
     var approveRulesWithNoEnoughVisits = approveRules
-    approveRulesWithNoEnoughVisits.notAppears += 1
+    approveRulesWithNoEnoughVisits.skippedEvents += 1
     return try generateUserForGrantApprove(approveRulesWithNoEnoughVisits)
   }
   
@@ -101,7 +101,7 @@ final class EventRegHelper {
     
     guard
       let session = try! Session.all().random,
-      let events = try! App.Event.getMonthsAgo(approveRules.appearMonths)
+      let events = try! App.Event.getMonthsAgo(approveRules.forPeriodInMonths)
       else {
         return nil
     }
@@ -111,7 +111,7 @@ final class EventRegHelper {
     var shuffledEvents = events.shuffled()
     
     // MARK: - Visit
-    for _ in 1...approveRules.visits {
+    for _ in 1...approveRules.visitedEvents {
       
       guard let event =  shuffledEvents.popLast() else {
         return nil
@@ -123,15 +123,15 @@ final class EventRegHelper {
     }
     
     // MARK: - Not Appears
-    guard approveRules.notAppears > 0 else {
+    guard approveRules.skippedEvents > 0 else {
       return token
     }
     
-    guard shuffledEvents.count > approveRules.notAppears - 1 else {
+    guard shuffledEvents.count > approveRules.skippedEvents - 1 else {
       return nil
     }
     
-    for i in 1...approveRules.notAppears - 1 {
+    for i in 1...approveRules.skippedEvents - 1 {
       try! fillEventReg(shuffledEvents[i],
                         status: EventReg.RegistrationStatus.notAppeared,
                         userId: userId,

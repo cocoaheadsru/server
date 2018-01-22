@@ -75,7 +75,7 @@ extension RegField {
   
   func fieldToJSON() throws -> JSON {
     
-    func getNameAndTypeAndPlaceholderAndDefaultValueAndFieldAnswersJSON() throws -> JSON {
+    func fieldWithAnswersJSON() throws -> JSON {
       var json = JSON()
       try json.set(Keys.name, name)
       try json.set(Keys.type, type.string)
@@ -92,7 +92,7 @@ extension RegField {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.required, required)
-    try json.set(AnswersKeys.field, getNameAndTypeAndPlaceholderAndDefaultValueAndFieldAnswersJSON())
+    try json.set(AnswersKeys.field, fieldWithAnswersJSON())
     return json
   }
 }

@@ -9,9 +9,20 @@ extension RegistrationController {
     static let userAnswers = "user_answers"
   }
   
+  func getUserId(from req: Request) throws -> Identifier {
+    guard
+      let token = req.headers.userToken,
+      let session = try Session.find(by: token),
+      let userId = session.user?.id
+      else {
+        throw Abort(.internalServerError, reason: "Can't find User and get user id by token")
+    }
+    return userId
+  }
+  
   func checkRadio(fieldId: Identifier, answerCount: Int) throws -> Bool {
     let fiedlType = try RegField.find(fieldId)?.type
-    if  fiedlType == RegField.FieldType.radio {
+    if fiedlType == RegField.FieldType.radio {
       return answerCount <= 1
     } else {
       return true
@@ -19,11 +30,11 @@ extension RegistrationController {
   }
   
   func checkRequired(fieldId: Identifier, answerCount: Int) throws -> Bool {
-    guard let fiedlRequired = try RegField.find(fieldId)?.required else {
+    guard let fieldRequired = try RegField.find(fieldId)?.required else {
       throw Abort.serverError
     }
     
-    if fiedlRequired {
+    if fieldRequired {
       return answerCount > 0
     } else {
       return true
@@ -46,11 +57,11 @@ extension RegistrationController {
       let userAnswers = try field.get(Keys.userAnswers) as [JSON]
       
       guard try checkRequired(fieldId: fieldId, answerCount: userAnswers.count) else {
-        throw Abort(.internalServerError, reason: "The field must have at least one answer. Field id is '\(fieldId.int!)'")
+        throw Abort(.internalServerError, reason: "The field must have at least one answer. Field id is '\(fieldId.int ?? -1)'")
       }
       
       guard try checkRadio(fieldId: fieldId, answerCount: userAnswers.count) else {
-        throw Abort(.internalServerError, reason: "The answer to field with type radio should be only one. Field id is '\(fieldId.int!)'")
+        throw Abort(.internalServerError, reason: "The answer to field with type radio should be only one. Field id is '\(fieldId.int ?? -1)'")
       }
       
       for userAnswer in userAnswers {

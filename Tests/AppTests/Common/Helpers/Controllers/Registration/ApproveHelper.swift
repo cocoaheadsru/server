@@ -12,11 +12,11 @@ final class ApproveHelper {
     var cityId = [Identifier]()
     var placeId = [Identifier]()
     var events = [App.Event]()
-    let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 10, max: 20))
+    let randomRange = 1...Int.random(min: 10, max: 20)
     let months = 24
     
     if cities.count == 0 {
-      for _ in iterations.min...iterations.max {
+      for _ in randomRange {
         let city = City()
         try! city.save()
         cityId.append(city.id!)
@@ -26,7 +26,7 @@ final class ApproveHelper {
     }
     
     if places.count == 0 {
-      for _ in iterations.min...iterations.max {
+      for _ in randomRange {
         let place = Place(true, cityId: cityId.randomValue)
         try! place.save()
         placeId.append(place.id!)
@@ -45,8 +45,8 @@ final class ApproveHelper {
           return nil
       }
       
-      let event1 = App.Event.init(endDate: date1, placeId: placeId.randomValue)
-      let event2 = App.Event.init(endDate: date2, placeId: placeId.randomValue)
+      let event1 = App.Event(endDate: date1, placeId: placeId.randomValue)
+      let event2 = App.Event(endDate: date2, placeId: placeId.randomValue)
       
       try! event1.save()
       try! event2.save()
