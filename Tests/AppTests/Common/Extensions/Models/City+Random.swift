@@ -3,8 +3,8 @@ import Vapor
 
 extension City {
   
-  convenience init(_ randomInit: Bool = true) {
-    if randomInit {
+  convenience init(_ randomlyInitialized: Bool = true) {
+    if randomlyInitialized {
       self.init(cityName: String.randomValue)
     } else {
       self.init(cityName: "")

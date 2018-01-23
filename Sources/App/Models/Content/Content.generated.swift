@@ -22,7 +22,7 @@ extension Content {
 
 extension Content {
 
-  enum ContentType {
+  enum ContentType: String {
     case video
     case slide
 
@@ -31,10 +31,7 @@ extension Content {
     }
 
     init(_ string: String) {
-      switch string {
-      case "video": self = .video
-      default: self = .slide
-      }
+      self = ContentType(rawValue: string) ?? .slide
     }
   }
 }

@@ -8,46 +8,42 @@ typealias  EventId = Identifier
 final class RegFormHelper {
   
   static func assertRegFromHasExpectedFields(_ regForm: JSON) throws -> Bool {
-    guard
-      let _ = regForm["id"]?.int,
-      let _ = regForm["form_name"]?.string,
-      let _ = regForm["description"]?.string,
-      let _ = regForm["reg_fields"]?.makeJSON()
-      else {
-        return false
-    }
-    return true
+    return
+      regForm["id"]?.int != nil &&
+      regForm["form_name"]?.string != nil &&
+      regForm["description"]?.string != nil &&
+      regForm["reg_fields"]?.makeJSON() != nil
   }
   
   @discardableResult
   static func store(for events: [App.Event] = []) throws -> [RegForm]? {
-    var regForms = [RegForm]()
-    if events.count == 0 {
-      var cityId: [Identifier] = []
-      var placeId: [Identifier] = []
-      var eventId: [Identifier] = []
-      let iterations: (min: Int, max: Int) = (min: 1, max: Int.random(min: 10, max: 20))
+    var regForms: [RegForm] = []
+    if events.isEmpty {
+      var cityIds: [Identifier] = []
+      var placeIds: [Identifier] = []
+      var eventIds: [Identifier] = []
+      let randomRange = 1...Int.random(min: 10, max: 20)
       
-      for _ in iterations.min...iterations.max {
+      for _ in randomRange {
         let city = City()
         try city.save()
-        cityId.append(city.id!)
+        cityIds.append(city.id!)
       }
       
-      for _ in iterations.min...iterations.max {
-        let place = Place(true, cityId: cityId.randomValue)
+      for _ in randomRange {
+        let place = Place(true, cityId: cityIds.randomValue)
         try place.save()
-        placeId.append(place.id!)
+        placeIds.append(place.id!)
       }
       
-      for _ in iterations.min...iterations.max {
-        let event = Event(placeId: placeId.randomValue)
+      for _ in randomRange {
+        let event = Event(placeId: placeIds.randomValue)
         try! event.save()
-        eventId.append(event.id!)
+        eventIds.append(event.id!)
       }
       
-      let shuflleEventId = eventId.shuffled()
-      for i in iterations.min...iterations.max {
+      let shuflleEventId = eventIds.shuffled()
+      for i in randomRange {
         let regForm = RegForm(eventId: shuflleEventId[i-1])
         try regForm.save()
         regForms.append(regForm)

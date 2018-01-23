@@ -3,8 +3,8 @@ import Vapor
 
 extension User {
   
-  convenience init(_ randomInit: Bool = true) {
-    if randomInit {
+  convenience init(_ randomlyInitialized: Bool = true) {
+    if randomlyInitialized {
       self.init(
         name: String.randomValue,
         lastname: String.randomValue,

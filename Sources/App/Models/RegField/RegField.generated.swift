@@ -24,7 +24,7 @@ extension RegField {
 
 extension RegField {
 
-  enum FieldType {
+  enum FieldType: String {
     case checkbox
     case radio
     case string
@@ -34,11 +34,7 @@ extension RegField {
     }
 
     init(_ string: String) {
-      switch string {
-      case "checkbox": self = .checkbox
-      case "radio": self = .radio
-      default: self = .string
-      }
+      self = FieldType(rawValue: string) ?? .string
     }
   }
 }

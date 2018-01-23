@@ -2,6 +2,8 @@ import Vapor
 import Foundation
 @testable import App
 
+typealias ApproveRules = (visitedEvents: Int, skippedEvents: Int, periodInMonths: Int)
+
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
 final class ApproveHelper {
@@ -9,8 +11,8 @@ final class ApproveHelper {
   @discardableResult
   static func store(places: [Place] = [], cities: [City] = []) throws -> [App.Event]? {
     
-    var cityId = [Identifier]()
-    var placeId = [Identifier]()
+    var cityIds: [Identifier] = []
+    var placeIds: [Identifier] = []
     var events = [App.Event]()
     let randomRange = 1...Int.random(min: 10, max: 20)
     let months = 24
@@ -19,20 +21,20 @@ final class ApproveHelper {
       for _ in randomRange {
         let city = City()
         try! city.save()
-        cityId.append(city.id!)
+        cityIds.append(city.id!)
       }
     } else {
-      cityId =  cities.map { city in city.id! }
+      cityIds =  cities.map { city in city.id! }
     }
     
-    if places.count == 0 {
+    if places.isEmpty {
       for _ in randomRange {
-        let place = Place(true, cityId: cityId.randomValue)
+        let place = Place(true, cityId: cityIds.randomValue)
         try! place.save()
-        placeId.append(place.id!)
+        placeIds.append(place.id!)
       }
     } else {
-      placeId = places.map {place in place.id!}
+      placeIds = places.map { place in place.id!}
     }
     
     for i in 0...months-1 {
@@ -45,8 +47,8 @@ final class ApproveHelper {
           return nil
       }
       
-      let event1 = App.Event(endDate: date1, placeId: placeId.randomValue)
-      let event2 = App.Event(endDate: date2, placeId: placeId.randomValue)
+      let event1 = App.Event(endDate: date1, placeId: placeIds.randomValue)
+      let event2 = App.Event(endDate: date2, placeId: placeIds.randomValue)
       
       try! event1.save()
       try! event2.save()

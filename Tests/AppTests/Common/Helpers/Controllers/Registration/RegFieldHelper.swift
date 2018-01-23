@@ -7,18 +7,15 @@ import Fluent
 final class RegFieldHelper {
   
   static func assertRegFieldHasExpectedFields(_ regFields: JSON) throws -> Bool {
-    guard
-      let _ = regFields["id"]?.int,
-      let _ = regFields["name"]?.string,
-      let _ = regFields["default_value"]?.string,
-      let _ = regFields["required"]?.bool,
-      let _ = regFields["type"]?.string,
-      let _ = regFields["placeholder"]?.string,
-      let _ = regFields["field_answers"]?.makeJSON()
-      else {
-        return false
-    }
-    return true
+    return
+      regFields["id"]?.int != nil &&
+      regFields["name"]?.string != nil &&
+      regFields["default_value"]?.string != nil &&
+      regFields["required"]?.bool != nil &&
+      regFields["type"]?.string != nil &&
+      regFields["placeholder"]?.string != nil &&
+      regFields["field_answers"]?.makeJSON() != nil
+
   }
   
   static func store(for regForms: [RegForm]) throws -> [RegField]? {

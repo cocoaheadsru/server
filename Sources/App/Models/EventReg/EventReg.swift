@@ -9,7 +9,7 @@ final class EventReg: Model {
   
   var regFormId: Identifier
   var userId: Identifier
-  // sourcery: enum, waiting, rejected, approved, canceled, notAppeared
+  // sourcery: enum, waiting, rejected, approved, canceled, skipped
   var status: RegistrationStatus = .waiting
   
   init(regFormId: Identifier,

@@ -4,21 +4,21 @@ import Fluent
 
 final class  AutoapproveController {
   
-  private let autoapprove: Approve
+  private let autoapprove: Approval
   
   init() throws {
-    guard let count = try? Approve.count() else {
+    guard let count = try? Approval.count() else {
       fatalError("There are problems with call Approve.count()")
     }
     
     if count < 1 {
-      autoapprove = Approve(
+      autoapprove = Approval(
         visitedEvents: 2,
         skippedEvents: 2,
-        forPeriodInMonths: 6)
+        periodInMonths: 6)
       try autoapprove.save()
     } else {
-      autoapprove = try Approve.all().first!
+      autoapprove = try Approval.all().first!
     }
   }
   
@@ -39,7 +39,7 @@ final class  AutoapproveController {
     }
     
     guard
-      let date = Calendar.current.date(byAdding: .month, value: -autoapprove.forPeriodInMonths, to: Date()),
+      let date = Calendar.current.date(byAdding: .month, value: -autoapprove.periodInMonths, to: Date()),
       let eventId = event.id
     else {
         return nil
@@ -63,7 +63,7 @@ final class  AutoapproveController {
       .makeQuery()
       .filter(EventReg.Keys.regFormId, in: regForms.array.map { $0.id!.int })
       .filter(EventReg.Keys.userId, user.id!)
-      .filter(EventReg.Keys.status, EventReg.RegistrationStatus.notAppeared.string)
+      .filter(EventReg.Keys.status, EventReg.RegistrationStatus.skipped.string)
       .count()
     
     guard skippedEventsCount >= autoapprove.skippedEvents else {

@@ -6,13 +6,7 @@ import Fluent
 final class RegFieldRuleHelper {
   
   static func assertRegFieldRuleHasExpectedFields(_ rules: JSON) throws -> Bool {
-    guard
-      let _ = rules["id"]?.int,
-      let _ = rules["type"]?.string
-      else {
-        return false
-    }
-    return true
+    return  rules["id"]?.int != nil && rules["type"]?.string != nil
   }
   
   static func addRules(to regFields: [RegField]) throws -> [RegField]? {

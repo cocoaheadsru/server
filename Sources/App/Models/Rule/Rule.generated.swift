@@ -18,7 +18,7 @@ extension Rule {
 
 extension Rule {
 
-  enum ValidationRule {
+  enum ValidationRule: String {
     case phone
     case number
     case alphanumeric
@@ -30,13 +30,7 @@ extension Rule {
     }
 
     init(_ string: String) {
-      switch string {
-      case "phone": self = .phone
-      case "number": self = .number
-      case "alphanumeric": self = .alphanumeric
-      case "email": self = .email
-      default: self = .string
-      }
+      self = ValidationRule(rawValue: string) ?? .string
     }
   }
 }

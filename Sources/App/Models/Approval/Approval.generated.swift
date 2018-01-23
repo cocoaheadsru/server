@@ -4,50 +4,50 @@
 import Vapor
 import FluentProvider
 
-extension Approve {
-  static var entity: String = "approve"
+extension Approval {
+  static var entity: String = "approval"
 }
 
-extension Approve {
+extension Approval {
 
   struct Keys {
     static let id = "id"
     static let visitedEvents = "visited_events"
     static let skippedEvents = "skipped_events"
-    static let forPeriodInMonths = "for_period_in_months"
+    static let periodInMonths = "period_in_months"
   }
 }
 
-extension Approve: Updateable {
+extension Approval: Updateable {
 
-  public static var updateableKeys: [UpdateableKey<Approve>] {
+  public static var updateableKeys: [UpdateableKey<Approval>] {
     return [
       UpdateableKey(Keys.visitedEvents, Int.self) { $0.visitedEvents = $1 },
       UpdateableKey(Keys.skippedEvents, Int.self) { $0.skippedEvents = $1 },
-      UpdateableKey(Keys.forPeriodInMonths, Int.self) { $0.forPeriodInMonths = $1 }
+      UpdateableKey(Keys.periodInMonths, Int.self) { $0.periodInMonths = $1 }
     ]
   }
 }
 
-extension Approve: JSONInitializable {
+extension Approval: JSONInitializable {
 
   convenience init(json: JSON) throws {
     self.init(
       visitedEvents: try json.get(Keys.visitedEvents),
       skippedEvents: try json.get(Keys.skippedEvents),
-      forPeriodInMonths: try json.get(Keys.forPeriodInMonths)
+      periodInMonths: try json.get(Keys.periodInMonths)
     )
   }
 }
 
-extension Approve: Preparation {
+extension Approval: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
       builder.int(Keys.visitedEvents)
       builder.int(Keys.skippedEvents)
-      builder.int(Keys.forPeriodInMonths)
+      builder.int(Keys.periodInMonths)
     }
   }
 
@@ -56,14 +56,14 @@ extension Approve: Preparation {
   }
 }
 
-extension Approve: JSONRepresentable {
+extension Approval: JSONRepresentable {
 
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.visitedEvents, visitedEvents)
     try json.set(Keys.skippedEvents, skippedEvents)
-    try json.set(Keys.forPeriodInMonths, forPeriodInMonths)
+    try json.set(Keys.periodInMonths, periodInMonths)
     return json
   }
 }

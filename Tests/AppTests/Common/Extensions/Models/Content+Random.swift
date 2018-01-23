@@ -3,8 +3,8 @@ import Vapor
 
 extension App.Content {
   
-  convenience init(_ randomInit: Bool = true, speechId: Identifier) {
-    if randomInit {
+  convenience init(_ randomlyInitialized: Bool = true, speechId: Identifier) {
+    if randomlyInitialized {
       self.init(
         speechId: speechId,
         title: String.randomValue,

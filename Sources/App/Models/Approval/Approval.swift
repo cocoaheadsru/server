@@ -3,32 +3,32 @@ import FluentProvider
 
 // sourcery: AutoModelGeneratable
 // sourcery: toJSON, Preparation, fromJSON, Updateable
-final class Approve: Model {
+final class Approval: Model {
   
   let storage = Storage()
   
   var visitedEvents: Int
   var skippedEvents: Int
-  var forPeriodInMonths: Int
+  var periodInMonths: Int
   
-  init(visitedEvents: Int = 2, skippedEvents: Int = 2, forPeriodInMonths: Int = 6) {
+  init(visitedEvents: Int = 2, skippedEvents: Int = 2, periodInMonths: Int = 6) {
     self.visitedEvents = visitedEvents
     self.skippedEvents = skippedEvents
-    self.forPeriodInMonths = forPeriodInMonths
+    self.periodInMonths = periodInMonths
   }
-  
-// sourcery:inline:auto:Approve.AutoModelGeneratable
+
+// sourcery:inline:auto:Approval.AutoModelGeneratable
   init(row: Row) throws {
     visitedEvents = try row.get(Keys.visitedEvents)
     skippedEvents = try row.get(Keys.skippedEvents)
-    forPeriodInMonths = try row.get(Keys.forPeriodInMonths)
+    periodInMonths = try row.get(Keys.periodInMonths)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.visitedEvents, visitedEvents)
     try row.set(Keys.skippedEvents, skippedEvents)
-    try row.set(Keys.forPeriodInMonths, forPeriodInMonths)
+    try row.set(Keys.periodInMonths, periodInMonths)
     return row
   }
 // sourcery:end

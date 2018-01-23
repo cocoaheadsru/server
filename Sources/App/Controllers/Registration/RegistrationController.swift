@@ -53,7 +53,7 @@ final class  RegistrationController {
     try eventReg.delete()
     return try Response(
       status: .ok,
-      message: "Registration is canceld"
+      message: "Registration is canceled"
     )
   }
   

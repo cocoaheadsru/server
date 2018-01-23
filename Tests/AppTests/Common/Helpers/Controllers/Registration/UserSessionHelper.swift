@@ -13,7 +13,6 @@ final class UserSessionHelper {
       
       let session = Session(userId: user.id!)
       try session.save()
-      
     }
   }
   

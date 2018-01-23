@@ -3,8 +3,8 @@ import Vapor
 
 extension Speech {
   
-  convenience init(_ randomInit: Bool = true, eventId: Identifier) {
-    if randomInit {
+  convenience init(_ randomlyInitialized: Bool = true, eventId: Identifier) {
+    if randomlyInitialized {
       self.init(
         eventId: eventId,
         title: String.randomValue,

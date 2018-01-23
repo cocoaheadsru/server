@@ -6,13 +6,7 @@ import Fluent
 final class RegFieldAnswerHelper {
   
   static func assertRegFieldAnswerHasExpectedFields(_ regFieldAnswer: JSON) throws -> Bool {
-    guard
-      let _ = regFieldAnswer["id"]?.int,
-      let _ = regFieldAnswer["value"]?.string
-      else {
-        return false
-    }
-    return true
+    return regFieldAnswer["id"]?.int != nil && regFieldAnswer["value"]?.string != nil
   }
   
   @discardableResult

@@ -3,8 +3,6 @@ import Fluent
 import Foundation
 @testable import App
 
-typealias ApproveRules = (visitedEvents: Int, skippedEvents: Int, forPeriodInMonths: Int)
-
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
 
@@ -101,7 +99,7 @@ final class EventRegHelper {
     
     guard
       let session = try! Session.all().random,
-      let events = try! App.Event.getMonthsAgo(approveRules.forPeriodInMonths)
+      let events = try! App.Event.getMonthsAgo(approveRules.periodInMonths)
       else {
         return nil
     }
@@ -133,7 +131,7 @@ final class EventRegHelper {
     
     for i in 1...approveRules.skippedEvents - 1 {
       try! fillEventReg(shuffledEvents[i],
-                        status: EventReg.RegistrationStatus.notAppeared,
+                        status: EventReg.RegistrationStatus.skipped,
                         userId: userId,
                         token: token)
     }

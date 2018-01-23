@@ -96,7 +96,7 @@ final class EventRegAnswerHelper {
     let user = try! selectUser(token)
     
     guard
-      let sessionToken = token == nil ? try Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token : token,
+      let sessionToken = try token ?? Session.makeQuery().filter(Session.Keys.userId, user.id!).first()?.token,
       let regFormId = regForm.id?.int
     else {
         return nil

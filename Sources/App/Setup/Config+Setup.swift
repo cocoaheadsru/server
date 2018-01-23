@@ -22,7 +22,7 @@ extension Config {
   private func setupPreparations() throws {
   
     let entities: [Preparation.Type] = [
-      Approve.self,
+      Approval.self,
       Heartbeat.self,
       User.self,
       Client.self,

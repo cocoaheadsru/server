@@ -3,10 +3,10 @@ import Vapor
 
 extension App.Event {
   
-  convenience init(_ randomInit: Bool = true, endDate: Date? = nil, placeId: Identifier) {
+  convenience init(_ randomlyInitialized: Bool = true, endDate: Date? = nil, placeId: Identifier) {
     var date = Date()
     
-    if randomInit {
+    if randomlyInitialized {
       
       if endDate != nil {
         date = endDate!

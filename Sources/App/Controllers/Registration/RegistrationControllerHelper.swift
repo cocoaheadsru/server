@@ -21,8 +21,8 @@ extension RegistrationController {
   }
   
   func checkRadio(fieldId: Identifier, answerCount: Int) throws -> Bool {
-    let fiedlType = try RegField.find(fieldId)?.type
-    if fiedlType == RegField.FieldType.radio {
+    let fieldType = try RegField.find(fieldId)?.type
+    if fieldType == RegField.FieldType.radio {
       return answerCount <= 1
     } else {
       return true
