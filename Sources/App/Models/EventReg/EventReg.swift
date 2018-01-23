@@ -54,7 +54,7 @@ extension EventReg {
       .filter(EventReg.Keys.status, in: [
         EventReg.RegistrationStatus.waiting.string,
         EventReg.RegistrationStatus.approved.string])
-      .all().count == 0
+      .all().isEmpty
   }
   
   func willDelete() throws {

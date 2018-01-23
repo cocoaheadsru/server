@@ -12,7 +12,7 @@ final class RegFieldAnswerHelper {
   @discardableResult
   static func store(for regFields: [RegField]) throws -> [RegFieldAnswer]? {
     
-    var regFieldAnswers = [RegFieldAnswer]()
+    var regFieldAnswers: [RegFieldAnswer] = []
     
     for regField in regFields {
       

@@ -13,7 +13,7 @@ final class ApproveHelper {
     
     var cityIds: [Identifier] = []
     var placeIds: [Identifier] = []
-    var events = [App.Event]()
+    var events: [App.Event] = []
     let randomRange = 1...Int.random(min: 10, max: 20)
     let months = 24
     

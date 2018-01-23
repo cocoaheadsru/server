@@ -104,7 +104,7 @@ final class EventRegAnswerHelper {
     let regFields = try! regForm.eventRegFields()
     
     var body = JSON()
-    var fields = [JSON]()
+    var fields: [JSON] = []
     try body.set(EventReg.Keys.regFormId, regFormId)
     
     for regField in regFields {
@@ -118,7 +118,7 @@ final class EventRegAnswerHelper {
         return nil
       }
       
-      var userAnswers = [JSON]()
+      var userAnswers: [JSON] = []
       
       if !correctRequired && regField.required {
         try field.set("user_answers", userAnswers)
@@ -164,7 +164,7 @@ final class EventRegAnswerHelper {
     
     var body = JSON()
     try body.set(EventReg.Keys.regFormId, regFormId.int!)
-    var fields = [JSON]()
+    var fields: [JSON] = []
     
     let fieldIds = try! getEventRegAnswer(by: regId)
     
@@ -184,7 +184,7 @@ final class EventRegAnswerHelper {
           return nil
       }
       
-      var userAnswers = [JSON]()
+      var userAnswers: [JSON] = []
       for fieldAnswer in fieldAnswers {
         var userAnswer = JSON()
         try userAnswer.set("id", try fieldAnswer.get(EventRegAnswer.Keys.regFieldAnswerId) as Int)
