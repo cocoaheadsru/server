@@ -17,7 +17,7 @@ final class ApproveHelper {
     let randomRange = 1...Int.random(min: 10, max: 20)
     let months = 24
     
-    if cities.count == 0 {
+    if cities.isEmpty {
       for _ in randomRange {
         let city = City()
         try! city.save()
