@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: Preparation, Timestampable
+// sourcery: Preparation, Timestampable, Updateable
 final class Event: Model {
     
   let storage = Storage()
@@ -87,7 +87,7 @@ extension Event {
   func place() throws -> Place? {
     return try parent(id: placeId).get()
   }
-  
+
   func speeches() throws -> [Speech] {
     return try children().all()
   }

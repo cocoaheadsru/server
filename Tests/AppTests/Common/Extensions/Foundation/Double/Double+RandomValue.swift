@@ -1,6 +1,7 @@
 import Foundation
+#if os(Linux)
 import libc
-
+#endif
 extension Double {
   /// Random double value,
   /// rounded to 4 places, for ex: 1.212233244 -> 1.2122

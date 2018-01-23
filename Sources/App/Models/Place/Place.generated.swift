@@ -27,7 +27,7 @@ extension Place: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: City.self, optional: false, unique: false, foreignIdKey: Keys.cityId)
+      builder.foreignId(for: City.self, optional: false, unique: false, foreignIdKey: Keys.cityId, foreignKeyName: self.entity + "_" + Keys.cityId)
       builder.string(Keys.title)
       builder.string(Keys.address)
       builder.string(Keys.description)

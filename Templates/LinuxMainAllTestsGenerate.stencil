@@ -11,10 +11,8 @@ import XCTest
 }
 {% endif %}{% endfor %}
 
-// swiftlint:disable trailing_comma
 XCTMain([
 {% for type in types.classes|based:"TestCase" %}{% if not type.annotations.disableTests %}  testCase({{ type.name }}.allTests){% if not forloop.last %},{% endif %}
 {% endif %}{% endfor %}])
-// swiftlint:enable trailing_comma
 #endif
 // sourcery:end

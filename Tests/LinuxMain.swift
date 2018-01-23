@@ -4,6 +4,20 @@
 #if os(Linux)
 import XCTest
 
+extension AutoapproveTest {
+  static var allTests: [(String, (AutoapproveTest) -> () throws -> Void)] = [
+   ("testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod", testThatUserHasAutoapproveIfHaveEnoughVisitsAndDidNotAppearLessThanNeedsWithinPeriod),
+   ("testThatUserDontGetApproveIfNotHasEnoughVisits", testThatUserDontGetApproveIfNotHasEnoughVisits),
+   ("testThatUserDontGetApproveIfHasManyOmissions", testThatUserDontGetApproveIfHasManyOmissions)
+  ]
+}
+extension CancelRegistrationTest {
+  static var allTests: [(String, (CancelRegistrationTest) -> () throws -> Void)] = [
+   ("testThatCancelRegistrationGetErrorForNotApprovedUser", testThatCancelRegistrationGetErrorForNotApprovedUser),
+   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration),
+   ("testThatCancelRegistrationIsDone", testThatCancelRegistrationIsDone)
+  ]
+}
 extension ClientMiddlewareTests {
   static var allTests: [(String, (ClientMiddlewareTests) -> () throws -> Void)] = [
    ("testThatMiddlewarePresentInConfig", testThatMiddlewarePresentInConfig),
@@ -49,6 +63,16 @@ extension EventSpeechControllerTests {
    ("testThatGetSpeechesRouteFailsWithNonIntParameterValue", testThatGetSpeechesRouteFailsWithNonIntParameterValue)
   ]
 }
+extension GetRegFormTests {
+  static var allTests: [(String, (GetRegFormTests) -> () throws -> Void)] = [
+   ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
+   ("testThatRegFormGetBadReguestForBadEventId", testThatRegFormGetBadReguestForBadEventId),
+   ("testThatRegFormHasExpectedFields", testThatRegFormHasExpectedFields),
+   ("testThatRegFieldLinkedWithRegFormAndHasExpectedFields", testThatRegFieldLinkedWithRegFormAndHasExpectedFields),
+   ("testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields", testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields),
+   ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -61,6 +85,14 @@ extension HeartbeatControllerTests {
    ("testThatRouteHearbeatScenarioIsCorrect", testThatRouteHearbeatScenarioIsCorrect)
   ]
 }
+extension RegistrationControllerTests {
+  static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
+   ("testThatUserRegFormAnswersStoredForEvent", testThatUserRegFormAnswersStoredForEvent),
+   ("testThatUserRegFormAnswersStoredForEventOnlyOnce", testThatUserRegFormAnswersStoredForEventOnlyOnce),
+   ("testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer", testThatIfRegFieldTypeIsRadioThenThereIsOnlyOneAnswer),
+   ("testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer", testThatIfRegFieldIsRequiredThenThereIsAtLeastOneAnswer)
+  ]
+}
 extension RouteTests {
   static var allTests: [(String, (RouteTests) -> () throws -> Void)] = [
    ("testThatRequestWithNoClientTokenFails", testThatRequestWithNoClientTokenFails),
@@ -71,13 +103,15 @@ extension RouteTests {
   ]
 }
 
-// swiftlint:disable trailing_comma
 XCTMain([
+  testCase(AutoapproveTest.allTests),
+  testCase(CancelRegistrationTest.allTests),
   testCase(ClientMiddlewareTests.allTests),
   testCase(EventControllerTests.allTests),
   testCase(EventSpeechControllerTests.allTests),
+  testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
+  testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests)
 ])
-// swiftlint:enable trailing_comma
 #endif

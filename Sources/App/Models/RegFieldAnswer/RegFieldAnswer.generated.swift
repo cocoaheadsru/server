@@ -12,7 +12,7 @@ extension RegFieldAnswer {
 
   struct Keys {
     static let id = "id"
-    static let fieldId = "field_id"
+    static let regFieldId = "reg_field_id"
     static let value = "value"
   }
 }
@@ -22,7 +22,7 @@ extension RegFieldAnswer: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       value: try json.get(Keys.value),
-      fieldId: try json.get(Keys.fieldId)
+      regFieldId: try json.get(Keys.regFieldId)
     )
   }
 }
@@ -32,7 +32,7 @@ extension RegFieldAnswer: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.fieldId)
+      builder.foreignId(for: RegField.self, optional: false, unique: false, foreignIdKey: Keys.regFieldId, foreignKeyName: self.entity + "_" + Keys.regFieldId)
       builder.string(Keys.value)
     }
   }
@@ -47,7 +47,6 @@ extension RegFieldAnswer: JSONRepresentable {
   func makeJSON() throws -> JSON {
     var json = JSON()
     try json.set(Keys.id, id)
-    try json.set(Keys.fieldId, fieldId)
     try json.set(Keys.value, value)
     return json
   }

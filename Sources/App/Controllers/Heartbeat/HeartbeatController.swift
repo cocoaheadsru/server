@@ -1,7 +1,7 @@
 import Vapor
 import HTTP
 
-final class HeartbeatController  {
+final class HeartbeatController {
   
   func index(req: Request) throws -> ResponseRepresentable {
     guard let beat = try Heartbeat.all().first else {
@@ -16,16 +16,16 @@ final class HeartbeatController  {
     if count > 0 {
       try Heartbeat.makeQuery().delete()
     }
-    let json = req.json
-    let value = try json?.get(Heartbeat.Keys.beat) ?? -1
-    let beat = Heartbeat(beat: value)
+    guard let json = req.json else {
+      return try Response(status: .badRequest, message: "JSON is missing")
+    }
+    let beat = try Heartbeat(json: json)
     try beat.save()
-    let result = try beat.makeJSON()
-    return result
+    return try beat.makeJSON()
   }
 }
 
-extension HeartbeatController: ResourceRepresentable  {
+extension HeartbeatController: ResourceRepresentable {
   
   func makeResource() -> Resource<Heartbeat> {
     return Resource(
@@ -35,4 +35,4 @@ extension HeartbeatController: ResourceRepresentable  {
   }
 }
 
-extension HeartbeatController: EmptyInitializable { }
+extension HeartbeatController: EmptyInitializable {}

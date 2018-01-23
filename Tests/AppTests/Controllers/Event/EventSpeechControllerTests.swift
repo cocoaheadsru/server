@@ -3,10 +3,10 @@ import Testing
 @testable import Vapor
 @testable import App
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 class EventSpeechControllerTests: TestCase {
-  //swiftlint:disable force_try
   var drop: Droplet!
-  ///swiftlint:enable force_try
   let eventSpeechContoller = EventSpeechController()
   
   override func setUp() {
@@ -20,14 +20,14 @@ class EventSpeechControllerTests: TestCase {
   }
     
   func testThatIndexSpeechesReturnsOkStatus() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
-    try storeSpeech(for: eventId)
+    try! storeSpeech(for: eventId)
 
-    let res = try fetchSpeeches(by: id)
+    let res = try! fetchSpeeches(by: id)
     XCTAssertEqual(res.status, .ok)
   }
   
@@ -38,14 +38,14 @@ class EventSpeechControllerTests: TestCase {
   }
   
   func testThatIndexSpeechesReturnsJSONWithAllRequiredFields() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
     try storeSpeech(for: eventId)
 
-    let res = try fetchSpeeches(by: id)
+    let res = try! fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     
     XCTAssertNotNil(speechJSON)
@@ -76,8 +76,8 @@ class EventSpeechControllerTests: TestCase {
   }
   
   func testThatIndexSpeechesReturnsJSONWithExpectedFields() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
@@ -87,12 +87,12 @@ class EventSpeechControllerTests: TestCase {
     let speechJSON = res.json?.array?.first
     
     guard
-      let speech = try findEvent(by: eventId)?.speeches().first,
-      let speaker = try speech.speakers().first,
-      let user = try speaker.user(),
-      let content = try speech.contents().first
+      let speech = try! findEvent(by: eventId)?.speeches().first,
+      let speaker = try! speech.speakers().first,
+      let user = try! speaker.user(),
+      let content = try! speech.contents().first
     else {
-      XCTFail()
+      XCTFail("Can't prepare stage")
       return
     }
     
@@ -119,15 +119,15 @@ class EventSpeechControllerTests: TestCase {
   }
   
   func testThatIndexSpeechesReturnsCorrectSpeechesCount() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
     let expectedSpeechesCount = Int.random(min: 1, max: 6)
-    try storeSpeeches(count: expectedSpeechesCount, for: eventId)
+    try! storeSpeeches(count: expectedSpeechesCount, for: eventId)
     
-    let res = try fetchSpeeches(by: id)
+    let res = try! fetchSpeeches(by: id)
     let arrayJSON = res.json?.array
     
     XCTAssertEqual(arrayJSON?.count, expectedSpeechesCount)
@@ -135,14 +135,14 @@ class EventSpeechControllerTests: TestCase {
   
   func testThatIndexSpeechesReturnsCorrectSpeakersCount() throws {
     guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+      XCTFail("Can't get eventId")
       return
     }
     
     let expectedSpeakersCount = Int.random(min: 1, max: 6)
     try storeSpeech(for: eventId, speakersCount: expectedSpeakersCount)
     
-    let res = try fetchSpeeches(by: id)
+    let res = try! fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     let speakersArrayJSON = speechJSON?["speakers"]?.array
     
@@ -150,15 +150,15 @@ class EventSpeechControllerTests: TestCase {
   }
   
   func testThatIndexSpeechesReturnsCorrectContentsCount() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
     let expectedContentsCount = Int.random(min: 1, max: 6)
     try storeSpeech(for: eventId, contentCount: expectedContentsCount)
     
-    let res = try fetchSpeeches(by: id)
+    let res = try! fetchSpeeches(by: id)
     let speechJSON = res.json?.array?.first
     let contentsArrayJSON = speechJSON?["contents"]?.array
     
@@ -168,26 +168,26 @@ class EventSpeechControllerTests: TestCase {
   // MARK: Endpoint tests
   
   func testThatGetSpeechesRouteReturnsOkStatus() throws {
-    guard let eventId = try storeEvent(), let id = eventId.int else {
-      XCTFail()
+    guard let eventId = try! storeEvent(), let id = eventId.int else {
+      XCTFail("Can't get eventId")
       return
     }
     
-    try storeSpeech(for: eventId)
+    try! storeSpeech(for: eventId)
     
-    try drop
+    try! drop
       .clientAuthorizedTestResponse(to: .get, at: "/event/\(id)/speech")
       .assertStatus(is: .ok)
   }
   
   func testThatGetSpeechesRouteFailsForEmptyTable() throws {
-    try drop
+    try! drop
       .clientAuthorizedTestResponse(to: .get, at: "/event/\(Int.randomValue)/speech")
       .assertStatus(is: .notFound)
   }
   
   func testThatGetSpeechesRouteFailsWithNonIntParameterValue() throws {
-    try drop
+    try! drop
       .clientAuthorizedTestResponse(to: .get, at: "/event/\(EventSpeechHelper.invalidParameterValue)/speech")
       .assertStatus(is: .badRequest)
   }

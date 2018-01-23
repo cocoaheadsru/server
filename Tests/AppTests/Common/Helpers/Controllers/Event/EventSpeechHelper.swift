@@ -1,6 +1,7 @@
 import Vapor
 @testable import App
-
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 class EventSpeechHelper {
   
   static var invalidParameterKey: String {
@@ -24,23 +25,11 @@ class EventSpeechHelper {
     speakersCount: Int = 2,
     contentCount: Int = 2
   ) throws {
-    let speech = Speech(
-      eventId: eventId,
-      title: String.randomValue,
-      description: String.randomValue
-    )
+    let speech = Speech(eventId: eventId)
     try speech.save()
     
     for _ in 0..<speakersCount {
-      let user = User(
-        name: String.randomValue,
-        lastname: String.randomValue,
-        company: String.randomValue,
-        position: String.randomValue,
-        photo: String.randomValue,
-        email: String.randomValue,
-        phone: String.randomValue
-      )
+      let user = User()
       try user.save()
       
       let speaker = Speaker(userId: user.id!, speechId: speech.id!)
@@ -48,14 +37,9 @@ class EventSpeechHelper {
     }
     
     for _ in 0..<contentCount {
-      let content = Content(
-        speechId: speech.id!,
-        title: String.randomValue,
-        description: String.randomValue,
-        link: String.randomValue,
-        type: Bool.randomValue ? .video : .slide
-      )
+      let content = App.Content(speechId: speech.id!)
       try content.save()
     }
   }
+  
 }

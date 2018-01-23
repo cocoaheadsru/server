@@ -15,15 +15,18 @@ extension RegForm {
     static let eventId = "event_id"
     static let formName = "form_name"
     static let description = "description"
+    static let regFields = "reg_fields"
   }
 }
+
+extension RegForm: ResponseRepresentable { }
 
 extension RegForm: Preparation {
 
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId)
+      builder.foreignId(for: Event.self, optional: false, unique: false, foreignIdKey: Keys.eventId, foreignKeyName: self.entity + "_" + Keys.eventId)
       builder.string(Keys.formName)
       builder.string(Keys.description)
     }
@@ -42,6 +45,7 @@ extension RegForm: JSONRepresentable {
     try json.set(Keys.eventId, eventId)
     try json.set(Keys.formName, formName)
     try json.set(Keys.description, description)
+    try json.set(Keys.regFields, regFields().makeJSON())
     return json
   }
 }

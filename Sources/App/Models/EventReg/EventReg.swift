@@ -2,14 +2,14 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation, Updateable
+// sourcery: toJSON, Preparation, Updateable, ResponseRepresentable
 final class EventReg: Model {
     
   let storage = Storage()
   
   var regFormId: Identifier
   var userId: Identifier
-  // sourcery: enum, waiting, rejected, approved, canceled
+  // sourcery: enum, waiting, rejected, approved, canceled, skipped
   var status: RegistrationStatus = .waiting
   
   init(regFormId: Identifier,
@@ -44,8 +44,22 @@ extension EventReg {
   }
   
   func eventRegAnswers() throws -> [EventRegAnswer] {
-    return try EventRegAnswer.makeQuery().filter(EventRegAnswer.Keys.regId, id).all()
+    return try children().all()
   }
+  
+  static func duplicationCheck(regFormId: Identifier, userId: Identifier) throws -> Bool {
+   return try EventReg.makeQuery()
+      .filter(EventReg.Keys.regFormId, regFormId)
+      .filter(EventReg.Keys.userId, userId)
+      .filter(EventReg.Keys.status, in: [
+        EventReg.RegistrationStatus.waiting.string,
+        EventReg.RegistrationStatus.approved.string])
+      .all().isEmpty
+  }
+  
+  func willDelete() throws {
+    try  eventRegAnswers()
+      .forEach { try  $0.delete() }
+  }
+  
 }
-
-

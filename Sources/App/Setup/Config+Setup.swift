@@ -20,21 +20,21 @@ extension Config {
   /// Add all models that should have their
   /// schemas prepared before the app boots
   private func setupPreparations() throws {
+  
     let entities: [Preparation.Type] = [
+      Approval.self,
       Heartbeat.self,
       User.self,
       Client.self,
       Session.self,
-      Migration.self,
       City.self,
       Place.self,
       Event.self,
       RegForm.self,
       EventReg.self,
-      RegFieldRule.self,
+      Rule.self,
       RegField.self,
       RegFieldAnswer.self,
-      EventRegField.self,
       EventRegAnswer.self,
       Speech.self,
       Speaker.self,
@@ -42,13 +42,15 @@ extension Config {
       Creator.self,
       GiveSpeech.self,
       Social.self,
-      SocialAccount.self
+      SocialAccount.self,
+      Pivot<RegField, Rule>.self
     ]
     
     entities
       .forEach {
         preparations.append($0)
       }
+    
   }
   
   // Configure Middleware

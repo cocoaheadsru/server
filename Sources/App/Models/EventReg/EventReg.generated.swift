@@ -20,26 +20,24 @@ extension EventReg {
 
 extension EventReg {
 
-  enum RegistrationStatus {
+  enum RegistrationStatus: String {
     case approved
     case rejected
     case waiting
     case canceled
+    case skipped
 
     var string: String {
       return String(describing: self)
     }
 
     init(_ string: String) {
-      switch string {
-      case "approved": self = .approved
-      case "rejected": self = .rejected
-      case "waiting": self = .waiting
-      default: self = .canceled
-      }
+      self = RegistrationStatus(rawValue: string) ?? .skipped
     }
   }
 }
+
+extension EventReg: ResponseRepresentable { }
 
 extension EventReg: Updateable {
 
@@ -57,9 +55,9 @@ extension EventReg: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId)
-      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.enum(Keys.status, options: ["approved","rejected","waiting","canceled"])
+      builder.foreignId(for: RegForm.self, optional: false, unique: false, foreignIdKey: Keys.regFormId, foreignKeyName: self.entity + "_" + Keys.regFormId)
+      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId, foreignKeyName: self.entity + "_" + Keys.userId)
+      builder.enum(Keys.status, options: ["approved", "rejected", "waiting", "canceled", "skipped"])
     }
   }
 

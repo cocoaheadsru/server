@@ -1,7 +1,7 @@
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: fromJSON, toJSON, Preparation
 final class Heartbeat: Model {
   let storage = Storage()
   
@@ -11,7 +11,6 @@ final class Heartbeat: Model {
     self.beat = beat
   }
   
-
   // sourcery:inline:auto:Heartbeat.AutoModelGeneratable
   init(row: Row) throws {
     beat = try row.get(Keys.beat)

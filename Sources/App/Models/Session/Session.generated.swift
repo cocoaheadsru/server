@@ -36,7 +36,7 @@ extension Session: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: User.self, optional: false, unique: true, foreignIdKey: Keys.userId)
+      builder.foreignId(for: User.self, optional: false, unique: true, foreignIdKey: Keys.userId, foreignKeyName: self.entity + "_" + Keys.userId)
       builder.string(Keys.token)
       builder.bool(Keys.actual)
       builder.int(Keys.timestamp)

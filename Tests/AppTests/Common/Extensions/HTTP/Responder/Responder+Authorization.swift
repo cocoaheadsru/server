@@ -1,6 +1,8 @@
 import Vapor
 import HTTP
 
+typealias HTTPHeader = [HTTP.HeaderKey: String]
+
 extension Responder {
   public func unauthorizedTestResponse(
     to method: HTTP.Method,
@@ -67,8 +69,7 @@ extension Responder {
     file: StaticString = #file,
     line: UInt = #line
     ) throws -> HTTP.Response {
-    var userHeaders = headers
-    userHeaders["user-token"] = "user"
+    let userHeaders = headers
     return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,

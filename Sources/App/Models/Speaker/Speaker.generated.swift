@@ -22,8 +22,8 @@ extension Speaker: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId)
-      builder.foreignId(for: Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
+      builder.foreignId(for: User.self, optional: false, unique: false, foreignIdKey: Keys.userId, foreignKeyName: self.entity + "_" + Keys.userId)
+      builder.foreignId(for: Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId, foreignKeyName: self.entity + "_" + Keys.speechId)
     }
   }
 

@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: toJSON, Preparation, ResponseRepresentable
 final class RegForm: Model {
     
   let storage = Storage()
@@ -37,8 +37,21 @@ final class RegForm: Model {
 }
 
 extension RegForm {
-  
-  func eventRegFields() throws -> [EventRegField] {
-    return try EventRegField.makeQuery().filter(EventRegField.Keys.regFormId, id).all()
+  // sourcery: nestedJSONRepresentableField
+  func regFields() throws -> [RegField] {
+    return try children().all()
   }
+  
+  func eventRegFields() throws -> [RegField] {
+    return try RegField.makeQuery().filter(RegField.Keys.regFormId, id).all()
+  }
+  
+  var event: Event? {
+    return try? parent(id: eventId).get()!
+  }
+  
+  static func getRegForm(by eventId: Int) throws -> RegForm? {
+    return try RegForm.makeQuery().filter(Keys.eventId, eventId).first()
+  }
+  
 }

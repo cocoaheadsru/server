@@ -1,6 +1,5 @@
 {# Defining macros for each annotation #}
 
-
 {% macro AddEntity type %}
 extension {{ type.name }} {
   static var entity: String = "{{ type.name|lowerFirstLetter|camelToSnakeCase }}"
@@ -65,7 +64,7 @@ extension {{ type.name }} {
 
 extension {{ type.name }} {
 
-  enum {{ variable.unwrappedTypeName }} {
+  enum {{ variable.unwrappedTypeName }}: String {
     {% for annotation in variable.annotations where annotation != "enum" %}
     case {{ annotation }}
     {% endfor %}
@@ -75,15 +74,11 @@ extension {{ type.name }} {
     }
 
     init(_ string: String) {
-      switch string {
-      {% for annotation in variable.annotations where annotation != "enum" %}
+    {% for annotation in variable.annotations where annotation != "enum" %}
       {% if forloop.last %}
-      default: self = .{{ annotation }}
-      {% else %}
-      case "{{ annotation }}": self = .{{ annotation }}
+      self = {{variable.unwrappedTypeName}}(rawValue: string) ?? .{{ annotation }}
       {% endif %}
-      {% endfor %}
-      }
+    {% endfor %}
     }
   }
 }
@@ -156,11 +151,11 @@ extension {{ type.name }}: Updateable {
 
 
 {% macro ExplicitForeignRelation variable %}
-      builder.foreignId(for: {{ variable.annotations.relatedModel }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+      builder.foreignId(for: {{ variable.annotations.relatedModel }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }}, foreignKeyName: self.entity + "_" + Keys.{{ variable.name }})
 {% endmacro %}
 
 {% macro ImplicitForeignRelation variable %}
-      builder.foreignId(for: {{ variable.name|replace:"Id",""|upperFirstLetter }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }})
+      builder.foreignId(for: {{ variable.name|replace:"Id",""|upperFirstLetter }}.self, optional: {% if variable.isOptional %}true{% else %}false{% endif %}, unique: {{ variable.annotations.unique|default:"false" }}, foreignIdKey: Keys.{{ variable.name }}, foreignKeyName: self.entity + "_" + Keys.{{ variable.name }})
 {% endmacro %}
 
 {% macro PlainType variable %}
@@ -168,7 +163,7 @@ extension {{ type.name }}: Updateable {
 {% endmacro %}
 
 {% macro PrepareEnum variable %}
-      builder.enum(Keys.{{ variable.name }}, options: [{% for annotation in variable.annotations where annotation != "enum" %}"{{ annotation }}"{% if not forloop.last %},{% endif %}{% endfor %}])
+      builder.enum(Keys.{{ variable.name }}, options: [{% for annotation in variable.annotations where annotation != "enum" %}"{{ annotation }}"{% if not forloop.last %}, {% endif %}{% endfor %}])
 {% endmacro%}
 
 

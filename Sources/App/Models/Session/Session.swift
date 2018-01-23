@@ -41,3 +41,15 @@ final class Session: Model {
   }
   // sourcery:end
 }
+
+extension Session {
+  
+  static func find(by token: String) throws -> Session? {
+    return try Session.makeQuery().filter(Keys.token, token).first()
+  }
+  
+  var user: User? {
+    return try? parent(id: userId).get()!
+  }
+  
+}

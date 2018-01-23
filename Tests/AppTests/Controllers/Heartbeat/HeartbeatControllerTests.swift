@@ -7,8 +7,9 @@ import Fluent
 @testable import App
 
 class HeartbeatControllerTests: TestCase {
-  
+  //swiftlint:disable force_try
   let drop = try! Droplet.testable()
+  //swiftlint:enable force_try
   let controller = HeartbeatController()
   let validToken = TestConstants.Middleware.validToken
   
@@ -17,7 +18,7 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     // act
     guard let res = try setBeat(to: beat) as? Response else {
-      XCTFail()
+      XCTFail("Can't set beat and get current value for beat: \(beat)")
       return
     }
     // assert
@@ -73,11 +74,11 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
     let json = try heartbeat.makeJSON()
-    let reqBody = try Body(json)
-    let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json", "client-token":validToken], body: reqBody)
+    let header: HTTPHeader = ["Content-Type": "application/json"]
     // act & assert
+    print(json)
     try drop
-      .testResponse(to: req)
+      .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -87,7 +88,7 @@ class HeartbeatControllerTests: TestCase {
     try cleanHeartbeatTable()
     // act & assert
     try drop
-      .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+      .userAuthorizedTestResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .noContent)
   }
   
@@ -109,15 +110,14 @@ class HeartbeatControllerTests: TestCase {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
       let json = try heartbeat.makeJSON()
-      let reqBody = try Body(json)
-      let req = Request(method: .post, uri: "/heartbeat", headers: ["Content-Type": "application/json", "client-token": validToken], body: reqBody)
+      let header: HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
       try drop
-        .testResponse(to: req)
+        .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
       try drop
-        .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+        .userAuthorizedTestResponse(to: .get, at: "heartbeat")
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
     }
@@ -134,7 +134,7 @@ extension HeartbeatControllerTests {
   // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
     let req = Request.makeTest(method: .post)
-    req.json =  try JSON(node: ["beat":value])
+    req.json =  try JSON(node: ["beat": value])
     let res = try controller.store(req: req).makeResponse()
     return res
   }

@@ -25,4 +25,3 @@ extension EventSpeechController: ResourceRepresentable {
 }
 
 extension EventSpeechController: EmptyInitializable { }
-

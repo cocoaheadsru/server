@@ -2,6 +2,8 @@ import Vapor
 import Foundation
 @testable import App
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 class EventHelper {
   
   static var invalidQueryKeyParameter: String {
@@ -25,41 +27,23 @@ class EventHelper {
   }
   
   static func storeComingEvent() throws -> Identifier? {
-    return try storeEvent(date: Date.randomValueInFuture)
+    return try! storeEvent(date: Date.randomValueInFuture)
   }
   
   static func storeEvent(date: Date = Date.randomValue) throws -> Identifier? {
-    let city = City(
-      cityName: String.randomValue
-    )
-    try city.save()
+    let city = City()
+    try! city.save()
     
-    let place = Place(
-      title: String.randomValue,
-      address: String.randomValue,
-      description: String.randomValue,
-      latitude: Double.randomValue,
-      longitude: Double.randomValue,
-      cityId: (city.id)!
-    )
-    try place.save()
+    let place = Place(cityId: city.id!)
+    try! place.save()
     
-    let event = Event(
-      title: String.randomValue,
-      description: String.randomValue,
-      photoUrl: String.randomValue,
-      placeId: (place.id)!,
-      isRegistrationOpen: Bool.randomValue,
-      startDate: date.fiveHoursAgo,
-      endDate: date,
-      hide: Bool.randomValue
-    )
-    try event.save()
+    let event = App.Event(endDate: date, placeId: place.id!)
+    try! event.save()
   
     return event.id
   }
 
   static func findEvent(by id: Identifier?) throws -> App.Event? {
-    return try Event.find(id)
+    return try! Event.find(id)
   }
 }

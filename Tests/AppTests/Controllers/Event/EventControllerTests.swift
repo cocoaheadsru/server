@@ -3,10 +3,10 @@ import Testing
 @testable import Vapor
 @testable import App
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 class EventControllerTests: TestCase {
-  //swiftlint:disable force_try
   var drop: Droplet!
-  ///swiftlint:enable force_try
   let eventContoller = EventController()
   
   override func setUp() {
@@ -20,37 +20,37 @@ class EventControllerTests: TestCase {
   }
   
   func testThatEventHasPlaceRelation() throws {
-    let eventId = try storeEvent()
-    let event = try findEvent(by: eventId)
-    let place = try event?.place()
+    let eventId = try! storeEvent()
+    let event = try! findEvent(by: eventId)
+    let place = try! event?.place()
     XCTAssertNotNil(place)
   }
   
   func testThatPlaceOfEventHasCityRelation() throws {
-    let eventId = try storeEvent()
-    let event = try findEvent(by: eventId)
-    let place = try event?.place()
-    let city = try place?.city()
+    let eventId = try! storeEvent()
+    let event = try! findEvent(by: eventId)
+    let place = try! event?.place()
+    let city = try! place?.city()
     XCTAssertNotNil(city)
   }
   
   func testThatIndexEventsReturnsOkStatusForBeforeQueryKey() throws {
     let query = "before=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
+    let res = try! eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexEventsReturnsOkStatusForAfterQueryKey() throws {
     let query = "after=\(Date.randomValue.mysqlString)"
     let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
+    let res = try! eventContoller.index(req).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexEventsReturnsJSONArray() throws {
-    let resAfter = try fetchPastEvents()
-    let resBefore = try fetchComingEvents()
+    let resAfter = try! fetchPastEvents()
+    let resBefore = try! fetchComingEvents()
     XCTAssertNotNil(resAfter.json?.array)
     XCTAssertNotNil(resBefore.json?.array)
   }
@@ -59,8 +59,8 @@ class EventControllerTests: TestCase {
     try storeComingEvent()
     try storePastEvent()
 
-    let resAfter = try fetchComingEvents()
-    let resBefore = try fetchPastEvents()
+    let resAfter = try! fetchComingEvents()
+    let resBefore = try! fetchPastEvents()
     
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
@@ -70,19 +70,19 @@ class EventControllerTests: TestCase {
   }
   
   func testThatIndexEventsReturnsJSONArrayEventsHasAllExpectedFields() throws {
-    let eventId1 = try storeComingEvent()
-    let eventId2 = try storePastEvent()
+    let eventId1 = try! storeComingEvent()
+    let eventId2 = try! storePastEvent()
     
     guard
-      let event1 = try findEvent(by: eventId1),
-      let event2 = try findEvent(by: eventId2)
+      let event1 = try! findEvent(by: eventId1),
+      let event2 = try! findEvent(by: eventId2)
     else {
-      XCTFail()
+      XCTFail("Can't get event")
       return
     }
     
-    let resAfter = try fetchComingEvents()
-    let resBefore = try fetchPastEvents()
+    let resAfter = try! fetchComingEvents()
+    let resBefore = try! fetchPastEvents()
     
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
@@ -113,11 +113,11 @@ class EventControllerTests: TestCase {
     let expectedPastEventsCount = Int.random(min: 1, max: 20)
     let expectedComingEventsCount = Int.random(min: 1, max: 20)
     
-    try storePastEvents(count: expectedPastEventsCount)
-    try storeComingEvents(count: expectedComingEventsCount)
+    try! storePastEvents(count: expectedPastEventsCount)
+    try! storeComingEvents(count: expectedComingEventsCount)
     
-    let resBefore = try fetchPastEvents()
-    let resAfter = try fetchComingEvents()
+    let resBefore = try! fetchPastEvents()
+    let resAfter = try! fetchComingEvents()
 
     let actualPastEventsCount = resBefore.json?.array?.count
     let actualComingEventsCount = resAfter.json?.array?.count
@@ -192,12 +192,12 @@ fileprivate extension EventControllerTests {
   }
   
   func assertEventHasExpectedFields(json: JSON?, event: App.Event) throws {
-    guard let place = try event.place() else {
-      XCTFail()
+    guard let place = try! event.place() else {
+      XCTFail("Can't get place")
       return
     }
-    guard let city = try place.city() else {
-      XCTFail()
+    guard let city = try! place.city() else {
+      XCTFail("Can't get city")
       return
     }
     

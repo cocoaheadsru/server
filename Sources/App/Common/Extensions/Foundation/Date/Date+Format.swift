@@ -12,4 +12,3 @@ extension Date {
     return DateFormatter.mysql.string(from: self)
   }
 }
-

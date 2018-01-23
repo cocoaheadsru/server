@@ -22,7 +22,7 @@ extension Content {
 
 extension Content {
 
-  enum ContentType {
+  enum ContentType: String {
     case video
     case slide
 
@@ -31,10 +31,7 @@ extension Content {
     }
 
     init(_ string: String) {
-      switch string {
-      case "video": self = .video
-      default: self = .slide
-      }
+      self = ContentType(rawValue: string) ?? .slide
     }
   }
 }
@@ -44,8 +41,8 @@ extension Content: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.foreignId(for: Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId)
-      builder.enum(Keys.type, options: ["video","slide"])
+      builder.foreignId(for: Speech.self, optional: false, unique: false, foreignIdKey: Keys.speechId, foreignKeyName: self.entity + "_" + Keys.speechId)
+      builder.enum(Keys.type, options: ["video", "slide"])
       builder.string(Keys.title)
       builder.string(Keys.description)
       builder.string(Keys.link)

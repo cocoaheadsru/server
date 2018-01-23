@@ -1,6 +1,6 @@
 import Foundation
 
-extension String {    
+extension String {
   static var invalidRandomToken: String {
     let token = String.randomValue
     if ["test", "user"].contains(token) {

@@ -16,6 +16,15 @@ extension Heartbeat {
   }
 }
 
+extension Heartbeat: JSONInitializable {
+
+  convenience init(json: JSON) throws {
+    self.init(
+      beat: try json.get(Keys.beat)
+    )
+  }
+}
+
 extension Heartbeat: Preparation {
 
   static func prepare(_ database: Database) throws {

@@ -7,53 +7,101 @@ final class RegField: Model {
     
   let storage = Storage()
   
-  // sourcery: enum, string, radio, checkbox
+  // sourcery: ignoreInJSON
+  var regFormId: Identifier
+  var required: Bool
+  // sourcery: enum,string,radio,checkbox
   var type: FieldType
-  // sourcery: relatedModel = RegFieldRule
-  var rules: [Identifier]
   var name: String
   var placeholder: String
+  var defaultValue: String
   
-  init(name: String,
+  init(regFormId: Identifier,
+       required: Bool,
+       name: String,
        type: FieldType,
        placeholder: String,
-       rules: [Identifier]) {
-    self.name = name
+       defaultValue: String) {
+    self.regFormId = regFormId
+    self.required = required
     self.type = type
+    self.name = name
     self.placeholder = placeholder
-    self.rules = rules
+    self.defaultValue = defaultValue
   }
 
-  // sourcery:inline:auto:RegField.AutoModelGeneratable
+// sourcery:inline:auto:RegField.AutoModelGeneratable
   init(row: Row) throws {
+    regFormId = try row.get(Keys.regFormId)
+    required = try row.get(Keys.required)
     type = FieldType(try row.get(Keys.type))
-    rules = try row.get(Keys.rules)
     name = try row.get(Keys.name)
     placeholder = try row.get(Keys.placeholder)
+    defaultValue = try row.get(Keys.defaultValue)
   }
 
   func makeRow() throws -> Row {
     var row = Row()
+    try row.set(Keys.regFormId, regFormId)
+    try row.set(Keys.required, required)
     try row.set(Keys.type, type.string)
-    try row.set(Keys.rules, rules)
     try row.set(Keys.name, name)
     try row.set(Keys.placeholder, placeholder)
+    try row.set(Keys.defaultValue, defaultValue)
     return row
   }
-  // sourcery:end
+  
+// sourcery:end
 }
 
 extension RegField {
   
-  func eventRegFields() throws -> [EventRegField] {
-    return try EventRegField.makeQuery().filter(EventRegField.Keys.fieldId, id).all()
+ // sourcery: nestedJSONRepresentableField
+ func fieldAnswers() throws -> [RegFieldAnswer] {
+  return try children().all()
+ }
+  
+  var rules: Siblings<RegField, Rule, Pivot<RegField, Rule>> {
+    return siblings()
   }
   
-  func regFieldAnswers() throws -> [RegFieldAnswer] {
-    return try RegFieldAnswer.makeQuery().filter(RegFieldAnswer.Keys.fieldId, id).all()
+  func regForm() throws -> RegForm? {
+    return try parent(id: regFormId).get()
   }
   
-  func validationRules() throws -> [RegFieldRule] {
-    return try children().all()
+  func field() throws -> RegField? {
+    return try children().first()
+  }
+  
+  func fieldToJSON() throws -> JSON {
+    
+    func fieldWithAnswersJSON() throws -> JSON {
+      var json = JSON()
+      try json.set(Keys.name, name)
+      try json.set(Keys.type, type.string)
+      try json.set(Keys.placeholder, placeholder)
+      try json.set(Keys.defaultValue, defaultValue)
+      
+      var fieldAnswers = try RegFieldAnswer.fieldAnswers(by: id!)
+      fieldAnswers.removeKey(RegFieldAnswer.Keys.regFieldId)
+      
+      try json.set(AnswersKeys.fieldAnswers, fieldAnswers)
+      return json
+    }
+    
+    var json = JSON()
+    try json.set(Keys.id, id)
+    try json.set(Keys.required, required)
+    try json.set(AnswersKeys.field, fieldWithAnswersJSON())
+    return json
+  }
+}
+
+extension RegField {
+  
+  struct AnswersKeys {
+    static let regFields = "reg_fields"
+    static let field = "field"
+    static let fieldAnswers = "field_answers"
   }
 }
