@@ -8,7 +8,7 @@ WORK_SPACE = "/home/jenkins/ch-stage/workspace/ch-server"
 DEVELOP_BRANCH = 'develop'
 MASTER_BRANCH = 'master'
 
-stage("Select a target node lable") {
+stage("Select a target node") {
   node('master') {
     echo "Start prepare..."
     
@@ -20,7 +20,7 @@ stage("Select a target node lable") {
       WORK_NODE = 'chprod-node'
       break
     default:
-      WORK_NODE = 'master'
+      WORK_NODE = 'chprod-node'
       break
     }
     
@@ -28,44 +28,80 @@ stage("Select a target node lable") {
   }
 }
 
-//if master of devlop commit
-if(WORK_NODE != 'master'){
-  node(WORK_NODE){
-    ws(WORK_SPACE) {
-      setenv()
-      checkout()
-      build()
-      deploy()
-      if(env.DEPLOY_STATUS == 'FAILURE') {
-        rollback()
-      } else {
-        slackSend( color: 'good', message: "Deploy SUCCESS :smiley: :rocket:")
-      }
-    }// workspace
-  }//node
-} else {
-  // check Pull Request
-  node('chstage-node'){
-    stage("checkout"){
-      checkout scm
-      def COMMIT_MESSAGE = commitMessage()
-      slackSend(
-        color: 'good',
-        message: "Start PR codestyle check for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
-      )
+switch(BRANCH_NAME) {
+case DEVELOP_BRANCH:
+    node(WORK_NODE) {
+        ws(WORK_SPACE) {
+            setenv_develop()
+            checkout()
+            mysql_configure()
+            build()
+            unit_test()
+            deploy()
+            if(env.DEPLOY_STATUS == 'FAILURE') {
+                slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
+            } else {
+                slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
+            }
+        }
     }
-    check_codestyle()
-  }
-  
+    break
+case MASTER_BRANCH:
+    node(WORK_NODE) {
+        ws(WORK_SPACE) {
+            setenv_production()
+            checkout()
+            mysql_configure()
+            build()
+            deploy()
+            if(env.DEPLOY_STATUS == 'FAILURE') {
+                slackSend(color: 'danger', message: "Deploy FAILED trying rollback :scream:" )
+                rollback()
+            } else {
+                slackSend( color: 'good', message: "Deploy on production SUCCESS :smiley: :rocket:")
+            }
+        }
+    }
+    break
+default: // PR
+    node(WORK_NODE) {
+        ws(WORK_SPACE) {
+            setenv_develop()
+            checkout()
+            check_codestyle()
+            mysql_configure()
+            build()
+            unit_test()
+        }
+    }
+    break
 }
 
+
+
 //===============================================================================================================
 //===============================================================================================================
 //===============================================================================================================
 
 
-def setenv() {
-  stage("Set environment"){
+def unit_test() {
+    stage("Unit-test"){
+        try {
+            echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
+            ansiColor('xterm') {
+                sh "$VAPOR test $TEST_PARAM"
+            }
+            slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
+        }catch(err) {
+            slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+            println(err.getMessage());
+            throw err
+        }
+    }
+}
+
+def setenv_develop() {
+  stage("Set environment for develop"){
     //Local paths
     WORK_DIR = "${env.WORKSPACE}"
     SCRIPTS_DIR = "${WORK_DIR}/Devops"
@@ -76,8 +112,8 @@ def setenv() {
     
     //Build config
     VAPOR = "/usr/local/bin/vapor"
-    BUILD_PARAM = "--verbose --release"
-    
+    BUILD_PARAM = "--verbose"
+    TEST_PARAM="--verbose"
     //Deploy config
     env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
     env.CH_WEBROOT = "/var/www/stage" // export to scripts
@@ -91,6 +127,35 @@ def setenv() {
     echo "========================"
   }
 }
+
+def setenv_production() {
+    stage("Set environment for production"){
+        //Local paths
+        WORK_DIR = "${env.WORKSPACE}"
+        SCRIPTS_DIR = "${WORK_DIR}/Devops"
+        
+        //MySQL config
+        MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
+        SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
+        
+        //Build config
+        VAPOR = "/usr/local/bin/vapor"
+        BUILD_PARAM = "--verbose --release"
+        
+        //Deploy config
+        env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
+        env.CH_WEBROOT = "/var/www/stage" // export to scripts
+        DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
+        ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
+        
+        //For rollback config
+        env.DEPLOY_STATUS = "SUCCESS"
+        echo "========================"
+        sh 'printenv'
+        echo "========================"
+    }
+}
+
 
 def check_codestyle() {
  stage("check codestyle"){
@@ -113,16 +178,26 @@ def checkout(){
         message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
       )
     
-      echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
-      sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
-      slackSend( color: 'good', message: "Chekout SUCCESS :smiley:")
-
     }catch(err) {
       slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
       println(err.getMessage());
       throw err
     }
   }
+}
+
+def mysql_configure() {
+    stage("MySQL configure") {
+        try{
+            echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
+            sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
+            slackSend(color: 'good', message: "MySQL configure SUCCESS :smiley:")
+        }catch(err) {
+            slackSend(color: 'danger', message: "MySQL configure FAILED :scream:" )
+            println(err.getMessage());
+            throw err
+        }
+    }
 }
 
 def build() {
