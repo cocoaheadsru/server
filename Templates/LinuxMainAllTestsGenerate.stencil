@@ -1,6 +1,7 @@
 // sourcery:file:Tests/LinuxMain.swift
 #if os(Linux)
 import XCTest
+@testable import AppTests
 
 {% for type in types.classes|based:"TestCase" %}
 {% if not type.annotations.disableTests %}extension {{ type.name }} {
