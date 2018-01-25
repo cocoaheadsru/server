@@ -34,18 +34,9 @@ case DEVELOP_BRANCH:
         ws(WORK_SPACE) {
             setenv_develop()
             checkout()
-            mysql_configure()
             build()
             unit_test()
             deploy()
-            sh 'printenv'
-            if(env.DEPLOY_STATUS == 'FAILURE') {
-                currentBuild.result = 'FAILURE'
-                slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
-            } else {
-                currentBuild.result = 'SUCCESS'
-                slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
-            }
         }
     }
     break
@@ -54,14 +45,14 @@ case MASTER_BRANCH:
         ws(WORK_SPACE) {
             setenv_production()
             checkout()
-            mysql_configure()
             build()
-            deploy()
-            if(env.DEPLOY_STATUS == 'FAILURE') {
-                slackSend(color: 'danger', message: "Deploy FAILED trying rollback :scream:" )
+            try {
+                deploy()
+            } catch(err) {
                 rollback()
-            } else {
-                slackSend( color: 'good', message: "Deploy on production SUCCESS :smiley: :rocket:")
+                slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+                println(err.getMessage());
+                throw err
             }
         }
     }
@@ -161,7 +152,7 @@ def setenv_production() {
 def check_codestyle() {
  stage("check codestyle"){
       //start
-      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml || true'
+      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml'
       checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       slackSend( color: 'good', message: "Codestyle checking is done :smiley:")
  }
@@ -187,23 +178,11 @@ def checkout(){
   }
 }
 
-def mysql_configure() {
-    stage("MySQL configure") {
-        try{
-            echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
-            sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
-            slackSend(color: 'good', message: "MySQL configure SUCCESS :smiley:")
-        }catch(err) {
-            slackSend(color: 'danger', message: "MySQL configure FAILED :scream:" )
-            println(err.getMessage());
-            throw err
-        }
-    }
-}
-
 def build() {
   stage("Build"){
     try{
+      echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
+      sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
       echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
       ansiColor('xterm') {
         sh "$VAPOR build $BUILD_PARAM"
@@ -222,8 +201,11 @@ def deploy() {
     try{
       echo "Start deploy by script ${DEPLOY_SCRIPT}"
       sh "$DEPLOY_SCRIPT"
+      currentBuild.result = 'SUCCESS'
+      slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
     } catch(err) {
-      slackSend( color: 'danger',message: "Deploy FAILED :scream:")
+      currentBuild.result = 'FAILURE'
+      slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
       println(err.getMessage());
       throw err
     }
