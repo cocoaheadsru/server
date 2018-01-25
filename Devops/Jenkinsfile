@@ -63,7 +63,6 @@ default: // PR
             setenv_develop()
             checkout()
             check_codestyle()
-            mysql_configure()
             build()
             unit_test()
         }
