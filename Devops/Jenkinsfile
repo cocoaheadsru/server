@@ -23,7 +23,6 @@ stage("Select a target node") {
       WORK_NODE = 'chprod-node'
       break
     }
-    
     echo "end prepare the Node is ${WORK_NODE}..."
   }
 }
