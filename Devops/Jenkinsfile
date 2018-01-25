@@ -28,46 +28,38 @@ stage("Select a target node") {
   }
 }
 
-switch(BRANCH_NAME) {
-case DEVELOP_BRANCH:
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_develop()
-            checkout()
-            build()
-            unit_test()
-            deploy()
-        }
-    }
+node(WORK_NODE) {
+  ws(WORK_SPACE) {
+    switch(BRANCH_NAME) {
+    case DEVELOP_BRANCH:
+      setenv_develop()
+      checkout()
+      build()
+      unit_test()
+      deploy()
     break
-case MASTER_BRANCH:
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_production()
-            checkout()
-            build()
-            try {
-                deploy()
-            } catch(err) {
-                rollback()
-                slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
-                println(err.getMessage());
-                throw err
-            }
-        }
-    }
+    case MASTER_BRANCH:
+      setenv_production()
+      checkout()
+      build()
+      try {
+        deploy()
+      } catch(err) {
+        rollback()
+        slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+        println(err.getMessage());
+        throw err
+      }
     break
-default: // PR
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_develop()
-            checkout()
-            check_codestyle()
-            build()
-            unit_test()
-        }
+    default: // PR
+      setenv_develop()
+      checkout()
+      check_codestyle()
+      build()
+      unit_test()
+      break
     }
-    break
+  }
 }
 
 //===============================================================================================================
