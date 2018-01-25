@@ -3,6 +3,7 @@
 
 #if os(Linux)
 import XCTest
+@testable import AppTests
 
 extension AutoapproveTest {
   static var allTests: [(String, (AutoapproveTest) -> () throws -> Void)] = [
