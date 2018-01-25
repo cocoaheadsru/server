@@ -38,9 +38,12 @@ case DEVELOP_BRANCH:
             build()
             unit_test()
             deploy()
+            sh 'printenv'
             if(env.DEPLOY_STATUS == 'FAILURE') {
+                currentBuild.result = 'FAILURE'
                 slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
             } else {
+                currentBuild.result = 'SUCCESS'
                 slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
             }
         }
@@ -77,12 +80,9 @@ default: // PR
     break
 }
 
-
-
 //===============================================================================================================
 //===============================================================================================================
 //===============================================================================================================
-
 
 def unit_test() {
     stage("Unit-test"){
@@ -114,6 +114,7 @@ def setenv_develop() {
     VAPOR = "/usr/local/bin/vapor"
     BUILD_PARAM = "--verbose"
     TEST_PARAM="--verbose"
+    
     //Deploy config
     env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
     env.CH_WEBROOT = "/var/www/stage" // export to scripts
@@ -221,9 +222,8 @@ def deploy() {
     try{
       echo "Start deploy by script ${DEPLOY_SCRIPT}"
       sh "$DEPLOY_SCRIPT"
-      currentBuild.result = 'SUCCESS'
     } catch(err) {
-      slackSend( color: 'danger',message: "3 of 3 Deploy FAILED :scream:")
+      slackSend( color: 'danger',message: "Deploy FAILED :scream:")
       println(err.getMessage());
       throw err
     }
