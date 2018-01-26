@@ -11,7 +11,6 @@ MASTER_BRANCH = 'master'
 stage("Select a target node") {
   node('master') {
     echo "Start prepare..."
-    
     switch(BRANCH_NAME) {
     case DEVELOP_BRANCH:
       WORK_NODE = 'chstage-node'
