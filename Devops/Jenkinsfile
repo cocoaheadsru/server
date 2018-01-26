@@ -44,7 +44,7 @@ node(WORK_NODE) {
         deploy()
       } catch(err) {
         rollback()
-        slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+        slackSend(color: 'danger', message: "New PR FAILED :scream:")
         println(err.getMessage());
         throw err
       }
