@@ -142,8 +142,8 @@ def check_codestyle() {
  stage("check codestyle"){
       //start
       sh 'env'
-      sh '/usr/bin/ldd /usr/local/bin/swiftlint'
-      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml'
+      sh 'ldd /usr/local/bin/swiftlint'
+      sh '/usr/local/bin/swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
       checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       slackSend( color: 'good', message: "Codestyle check is done :smiley:")
  }
