@@ -103,6 +103,16 @@ extension RouteTests {
    ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
+extension UserControllerTests {
+  static var allTests: [(String, (UserControllerTests) -> () throws -> Void)] = [
+   ("testThatUserCreatesFromRequest", testThatUserCreatesFromRequest),
+   ("testThatUserDoesNotCreateFromIncompleteRequest", testThatUserDoesNotCreateFromIncompleteRequest),
+   ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
+   ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
+   ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),
+   ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth)
+  ]
+}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -113,6 +123,7 @@ XCTMain([
   testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
-  testCase(RouteTests.allTests)
+  testCase(RouteTests.allTests),
+  testCase(UserControllerTests.allTests)
 ])
 #endif
