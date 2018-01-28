@@ -141,8 +141,9 @@ def setenv_production() {
 def check_codestyle() {
  stage("check codestyle"){
       //start
+      sh 'export PATH="/usr/lib/swift:$PATH"'
+      sh 'export LINUX_SOURCEKIT_LIB_PATH="/usr/lib"'
       sh 'env'
-      sh 'ldd /usr/local/bin/swiftlint'
       sh '/usr/local/bin/swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
       checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       slackSend( color: 'good', message: "Codestyle check is done :smiley:")
