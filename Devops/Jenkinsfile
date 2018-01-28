@@ -144,7 +144,6 @@ def check_codestyle() {
       sh 'env'
       sh 'pwd'
       sh 'export PATH="/usr/lib/swift:$PATH"; export LINUX_SOURCEKIT_LIB_PATH="/usr/lib"; /usr/bin/swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
-      //sh '/home/jenkins/ch-stage/scripts/sw_wraped.sh'
       checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       slackSend( color: 'good', message: "Codestyle check is done :smiley:")
   }
