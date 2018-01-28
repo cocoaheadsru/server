@@ -140,7 +140,6 @@ def setenv_production() {
 
 def check_codestyle() {
  stage("check codestyle"){
-  ws(WORK_SPACE) {
     //
       sh 'env'
       sh 'pwd'
@@ -148,7 +147,6 @@ def check_codestyle() {
       //sh '/home/jenkins/ch-stage/scripts/sw_wraped.sh'
       checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       slackSend( color: 'good', message: "Codestyle check is done :smiley:")
-    }
   }
 }
 
