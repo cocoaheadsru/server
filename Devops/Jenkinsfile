@@ -55,6 +55,7 @@ node(WORK_NODE) {
       check_codestyle()
       build()
       unit_test()
+      slackSend(color: 'good', message: "PR looks good :tada:" )
       break
     }
   }
