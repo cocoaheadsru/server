@@ -15,7 +15,17 @@ extension Session {
     static let userId = "user_id"
     static let token = "token"
     static let actual = "actual"
-    static let timestamp = "timestamp"
+  }
+}
+
+extension Session: Updateable {
+
+  public static var updateableKeys: [UpdateableKey<Session>] {
+    return [
+      UpdateableKey(Keys.userId, Identifier.self) { $0.userId = $1 },
+      UpdateableKey(Keys.token, String.self) { $0.token = $1 },
+      UpdateableKey(Keys.actual, Bool.self) { $0.actual = $1 }
+    ]
   }
 }
 
@@ -25,8 +35,7 @@ extension Session: JSONInitializable {
     self.init(
       userId: try json.get(Keys.userId),
       token: try json.get(Keys.token),
-      actual: try json.get(Keys.actual),
-      timestamp: try json.get(Keys.timestamp)
+      actual: try json.get(Keys.actual)
     )
   }
 }
@@ -39,7 +48,6 @@ extension Session: Preparation {
       builder.foreignId(for: User.self, optional: false, unique: true, foreignIdKey: Keys.userId, foreignKeyName: self.entity + "_" + Keys.userId)
       builder.string(Keys.token)
       builder.bool(Keys.actual)
-      builder.int(Keys.timestamp)
     }
   }
 
@@ -56,7 +64,8 @@ extension Session: JSONRepresentable {
     try json.set(Keys.userId, userId)
     try json.set(Keys.token, token)
     try json.set(Keys.actual, actual)
-    try json.set(Keys.timestamp, timestamp)
     return json
   }
 }
+
+extension Session: Timestampable { }

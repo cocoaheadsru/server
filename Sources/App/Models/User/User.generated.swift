@@ -30,11 +30,11 @@ extension User: JSONInitializable {
     self.init(
       name: try json.get(Keys.name),
       lastname: try json.get(Keys.lastname),
-      company: try json.get(Keys.company),
-      position: try json.get(Keys.position),
-      photo: try json.get(Keys.photo),
-      email: try json.get(Keys.email),
-      phone: try json.get(Keys.phone)
+      company: try? json.get(Keys.company),
+      position: try? json.get(Keys.position),
+      photo: try? json.get(Keys.photo),
+      email: try? json.get(Keys.email),
+      phone: try? json.get(Keys.phone)
     )
   }
 }
@@ -63,11 +63,11 @@ extension User: Preparation {
       builder.id()
       builder.string(Keys.name)
       builder.string(Keys.lastname)
-      builder.string(Keys.company)
-      builder.string(Keys.position)
-      builder.string(Keys.photo)
-      builder.string(Keys.email)
-      builder.string(Keys.phone)
+      builder.string(Keys.company, optional: true)
+      builder.string(Keys.position, optional: true)
+      builder.string(Keys.photo, optional: true)
+      builder.string(Keys.email, optional: true)
+      builder.string(Keys.phone, optional: true)
     }
   }
 
@@ -83,11 +83,11 @@ extension User: JSONRepresentable {
     try json.set(Keys.id, id)
     try json.set(Keys.name, name)
     try json.set(Keys.lastname, lastname)
-    try json.set(Keys.company, company)
-    try json.set(Keys.position, position)
-    try json.set(Keys.photo, photo)
-    try json.set(Keys.email, email)
-    try json.set(Keys.phone, phone)
+    try? json.set(Keys.company, company)
+    try? json.set(Keys.position, position)
+    try? json.set(Keys.photo, photo)
+    try? json.set(Keys.email, email)
+    try? json.set(Keys.phone, phone)
     return json
   }
 }
