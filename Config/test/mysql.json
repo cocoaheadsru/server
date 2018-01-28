@@ -2,6 +2,5 @@
   "hostname": "localhost",
   "user": "root",
   "password": "",
-  "database": "cocoaheads"
+  "database": "cocoaheads_test"
 }
-
