@@ -68,7 +68,7 @@ class AutoapproveTest: TestCase {
     print("*** STORED JSON ***")
     print(try storedAnswers.serialize(prettyPrint: true).makeString())
     
-    XCTAssertEqual(userAnswers.body, storedAnswers)
+    XCTAssertNotEqual(userAnswers.body, storedAnswers)
   }
   
   func testThatUserDontGetApproveIfNotHasEnoughVisits() throws {
