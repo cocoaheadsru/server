@@ -146,7 +146,7 @@ def check_codestyle() {
       //sh 'export PATH="/usr/lib/swift:$PATH"; export LINUX_SOURCEKIT_LIB_PATH="/usr/lib"; swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
       //checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
       //slackSend( color: 'good', message: "Codestyle check is done :smiley:")
-      slackSend( color: 'yellow', message: "Under construction :construction_worker:")
+      slackSend( color: 'yellow', message: "Checking codestyle under construction :construction_worker:")
   }
 }
 
