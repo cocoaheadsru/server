@@ -18,5 +18,6 @@ extension Droplet {
     try resource("event/:id/form", RegistrationFormController.self)
     try resource("event/register", RegistrationController.self)
     try resource("user", UserController.self)
+    try resource("user", UserUnauthorizedController.self)
   }
 }
