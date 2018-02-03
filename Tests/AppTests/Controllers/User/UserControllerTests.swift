@@ -7,7 +7,6 @@ import Sockets
 
 class UserControllerTests: TestCase {
   let drop = try! Droplet.testable()
-  let userContoller = UserController()
   
   let firstName = "Cocoa"
   let lastName = "Heads"
@@ -15,6 +14,7 @@ class UserControllerTests: TestCase {
   let position = "Tester"
   let email = "tester@cocoaheads.ru"
   let phone = "1234567890"
+  let photo = "http://cocoaheads.ru/photo.jpg"
   let updatedLastName = "Feet"
   
   override func setUp() {
@@ -31,9 +31,9 @@ class UserControllerTests: TestCase {
   
   func testThatUserDoesNotCreateFromIncompleteRequest() throws {
     var json = JSON()
-    try! json.set("name", firstName)
+    try json.set("name", firstName)
     
-    try! drop.clientAuthorizedTestResponse(to: .post, at: "user", body: json).assertStatus(is: .internalServerError)
+    try drop.clientAuthorizedTestResponse(to: .post, at: "user", body: json).assertStatus(is: .internalServerError)
   }
 
   func testThatStoreMethodReturnsUser() throws {
@@ -56,12 +56,12 @@ class UserControllerTests: TestCase {
   }
 
   func testThatSessionTokenDoesNotUpdateOnEveryShowRequest() throws {
-    let user = try! storeUser()
-    let token = try! user.session()?.token
+    let user = try storeUser()
+    let token = try user.session()?.token
     
-    try! sendGetRequest(for: user.id!)
+    try sendGetRequest(for: user.id!)
     
-    XCTAssertEqual(token, try! user.session()?.token)
+    XCTAssertEqual(token, try user.session()?.token)
   }
 
   func testThatShowMethodUpdatesSessionTokenAfterOneMonth() throws {
@@ -87,6 +87,45 @@ class UserControllerTests: TestCase {
     
     XCTAssertEqual(updatedAtMonth, currentMonth)
   }
+  
+  func testThatUpdateMethodUpdatesUserCredentials() throws {
+    let user = try storeUser()
+    var updatedUserJSON = try generatedUserJSON()
+    try updatedUserJSON.set("lastname", updatedLastName)
+
+    try sendPatchRequest(for: user.id!, with: updatedUserJSON)
+    
+    let updatedUser = try User.find(user.id!)
+    
+    XCTAssertEqual(updatedUser!.lastname, updatedLastName)
+  }
+  
+  func testThatUpdateMethodReturnsUpdatedUser() throws {
+    let user = try storeUser()
+    let newName = String.randomValue
+    let newLastName = String.randomValue
+    let newCompany = String.randomValue
+    let newPosition = String.randomValue
+    let newEmail = String.randomEmail
+    let newPhoto = String.randomURL
+    
+    var json = JSON()
+    try json.set("name", newName)
+    try json.set("lastname", newLastName)
+    try json.set("company", newCompany)
+    try json.set("position", newPosition)
+    try json.set("email", newEmail)
+    try json.set("photo", newPhoto)
+    
+    let response = try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\((user.id?.int)!)", body: json)
+    
+    try response.assertJSON("name", equals: newName)
+    try response.assertJSON("lastname", equals: newLastName)
+    try response.assertJSON("company", equals: newCompany)
+    try response.assertJSON("position", equals: newPosition)
+    try response.assertJSON("email", equals: newEmail)
+    try response.assertJSON("photo", equals: newPhoto)
+  }
 }
 
 extension UserControllerTests {
@@ -105,6 +144,7 @@ extension UserControllerTests {
       try json.set("position", position)
       try json.set("email", email)
       try json.set("phone", phone)
+      try json.set("photo", photo)
     }
     return json
   }
@@ -131,5 +171,10 @@ extension UserControllerTests {
   @discardableResult
   func sendGetRequest(for id: Identifier) throws -> Response {
     return try drop.clientAuthorizedTestResponse(to: .get, at: "/user/\(id.int!)")
+  }
+  
+  @discardableResult
+  func sendPatchRequest(for id: Identifier, with json: JSON) throws -> Response {
+    return try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\(id.int!)", body: json)
   }
 }
