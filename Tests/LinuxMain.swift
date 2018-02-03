@@ -110,7 +110,9 @@ extension UserControllerTests {
    ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
    ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
    ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),
-   ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth)
+   ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth),
+   ("testThatUpdateMethodUpdatesUserCredentials", testThatUpdateMethodUpdatesUserCredentials),
+   ("testThatUpdateMethodReturnsUpdatedUser", testThatUpdateMethodReturnsUpdatedUser)
   ]
 }
 
