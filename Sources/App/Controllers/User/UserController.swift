@@ -30,7 +30,7 @@ final class UserController {
   
   func updateSessionToken(for user: User) throws {
     do {
-      try user.updateSessionToken()
+      try user.session()?.updateToken()
     } catch {
       throw Abort.badRequest
     }
