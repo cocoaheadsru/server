@@ -3,7 +3,7 @@ import FluentProvider
 import Foundation
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
+// sourcery: fromJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class User: Model {
     
   let storage = Storage()
@@ -57,6 +57,23 @@ final class User: Model {
   // sourcery:end
 }
 
+extension User: JSONRepresentable {
+  
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.id, id)
+    try json.set(Keys.name, name)
+    try json.set(Keys.lastname, lastname)
+    try? json.set(Keys.company, company)
+    try? json.set(Keys.position, position)
+    try? json.set(Keys.photo, photo)
+    try? json.set(Keys.email, email)
+    try? json.set(Keys.phone, phone)
+    try json.set("session", session()?.makeJSON())
+    return json
+  }
+}
+
 // MARK: Relations
 extension User {
   
@@ -80,17 +97,6 @@ extension User {
       try session.save()
     } catch {
       try? self.delete()
-    }
-  }
-  
-  func updateSessionToken() throws {
-    guard let session = try self.session(), let updatedAt = session.updatedAt else {
-      throw Abort.notFound
-    }
-    if let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: updatedAt),
-      referenceDate < Date() {
-      session.token = UUID().uuidString
-      try session.save()
     }
   }
 }

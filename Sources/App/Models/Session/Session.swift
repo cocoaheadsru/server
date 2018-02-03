@@ -1,8 +1,9 @@
 import Vapor
 import FluentProvider
+import Foundation
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation, Timestampable, Updateable
+// sourcery: Preparation, Timestampable
 final class Session: Model {
     
   let storage = Storage()
@@ -37,6 +38,16 @@ final class Session: Model {
   // sourcery:end
 }
 
+extension Session: JSONRepresentable {
+  
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.token, token)
+    try json.set(Keys.actual, actual)
+    return json
+  }
+}
+
 extension Session {
 
   static func find(by token: String) throws -> Session? {
@@ -45,5 +56,15 @@ extension Session {
 
   var user: User? {
     return try? parent(id: userId).get()!
+  }
+  
+  func updateToken() throws {
+    if
+      let date = updatedAt,
+      let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date),
+      referenceDate < Date() {
+      self.token = UUID().uuidString
+      try self.save()
+    }
   }
 }

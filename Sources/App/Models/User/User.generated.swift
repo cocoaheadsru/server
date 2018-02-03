@@ -24,23 +24,6 @@ extension User {
 
 extension User: ResponseRepresentable { }
 
-extension User: JSONInitializable {
-
-  convenience init(json: JSON) throws {
-    self.init(
-      name: try json.get(Keys.name),
-      lastname: try json.get(Keys.lastname),
-      company: try? json.get(Keys.company),
-      position: try? json.get(Keys.position),
-      photo: try? json.get(Keys.photo),
-      email: try? json.get(Keys.email),
-      phone: try? json.get(Keys.phone)
-    )
-  }
-}
-
-extension User: Timestampable { }
-
 extension User: Updateable {
 
   public static var updateableKeys: [UpdateableKey<User>] {
@@ -53,6 +36,21 @@ extension User: Updateable {
       UpdateableKey(Keys.email, String.self) { $0.email = $1 },
       UpdateableKey(Keys.phone, String.self) { $0.phone = $1 }
     ]
+  }
+}
+
+extension User: JSONInitializable {
+
+  convenience init(json: JSON) throws {
+    self.init(
+      name: try json.get(Keys.name),
+      lastname: try json.get(Keys.lastname),
+      company: try? json.get(Keys.company),
+      position: try? json.get(Keys.position),
+      photo: try? json.get(Keys.photo),
+      email: try? json.get(Keys.email),
+      phone: try? json.get(Keys.phone)
+    )
   }
 }
 
@@ -76,18 +74,4 @@ extension User: Preparation {
   }
 }
 
-extension User: JSONRepresentable {
-
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Keys.id, id)
-    try json.set(Keys.name, name)
-    try json.set(Keys.lastname, lastname)
-    try? json.set(Keys.company, company)
-    try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photo)
-    try? json.set(Keys.email, email)
-    try? json.set(Keys.phone, phone)
-    return json
-  }
-}
+extension User: Timestampable { }
