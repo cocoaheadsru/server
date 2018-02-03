@@ -1,6 +1,6 @@
 import Vapor
 import FluentProvider
-import Foundation
+import Crypto
 
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
@@ -90,9 +90,9 @@ extension User {
   }
   
   func didCreate() {
-    let token = UUID().uuidString
     do {
       let userId = try self.assertExists()
+      let token = try Session.generateToken()
       let session = Session(userId: userId, token: token)
       try session.save()
     } catch {

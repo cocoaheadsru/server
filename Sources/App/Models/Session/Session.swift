@@ -1,6 +1,7 @@
 import Vapor
 import FluentProvider
 import Foundation
+import Crypto
 
 // sourcery: AutoModelGeneratable
 // sourcery: Preparation, Timestampable
@@ -56,6 +57,11 @@ extension Session {
 
   var user: User? {
     return try? parent(id: userId).get()!
+  }
+  
+  static func generateToken() throws -> String {
+    let random = try Crypto.Random.bytes(count: 16)
+    return random.base64Encoded.makeString()
   }
   
   func updateToken() throws {
