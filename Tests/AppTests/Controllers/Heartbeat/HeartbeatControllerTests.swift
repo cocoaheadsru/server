@@ -6,6 +6,9 @@ import Fluent
 @testable import Vapor
 @testable import App
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
+
 class HeartbeatControllerTests: TestCase {
   //swiftlint:disable force_try
   let drop = try! Droplet.testable()
@@ -66,19 +69,19 @@ class HeartbeatControllerTests: TestCase {
     // act
     let res = try controller.index(req: req).makeResponse()
     // assert
-    try res.assertJSON("beat", equals: beat)
+    try! res.assertJSON("beat", equals: beat)
   }
   
   func testThatRoutePostMethodShouldSetAnyIntValue() throws {
     // arrange
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
-    let json = try heartbeat.makeJSON()
+    let json = try! heartbeat.makeJSON()
     let header: HTTPHeader = ["Content-Type": "application/json"]
     // act & assert
-    print(json)
-    try drop
-      .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
+    print(try! json.serialize(prettyPrint: true).makeString())
+    try! drop
+      .testResponse(to: .post, at: "heartbeat", headers: header, body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -88,7 +91,7 @@ class HeartbeatControllerTests: TestCase {
     try cleanHeartbeatTable()
     // act & assert
     try drop
-      .userAuthorizedTestResponse(to: .get, at: "heartbeat")
+      .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .noContent)
   }
   
@@ -99,7 +102,7 @@ class HeartbeatControllerTests: TestCase {
     _ = try setBeat(to: beat)
     // act & assert
     try drop
-      .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+      .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -113,7 +116,7 @@ class HeartbeatControllerTests: TestCase {
       let header: HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
       try drop
-        .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
+        .testResponse(to: .post, at: "heartbeat", headers: header, body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
       try drop
