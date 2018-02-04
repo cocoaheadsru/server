@@ -41,11 +41,11 @@ node(WORK_NODE) {
       checkout()
       build()
       try {
-      deploy()
+        deploy()
       } catch(err) {
-      rollback()
-      slackSend(color: 'danger', message: "New PR FAILED :scream:")
-      println(err.getMessage());
+        rollback()
+        slackSend(color: 'danger', message: "New PR FAILED :scream:")
+        println(err.getMessage());
       throw err
       }
       break
@@ -68,15 +68,15 @@ node(WORK_NODE) {
 def unit_test() {
   stage("Unit-test"){
     try {
-    echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
-    ansiColor('xterm') {
-    sh "$VAPOR test $TEST_PARAM"
+      echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
+      ansiColor('xterm') {
+      sh "$VAPOR test $TEST_PARAM"
     }
-    slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
+      slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
     }catch(err) {
-    slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
-    println(err.getMessage());
-    throw err
+      slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+      println(err.getMessage());
+      throw err
     }
   }
 }
@@ -148,19 +148,18 @@ def check_codestyle() {
 def checkout(){
   stage("Checkout") {
     try{
-    echo "Start checkout on node: ${WORK_NODE}"
-    checkout scm
-    def COMMIT_MESSAGE = commitMessage()
+      echo "Start checkout on node: ${WORK_NODE}"
+      checkout scm
+      def COMMIT_MESSAGE = commitMessage()
 
-    slackSend(
-    color: 'good',
-    message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
-    )
-
+      slackSend(
+        color: 'good',
+        message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+      )
     }catch(err) {
-    slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
-    println(err.getMessage());
-    throw err
+      slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
+      println(err.getMessage());
+      throw err
     }
   }
 }
@@ -168,17 +167,17 @@ def checkout(){
 def build() {
   stage("Build"){
     try{
-    echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
-    sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
-    echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
-    ansiColor('xterm') {
-    sh "$VAPOR build $BUILD_PARAM"
-    }
-    slackSend( color: 'good', message: "Build SUCCESS :smiley:" )
+      echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
+      sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
+      echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
+      ansiColor('xterm') {
+        sh "$VAPOR build $BUILD_PARAM"
+      }
+      slackSend( color: 'good', message: "Build SUCCESS :smiley:" )
     }catch(err) {
-    slackSend(color: 'danger', message: "Build FAILED :scream:")
-    println(err.getMessage());
-    throw err
+      slackSend(color: 'danger', message: "Build FAILED :scream:")
+      println(err.getMessage());
+      throw err
     }
   }
 }
@@ -186,15 +185,15 @@ def build() {
 def deploy() {
   stage("Deploy"){
     try{
-    echo "Start deploy by script ${DEPLOY_SCRIPT}"
-    sh "$DEPLOY_SCRIPT"
-    currentBuild.result = 'SUCCESS'
-    slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
+      echo "Start deploy by script ${DEPLOY_SCRIPT}"
+      sh "$DEPLOY_SCRIPT"
+      currentBuild.result = 'SUCCESS'
+      slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
     } catch(err) {
-    currentBuild.result = 'FAILURE'
-    slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
-    println(err.getMessage());
-    throw err
+      currentBuild.result = 'FAILURE'
+      slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
+      println(err.getMessage());
+      throw err
     }
   }
 }
@@ -203,14 +202,14 @@ def deploy() {
 def rollback() {
   stage("ROLLBACK"){
     try{
-    echo "Start rollback by ${ROLLBACK_SCRIPT}"
-    sh "$ROLLBACK_SCRIPT"
-    currentBuild.result = 'FAILURE'
-    slackSend(color: 'danger', message: "Deploy failed but Rollback is SUCCESS :grimacing:")
+      echo "Start rollback by ${ROLLBACK_SCRIPT}"
+      sh "$ROLLBACK_SCRIPT"
+      currentBuild.result = 'FAILURE'
+      slackSend(color: 'danger', message: "Deploy failed but Rollback is SUCCESS :grimacing:")
     } catch(err) {
-    slackSend( color: 'danger', message: "Deploy FAILED and Rollback is FAILED :scream:")
-    println(err.getMessage());
-    throw err
+      slackSend( color: 'danger', message: "Deploy FAILED and Rollback is FAILED :scream:")
+      println(err.getMessage());
+      throw err
     }
   }
 }
