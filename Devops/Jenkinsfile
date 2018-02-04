@@ -94,7 +94,9 @@ def setenv_develop() {
     //Build config
     VAPOR = "/usr/local/bin/vapor"
     BUILD_PARAM = "--verbose"
-    TEST_PARAM="--verbose"
+
+    //Test config
+    TEST_PARAM = "--verbose"
 
     //Deploy config
     env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
