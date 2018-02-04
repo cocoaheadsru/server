@@ -20,7 +20,7 @@ stage("Select a target node") {
       WORK_NODE = 'chprod-node'
       break
     default:
-      WORK_NODE = 'chprod-node'
+      WORK_NODE = 'chstage-node'
       break
     }
     echo "end prepare the Node is ${WORK_NODE}..."
@@ -144,8 +144,8 @@ def setenv_production() {
 
 def check_codestyle() {
   stage("check codestyle"){
-    //sh 'export PATH="/usr/lib/swift:$PATH"; export LINUX_SOURCEKIT_LIB_PATH="/usr/lib"; swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
-    //checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
+    sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml'
+    checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
     slackSend( color: 'yellow', message: "Checking codestyle under construction :construction:")
   }
 }
