@@ -11,7 +11,6 @@ MASTER_BRANCH = 'master'
 stage("Select a target node") {
   node('master') {
     echo "Start prepare..."
-    
     switch(BRANCH_NAME) {
     case DEVELOP_BRANCH:
       WORK_NODE = 'chstage-node'
@@ -23,61 +22,43 @@ stage("Select a target node") {
       WORK_NODE = 'chprod-node'
       break
     }
-    
     echo "end prepare the Node is ${WORK_NODE}..."
   }
 }
 
-switch(BRANCH_NAME) {
-case DEVELOP_BRANCH:
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_develop()
-            checkout()
-            mysql_configure()
-            build()
-            unit_test()
-            deploy()
-            sh 'printenv'
-            if(env.DEPLOY_STATUS == 'FAILURE') {
-                currentBuild.result = 'FAILURE'
-                slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
-            } else {
-                currentBuild.result = 'SUCCESS'
-                slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
-            }
-        }
+node(WORK_NODE) {
+  ws(WORK_SPACE) {
+    switch(BRANCH_NAME) {
+    case DEVELOP_BRANCH:
+      setenv_develop()
+      checkout()
+      build()
+      unit_test()
+      deploy()
+      break
+    case MASTER_BRANCH:
+      setenv_production()
+      checkout()
+      build()
+      try {
+      deploy()
+      } catch(err) {
+      rollback()
+      slackSend(color: 'danger', message: "New PR FAILED :scream:")
+      println(err.getMessage());
+      throw err
+      }
+      break
+    default: // PR
+      setenv_develop()
+      checkout()
+      check_codestyle()
+      build()
+      unit_test()
+      slackSend(color: 'good', message: "PR looks good :tada:" )
+      break
     }
-    break
-case MASTER_BRANCH:
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_production()
-            checkout()
-            mysql_configure()
-            build()
-            deploy()
-            if(env.DEPLOY_STATUS == 'FAILURE') {
-                slackSend(color: 'danger', message: "Deploy FAILED trying rollback :scream:" )
-                rollback()
-            } else {
-                slackSend( color: 'good', message: "Deploy on production SUCCESS :smiley: :rocket:")
-            }
-        }
-    }
-    break
-default: // PR
-    node(WORK_NODE) {
-        ws(WORK_SPACE) {
-            setenv_develop()
-            checkout()
-            check_codestyle()
-            mysql_configure()
-            build()
-            unit_test()
-        }
-    }
-    break
+  }
 }
 
 //===============================================================================================================
@@ -85,19 +66,19 @@ default: // PR
 //===============================================================================================================
 
 def unit_test() {
-    stage("Unit-test"){
-        try {
-            echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
-            ansiColor('xterm') {
-                sh "$VAPOR test $TEST_PARAM"
-            }
-            slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
-        }catch(err) {
-            slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
-            println(err.getMessage());
-            throw err
-        }
+  stage("Unit-test"){
+    try {
+    echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
+    ansiColor('xterm') {
+    sh "$VAPOR test $TEST_PARAM"
     }
+    slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
+    }catch(err) {
+    slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+    println(err.getMessage());
+    throw err
+    }
+  }
 }
 
 def setenv_develop() {
@@ -105,22 +86,22 @@ def setenv_develop() {
     //Local paths
     WORK_DIR = "${env.WORKSPACE}"
     SCRIPTS_DIR = "${WORK_DIR}/Devops"
-    
+
     //MySQL config
     MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
-    
+    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/development/"
+
     //Build config
     VAPOR = "/usr/local/bin/vapor"
     BUILD_PARAM = "--verbose"
     TEST_PARAM="--verbose"
-    
+
     //Deploy config
     env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
     env.CH_WEBROOT = "/var/www/stage" // export to scripts
     DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
     ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
-    
+
     //For rollback config
     env.DEPLOY_STATUS = "SUCCESS"
     echo "========================"
@@ -130,89 +111,74 @@ def setenv_develop() {
 }
 
 def setenv_production() {
-    stage("Set environment for production"){
-        //Local paths
-        WORK_DIR = "${env.WORKSPACE}"
-        SCRIPTS_DIR = "${WORK_DIR}/Devops"
-        
-        //MySQL config
-        MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-        SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
-        
-        //Build config
-        VAPOR = "/usr/local/bin/vapor"
-        BUILD_PARAM = "--verbose --release"
-        
-        //Deploy config
-        env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
-        env.CH_WEBROOT = "/var/www/stage" // export to scripts
-        DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
-        ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
-        
-        //For rollback config
-        env.DEPLOY_STATUS = "SUCCESS"
-        echo "========================"
-        sh 'printenv'
-        echo "========================"
-    }
+  stage("Set environment for production"){
+    //Local paths
+    WORK_DIR = "${env.WORKSPACE}"
+    SCRIPTS_DIR = "${WORK_DIR}/Devops"
+
+    //MySQL config
+    MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
+    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/production/"
+
+    //Build config
+    VAPOR = "/usr/local/bin/vapor"
+    BUILD_PARAM = "--verbose --release"
+
+    //Deploy config
+    env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
+    env.CH_WEBROOT = "/var/www/stage" // export to scripts
+    DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
+    ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
+
+    //For rollback config
+    env.DEPLOY_STATUS = "SUCCESS"
+    echo "========================"
+    sh 'printenv'
+    echo "========================"
+  }
 }
 
 
 def check_codestyle() {
- stage("check codestyle"){
-      //start
-      sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml || true'
-      checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
-      slackSend( color: 'good', message: "Codestyle checking is done :smiley:")
- }
+  stage("check codestyle"){
+    slackSend( color: 'yellow', message: "Checking codestyle under construction :construction:")
+  }
 }
 
 def checkout(){
   stage("Checkout") {
     try{
-      echo "Start checkout on node: ${WORK_NODE}"
-      checkout scm
-      def COMMIT_MESSAGE = commitMessage()
-    
-      slackSend(
-        color: 'good',
-        message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
-      )
-    
+    echo "Start checkout on node: ${WORK_NODE}"
+    checkout scm
+    def COMMIT_MESSAGE = commitMessage()
+
+    slackSend(
+    color: 'good',
+    message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
+    )
+
     }catch(err) {
-      slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
-      println(err.getMessage());
-      throw err
+    slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
+    println(err.getMessage());
+    throw err
     }
   }
-}
-
-def mysql_configure() {
-    stage("MySQL configure") {
-        try{
-            echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
-            sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
-            slackSend(color: 'good', message: "MySQL configure SUCCESS :smiley:")
-        }catch(err) {
-            slackSend(color: 'danger', message: "MySQL configure FAILED :scream:" )
-            println(err.getMessage());
-            throw err
-        }
-    }
 }
 
 def build() {
   stage("Build"){
     try{
-      echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
-      ansiColor('xterm') {
-        sh "$VAPOR build $BUILD_PARAM"
-      }
-      slackSend( color: 'good', message: "Build SUCCESS :smiley:" )
+    echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
+    sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
+    echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
+    ansiColor('xterm') {
+    sh "$VAPOR build $BUILD_PARAM"
+    }
+    slackSend( color: 'good', message: "Build SUCCESS :smiley:" )
     }catch(err) {
-      slackSend(color: 'danger', message: "Build FAILED :scream:")
-      println(err.getMessage());
-      throw err
+    slackSend(color: 'danger', message: "Build FAILED :scream:")
+    println(err.getMessage());
+    throw err
     }
   }
 }
@@ -220,12 +186,15 @@ def build() {
 def deploy() {
   stage("Deploy"){
     try{
-      echo "Start deploy by script ${DEPLOY_SCRIPT}"
-      sh "$DEPLOY_SCRIPT"
+    echo "Start deploy by script ${DEPLOY_SCRIPT}"
+    sh "$DEPLOY_SCRIPT"
+    currentBuild.result = 'SUCCESS'
+    slackSend(color: 'good', message: "Deploy on production on development SUCCESS :smiley: :rocket:")
     } catch(err) {
-      slackSend( color: 'danger',message: "Deploy FAILED :scream:")
-      println(err.getMessage());
-      throw err
+    currentBuild.result = 'FAILURE'
+    slackSend(color: 'danger', message: "Deploy FAILED :scream:" )
+    println(err.getMessage());
+    throw err
     }
   }
 }
@@ -234,14 +203,14 @@ def deploy() {
 def rollback() {
   stage("ROLLBACK"){
     try{
-      echo "Start rollback by ${ROLLBACK_SCRIPT}"
-      sh "$ROLLBACK_SCRIPT"
-      currentBuild.result = 'FAILURE'
-      slackSend(color: 'danger', message: "Deploy failed but Rollback is SUCCESS :grimacing:")
+    echo "Start rollback by ${ROLLBACK_SCRIPT}"
+    sh "$ROLLBACK_SCRIPT"
+    currentBuild.result = 'FAILURE'
+    slackSend(color: 'danger', message: "Deploy failed but Rollback is SUCCESS :grimacing:")
     } catch(err) {
-      slackSend( color: 'danger', message: "Deploy FAILED and Rollback is FAILED :scream:")
-      println(err.getMessage());
-      throw err
+    slackSend( color: 'danger', message: "Deploy FAILED and Rollback is FAILED :scream:")
+    println(err.getMessage());
+    throw err
     }
   }
 }

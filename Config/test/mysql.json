@@ -1,6 +1,6 @@
 {
   "hostname": "localhost",
-  "user": "root",
-  "password": "",
+  "user": "test",
+  "password": "test",
   "database": "cocoaheads_test"
 }
