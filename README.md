@@ -44,12 +44,18 @@ Start mysql server
 mysql.server start
 
 ```
-Create database
+Create database for development and tests 
 
 ```
 mysql -u root
 CREATE DATABASE cocoaheads;
+CREATE DATABASE cocoaheads_test;
+CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
+GRANT ALL PRIVILEGES ON cocoaheads_test.* TO 'test'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
 ```
+
+
 
 #### Create project
 
