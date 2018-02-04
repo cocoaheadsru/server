@@ -10,13 +10,6 @@ class ClientMiddlewareTests: TestCase {
   let validToken = TestConstants.Middleware.validToken
   let generatedToken = String.invalidRandomToken
 
-  func testThatMiddlewarePresentInConfig() throws {
-    let config = droplet.config
-    let configMiddlewares = try config.resolveMiddleware()
-    let clientMiddleware = configMiddlewares.filter { $0 is ClientMiddleware }
-    XCTAssertTrue(clientMiddleware.count > 0)
-  }
-
   func testThatConfigInitializationFailWithoutToken() {
     var config = droplet.config
     config.removeKey("server.client-token")
