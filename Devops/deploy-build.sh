@@ -39,9 +39,7 @@ echo ""
 
 if [[ $RESULT == *"ERROR"* ]]; then 	
   echo "Something was wrong, let try start to rollback deploy..."
-  # set variable for Pipeline 
-  DEPLOY_STATUS="FAILURE"
-  exit 0
+  exit 1
 fi
 exit 0
 
