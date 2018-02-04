@@ -17,7 +17,7 @@ final class EventSpeechController {
 
 extension EventSpeechController: ResourceRepresentable {
 
-  func makeResource() -> Resource<Event> {
+  func makeResource() -> Resource<Speech> {
     return Resource(
       index: index
     )
