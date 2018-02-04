@@ -1,0 +1,17 @@
+{
+  "//": "User auth",
+  "auth_url": "https://graph.facebook.com/v2.12/oauth/access_token",
+  "client_id": "412364922532866",
+  "redirect_uri": "https://www.facebook.com/connect/login_success.html",
+  "scope": "email",
+  "client_secret": "c79f80d3ada9fdd483d274378eb632b6",
+  "//": "ATTENTION Only fresh and not used authorization code is work. You may copy fresh code from this URL: ",
+  "//": "https://www.facebook.com/v2.8/dialog/oauth?client_id=412364922532866&redirect_uri=https://www.facebook.com/connect/login_success.html&scope=email",
+  "//": "login: cocoaheads_gublhtf_test@tfbnw.net  password: vfreyby",
+  "code": "AQBmzZgprh_SidM-M2pKVLSwX0_omJ8Qnx25XOcTm_bS9vvWmVf2ysahpeth6PN_kvWG91mawS2N4Z3OnwmEDmzJtYKxflV7ysm9TEzYXHxrwoznz5UEZwnYCSmvps78dOX9R1Ox9l7C6v8bYY5VQXQo1MRDWOvbToVbvF9326LROX-pkobCJKytSphGE2lwIviBs1w7dBYUCe7elnw_BfV-5ly0VUOLZOcTEu5tCgHPpdzuQh4UEBgtQZQ2PpdHhkg3KfuI4bwjqIpGWfcGrZbhvWPHDz-gAAfuCYZ7NuEbkxyU9CvDeJQGguyEcKuMIttLwLHw8GloUb7yjgHp2fNI",
+
+  "//": "User info",
+  "user_info_url": "https://graph.facebook.com/me",
+  "fields": "id,email,first_name,last_name,picture.height(961)",
+  "access_token": "EAAF3CzC5tAIBAJpnoj53aqMqBugvQKPY8hhzS4UzKH0p4z6isUbQY4jlv3hipICI9g1UB4wT2BUFJwNzzXcaUp5RTRwhZA3FTpQDuW1QfPbkd45DNNTmFQP0hgNoouZBs5CkUmEay0l6TIZBkL9DsTiIsR9ic0XdwlWY5sDh8ZBBuhG8wkIf"
+}

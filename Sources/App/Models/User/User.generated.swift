@@ -19,6 +19,7 @@ extension User {
     static let photo = "photo"
     static let email = "email"
     static let phone = "phone"
+    static let token = "token"
   }
 }
 
@@ -88,6 +89,7 @@ extension User: JSONRepresentable {
     try json.set(Keys.photo, photo)
     try json.set(Keys.email, email)
     try json.set(Keys.phone, phone)
+    try json.set(Keys.token, token())
     return json
   }
 }

@@ -1,5 +1,6 @@
 import Vapor
 import FluentProvider
+import AuthProvider
 
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, toJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
@@ -62,4 +63,38 @@ extension User {
   var clients: Children<User, Client> {
     return children()
   }
+
+  private var sessions: Children<User, Session> {
+    return children()
+  }
+
+  func session() throws -> Session? {
+    return try sessions.first()
+  }
+
+  // sourcery: nestedJSONField
+  func token() throws -> String {
+    guard let token = try session()?.token else {
+     throw Abort(.internalServerError, reason: "User no have token")
+    }
+    return token
+  }
+
+  func didCreate() {
+    do {
+      let session = try Session(user: self)
+      try session.save()
+    } catch {
+      try? self.delete()
+    }
+  }
+
+  func updateSessionToken() throws {
+    try Session.updateToken(for: self)
+  }
+
+}
+
+extension User: TokenAuthenticatable {
+  typealias TokenType = Session 
 }

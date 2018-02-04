@@ -8,14 +8,12 @@ extension Session {
     if randomlyInitialized {
       self.init(
         userId: userId,
-        token:  UUID().uuidString,
-        timestamp: Int.randomValue(min: 1514917307-31556926, max: 1514917307)
+        token:  UUID().uuidString
       )
     } else {
       self.init(
         userId: userId,
-        token: "",
-        timestamp: 0
+        token: ""
       )
     }
   }

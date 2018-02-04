@@ -21,7 +21,6 @@ extension CancelRegistrationTest {
 }
 extension ClientMiddlewareTests {
   static var allTests: [(String, (ClientMiddlewareTests) -> () throws -> Void)] = [
-   ("testThatMiddlewarePresentInConfig", testThatMiddlewarePresentInConfig),
    ("testThatConfigInitializationFailWithoutToken", testThatConfigInitializationFailWithoutToken),
    ("testThatConfigInitializationFailWithEmptyToken", testThatConfigInitializationFailWithEmptyToken),
    ("testThatFailedConfigInitializationThrowsProperError", testThatFailedConfigInitializationThrowsProperError),
@@ -62,6 +61,12 @@ extension EventSpeechControllerTests {
    ("testThatGetSpeechesRouteReturnsOkStatus", testThatGetSpeechesRouteReturnsOkStatus),
    ("testThatGetSpeechesRouteFailsForEmptyTable", testThatGetSpeechesRouteFailsForEmptyTable),
    ("testThatGetSpeechesRouteFailsWithNonIntParameterValue", testThatGetSpeechesRouteFailsWithNonIntParameterValue)
+  ]
+}
+extension FacebookSocialControllerTest {
+  static var allTests: [(String, (FacebookSocialControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromFacebookAccount", testThatUserCreatedAndStoredFromFacebookAccount),
+   ("testThatSessionTokenCreatedAndStoredFromFacebookAccount", testThatSessionTokenCreatedAndStoredFromFacebookAccount)
   ]
 }
 extension GetRegFormTests {
@@ -110,6 +115,7 @@ XCTMain([
   testCase(ClientMiddlewareTests.allTests),
   testCase(EventControllerTests.allTests),
   testCase(EventSpeechControllerTests.allTests),
+  testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),

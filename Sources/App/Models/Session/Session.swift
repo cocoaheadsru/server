@@ -1,8 +1,10 @@
 import Vapor
 import FluentProvider
+import Crypto
+import Foundation
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation
+// sourcery: fromJSON, toJSON, Preparation, Timestampable, Updateable
 final class Session: Model {
     
   let storage = Storage()
@@ -11,16 +13,21 @@ final class Session: Model {
   var userId: Identifier
   var token: String
   var actual: Bool
-  var timestamp: Int // NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ??? FIX
-  
+
   init(userId: Identifier,
        token: String,
-       actual: Bool = true,
-       timestamp: Int) {
+       actual: Bool = true) {
     self.userId = userId
     self.token = token
     self.actual = actual
-    self.timestamp = timestamp
+  }
+
+  convenience init (user: User, actual: Bool = true) throws {
+    self.init(
+      userId: try user.assertExists(),
+      token: try Session.generateToken(),
+      actual: actual
+    )
   }
 
   // sourcery:inline:auto:Session.AutoModelGeneratable
@@ -28,7 +35,6 @@ final class Session: Model {
     userId = try row.get(Keys.userId)
     token = try row.get(Keys.token)
     actual = try row.get(Keys.actual)
-    timestamp = try row.get(Keys.timestamp)
   }
 
   func makeRow() throws -> Row {
@@ -36,7 +42,6 @@ final class Session: Model {
     try row.set(Keys.userId, userId)
     try row.set(Keys.token, token)
     try row.set(Keys.actual, actual)
-    try row.set(Keys.timestamp, timestamp)
     return row
   }
   // sourcery:end
@@ -47,9 +52,37 @@ extension Session {
   static func find(by token: String) throws -> Session? {
     return try Session.makeQuery().filter(Keys.token, token).first()
   }
-  
+
   var user: User? {
     return try? parent(id: userId).get()!
+  }
+
+  static func find(by user: User) throws -> Session? {
+    guard let userId = user.id else {
+      throw Abort(.internalServerError, reason: "User not found")
+    }
+    return try Session.makeQuery().filter(Keys.userId, userId).first()
+  }
+
+  static func generateToken()  throws -> String {
+    let random = try Crypto.Random.bytes(count: 16)
+    return random.base64Encoded.makeString()
+  }
+
+  @discardableResult
+  static func updateToken(for user: User) throws -> Session {
+
+    guard let session = try Session.find(by: user), let updatedAt = session.updatedAt else {
+      throw Abort.serverError
+    }
+
+    if let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: updatedAt),
+      referenceDate < Date() {
+      session.token = try generateToken()
+      try session.save()
+    }
+
+    return session
   }
   
 }
