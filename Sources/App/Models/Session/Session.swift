@@ -69,7 +69,7 @@ extension Session {
       let date = updatedAt,
       let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date),
       referenceDate < Date() {
-      self.token = UUID().uuidString
+      self.token = try Session.generateToken()
       try self.save()
     }
   }

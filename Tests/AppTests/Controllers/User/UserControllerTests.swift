@@ -5,8 +5,10 @@ import Sockets
 @testable import Vapor
 @testable import App
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 class UserControllerTests: TestCase {
-  let drop = try! Droplet.testable()
+  var drop: Droplet!
   
   let firstName = "Cocoa"
   let lastName = "Heads"
@@ -16,10 +18,15 @@ class UserControllerTests: TestCase {
   let phone = "1234567890"
   let photo = "http://cocoaheads.ru/photo.jpg"
   let updatedLastName = "Feet"
-  
+
   override func setUp() {
     super.setUp()
-    try! cleanUserTable()
+    do {
+      drop = try! Droplet.testable()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
   }
 
   func testThatUserCreatesFromRequest() throws {
@@ -131,8 +138,8 @@ class UserControllerTests: TestCase {
 extension UserControllerTests {
 
   func cleanUserTable() throws {
-    try Session.makeQuery().delete()
-    try User.makeQuery().delete()
+    try! Session.makeQuery().delete()
+    try! User.makeQuery().delete()
   }
 
   func generatedUserJSON(full: Bool = false) throws -> JSON {
