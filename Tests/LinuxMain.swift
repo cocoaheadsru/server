@@ -66,7 +66,8 @@ extension EventSpeechControllerTests {
 extension FacebookSocialControllerTest {
   static var allTests: [(String, (FacebookSocialControllerTest) -> () throws -> Void)] = [
    ("testThatUserCreatedAndStoredFromFacebookAccount", testThatUserCreatedAndStoredFromFacebookAccount),
-   ("testThatSessionTokenCreatedAndStoredFromFacebookAccount", testThatSessionTokenCreatedAndStoredFromFacebookAccount)
+   ("testThatSessionTokenCreatedAndStoredFromFacebookAccount", testThatSessionTokenCreatedAndStoredFromFacebookAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromFacebook", testThatIfUserExistThenUserProfileUpdatedFromFacebook)
   ]
 }
 extension GetRegFormTests {
@@ -108,6 +109,13 @@ extension RouteTests {
    ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
+extension VkontakteAuthControllerTest {
+  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
+   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte)
+  ]
+}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -119,6 +127,7 @@ XCTMain([
   testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
-  testCase(RouteTests.allTests)
+  testCase(RouteTests.allTests),
+  testCase(VkontakteAuthControllerTest.allTests)
 ])
 #endif

@@ -10,9 +10,7 @@ import Fluent
 // swiftlint:disable force_try
 
 class HeartbeatControllerTests: TestCase {
-  //swiftlint:disable force_try
   let drop = try! Droplet.testable()
-  //swiftlint:enable force_try
   let controller = HeartbeatController()
   let validToken = TestConstants.Middleware.validToken
   
@@ -20,7 +18,7 @@ class HeartbeatControllerTests: TestCase {
     // arrange
     let beat = Int.randomValue
     // act
-    guard let res = try setBeat(to: beat) as? Response else {
+    guard let res = try! setBeat(to: beat) as? Response else {
       XCTFail("Can't set beat and get current value for beat: \(beat)")
       return
     }
@@ -34,40 +32,40 @@ class HeartbeatControllerTests: TestCase {
     let beat2 = Int.randomValue
     let beat3 = Int.randomValue
     // act
-    _ = try setBeat(to: beat1)
-    let count1 = try Heartbeat.count()
+    _ = try! setBeat(to: beat1)
+    let count1 = try! Heartbeat.count()
     //assert
     XCTAssert(count1 == 1)
     // act
-    _ = try setBeat(to: beat2)
-    let count2 = try Heartbeat.count()
+    _ = try! setBeat(to: beat2)
+    let count2 = try! Heartbeat.count()
     // assert
     XCTAssert(count2 == 1)
     // act
     _ = try setBeat(to: beat3)
-    let count3 = try Heartbeat.count()
+    let count3 = try! Heartbeat.count()
     // assert
     XCTAssert(count3 == 1)
   }
   
   func testThatShowGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     let req = Request.makeTest(method: .get)
     // act
-    let res = try controller.index(req: req).makeResponse()
+    let res = try! controller.index(req: req).makeResponse()
     // assert
     res.assertStatus(is: .noContent)
   }
   
   func testThatShowGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     let beat = Int.randomValue
-    _ = try setBeat(to: beat)
+    _ = try! setBeat(to: beat)
     let req = Request.makeTest(method: .get)
     // act
-    let res = try controller.index(req: req).makeResponse()
+    let res = try! controller.index(req: req).makeResponse()
     // assert
     try! res.assertJSON("beat", equals: beat)
   }
@@ -88,20 +86,20 @@ class HeartbeatControllerTests: TestCase {
   
   func testThatRouteGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     // act & assert
-    try drop
+    try! drop
       .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .noContent)
   }
   
   func testThatRouteGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     let beat = Int.randomValue
-    _ = try setBeat(to: beat)
+    _ = try! setBeat(to: beat)
     // act & assert
-    try drop
+    try! drop
       .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
@@ -112,7 +110,7 @@ class HeartbeatControllerTests: TestCase {
     func makePostRequestForHeartbeat(with beat: Int) throws {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
-      let json = try heartbeat.makeJSON()
+      let json = try! heartbeat.makeJSON()
       let header: HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
       try drop
@@ -137,8 +135,8 @@ extension HeartbeatControllerTests {
   // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
     let req = Request.makeTest(method: .post)
-    req.json =  try JSON(node: ["beat": value])
-    let res = try controller.store(req: req).makeResponse()
+    req.json =  try! JSON(node: ["beat": value])
+    let res = try! controller.store(req: req).makeResponse()
     return res
   }
   
