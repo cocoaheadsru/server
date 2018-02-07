@@ -1,0 +1,13 @@
+{
+  "token_request_url": "https://github.com/login/oauth/access_token",
+  "client_id": "4f93f0cfa7e6bdd5e881",
+  "client_secret": "93af327e3302d217d3efe5e0820a7ce68e047e21",
+  ""
+  "api_url": "https://api.vk.com/",
+  "method": "https://api.github.com/user",
+  "uagent": "Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.14"
+  "fields": "photo_max,city,verified",
+  "//": "For tests"
+  "code":
+  "state":
+}
