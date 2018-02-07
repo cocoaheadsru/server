@@ -46,6 +46,7 @@ extension Responder {
 
     var appHeaders = headers
     appHeaders["client-token"] = token
+    appHeaders[TestConstants.Header.Key.contentType] = TestConstants.Header.Value.applicationJson
 
     return try self.unauthorizedTestResponse(
       to: method,
