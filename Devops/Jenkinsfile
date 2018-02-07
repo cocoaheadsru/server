@@ -1,4 +1,5 @@
 #!groovy
+
 // useful links
 // https://dzone.com/articles/build-your-pipeline-in-jenkins-20-as-code-with-ios
 // https://gist.github.com/jonico/e205b16cf07451b2f475543cf1541e70
@@ -19,7 +20,7 @@ stage("Select a target node") {
       WORK_NODE = 'chprod-node'
       break
     default:
-      WORK_NODE = 'chprod-node'
+      WORK_NODE = 'chstage-node'
       break
     }
     echo "end prepare the Node is ${WORK_NODE}..."
@@ -35,7 +36,7 @@ node(WORK_NODE) {
       build()
       unit_test()
       deploy()
-    break
+      break
     case MASTER_BRANCH:
       setenv_production()
       checkout()
@@ -46,9 +47,9 @@ node(WORK_NODE) {
         rollback()
         slackSend(color: 'danger', message: "New PR FAILED :scream:")
         println(err.getMessage());
-        throw err
+      throw err
       }
-    break
+      break
     default: // PR
       setenv_develop()
       checkout()
@@ -66,19 +67,19 @@ node(WORK_NODE) {
 //===============================================================================================================
 
 def unit_test() {
-    stage("Unit-test"){
-        try {
-            echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
-            ansiColor('xterm') {
-                sh "$VAPOR test $TEST_PARAM"
-            }
-            slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
-        }catch(err) {
-            slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
-            println(err.getMessage());
-            throw err
-        }
+  stage("Unit-test"){
+    try {
+      echo "Start unit-test: '${VAPOR} test ${TEST_PARAM}"
+      ansiColor('xterm') {
+      sh "$VAPOR test $TEST_PARAM"
     }
+      slackSend( color: 'good', message: "Unit-test SUCCESS :smiley:" )
+    }catch(err) {
+      slackSend(color: 'danger', message: "Unit-test FAILED :scream:")
+      println(err.getMessage());
+      throw err
+    }
+  }
 }
 
 def setenv_develop() {
@@ -86,22 +87,24 @@ def setenv_develop() {
     //Local paths
     WORK_DIR = "${env.WORKSPACE}"
     SCRIPTS_DIR = "${WORK_DIR}/Devops"
-    
+
     //MySQL config
     MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
-    
+    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/development/"
+
     //Build config
     VAPOR = "/usr/local/bin/vapor"
     BUILD_PARAM = "--verbose"
-    TEST_PARAM="--verbose"
-    
+
+    //Test config
+    TEST_PARAM = "--verbose"
+
     //Deploy config
     env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
     env.CH_WEBROOT = "/var/www/stage" // export to scripts
     DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
     ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
-    
+
     //For rollback config
     env.DEPLOY_STATUS = "SUCCESS"
     echo "========================"
@@ -111,43 +114,39 @@ def setenv_develop() {
 }
 
 def setenv_production() {
-    stage("Set environment for production"){
-        //Local paths
-        WORK_DIR = "${env.WORKSPACE}"
-        SCRIPTS_DIR = "${WORK_DIR}/Devops"
-        
-        //MySQL config
-        MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-        SERVER_CONFIG_DIR = "${WORK_DIR}/Config/secrets/"
-        
-        //Build config
-        VAPOR = "/usr/local/bin/vapor"
-        BUILD_PARAM = "--verbose --release"
-        
-        //Deploy config
-        env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
-        env.CH_WEBROOT = "/var/www/stage" // export to scripts
-        DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
-        ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
-        
-        //For rollback config
-        env.DEPLOY_STATUS = "SUCCESS"
-        echo "========================"
-        sh 'printenv'
-        echo "========================"
-    }
+  stage("Set environment for production"){
+    //Local paths
+    WORK_DIR = "${env.WORKSPACE}"
+    SCRIPTS_DIR = "${WORK_DIR}/Devops"
+
+    //MySQL config
+    MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
+    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/production/"
+
+    //Build config
+    VAPOR = "/usr/local/bin/vapor"
+    BUILD_PARAM = "--verbose --release"
+
+    //Deploy config
+    env.CH_BUILD = "${env.WORKSPACE}"  // export to scripts
+    env.CH_WEBROOT = "/var/www/stage" // export to scripts
+    DEPLOY_SCRIPT  = "/usr/bin/sudo -E ${SCRIPTS_DIR}/deploy-build.sh"
+    ROLLBACK_SCRIPT = "/usr/bin/sudo -E ${SCRIPTS_DIR}/rollback.sh"
+
+    //For rollback config
+    env.DEPLOY_STATUS = "SUCCESS"
+    echo "========================"
+    sh 'printenv'
+    echo "========================"
+  }
 }
 
 
 def check_codestyle() {
- stage("check codestyle"){
-    //
-      //sh 'env'
-      //sh 'pwd'
-      //sh 'export PATH="/usr/lib/swift:$PATH"; export LINUX_SOURCEKIT_LIB_PATH="/usr/lib"; swiftlint' //lint --reporter checkstyle > checkstyle-result.xml'
-      //checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
-      //slackSend( color: 'good', message: "Codestyle check is done :smiley:")
-      slackSend( color: 'yellow', message: "Checking codestyle under construction :construction:")
+  stage("check codestyle"){
+    sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle-result.xml'
+    checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle-result.xml', unHealthy: ''
+    slackSend( color: 'good', message: "Codestyle check is done :smiley:")
   }
 }
 
@@ -157,12 +156,11 @@ def checkout(){
       echo "Start checkout on node: ${WORK_NODE}"
       checkout scm
       def COMMIT_MESSAGE = commitMessage()
-    
+
       slackSend(
         color: 'good',
         message: "Start pipeline for '${env.BRANCH_NAME}' on node '${env.NODE_NAME}' commit message: '${COMMIT_MESSAGE}' Job description: ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}"
       )
-    
     }catch(err) {
       slackSend(color: 'danger', message: "Chekout FAILED :scream:" )
       println(err.getMessage());

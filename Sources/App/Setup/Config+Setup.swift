@@ -16,7 +16,7 @@ extension Config {
     try addProvider(FluentProvider.Provider.self)
     try addProvider(MySQLProvider.Provider.self)
   }
-  
+
   /// Add all models that should have their
   /// schemas prepared before the app boots
   private func setupPreparations() throws {

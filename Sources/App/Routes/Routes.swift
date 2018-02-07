@@ -17,5 +17,9 @@ extension Droplet {
     try resource("event/:id/speech", EventSpeechController.self)
     try resource("event/:id/form", RegistrationFormController.self)
     try resource("event/register", RegistrationController.self)
+    
+    let userController = UserController(droplet: self)
+    resource("user", userController)
+    try resource("user", UserUnauthorizedController.self)
   }
 }

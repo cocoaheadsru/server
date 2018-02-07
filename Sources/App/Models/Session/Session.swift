@@ -1,8 +1,10 @@
 import Vapor
 import FluentProvider
+import Foundation
+import Crypto
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation
+// sourcery: Preparation, Timestampable
 final class Session: Model {
     
   let storage = Storage()
@@ -11,16 +13,13 @@ final class Session: Model {
   var userId: Identifier
   var token: String
   var actual: Bool
-  var timestamp: Int // NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ??? FIX
   
   init(userId: Identifier,
        token: String,
-       actual: Bool = true,
-       timestamp: Int) {
+       actual: Bool = true) {
     self.userId = userId
     self.token = token
     self.actual = actual
-    self.timestamp = timestamp
   }
 
   // sourcery:inline:auto:Session.AutoModelGeneratable
@@ -28,7 +27,6 @@ final class Session: Model {
     userId = try row.get(Keys.userId)
     token = try row.get(Keys.token)
     actual = try row.get(Keys.actual)
-    timestamp = try row.get(Keys.timestamp)
   }
 
   func makeRow() throws -> Row {
@@ -36,20 +34,44 @@ final class Session: Model {
     try row.set(Keys.userId, userId)
     try row.set(Keys.token, token)
     try row.set(Keys.actual, actual)
-    try row.set(Keys.timestamp, timestamp)
     return row
   }
   // sourcery:end
 }
 
-extension Session {
+extension Session: JSONRepresentable {
   
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.token, token)
+    try json.set(Keys.actual, actual)
+    return json
+  }
+}
+
+extension Session {
+
   static func find(by token: String) throws -> Session? {
     return try Session.makeQuery().filter(Keys.token, token).first()
   }
-  
+
   var user: User? {
     return try? parent(id: userId).get()!
   }
-  
+
+  static func generateToken() throws -> String {
+    let random = try Crypto.Random.bytes(count: 16)
+    return random.base64Encoded.makeString()
+  }
+
+  func updateToken() throws {
+    guard
+      let date = updatedAt,
+      let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date)
+      else { throw Abort.serverError }
+    if referenceDate < Date() {
+      self.token = try Session.generateToken()
+      try self.save()
+    }
+  }
 }

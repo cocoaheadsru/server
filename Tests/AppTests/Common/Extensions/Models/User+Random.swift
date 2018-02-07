@@ -10,7 +10,7 @@ extension User {
         lastname: String.randomValue,
         company: String.randomValue,
         position: String.randomValue,
-        photo: String.randomPhotoURL,
+        photo: String.randomPhotoName,
         email: String.randomEmail,
         phone: String.randomPhone
       )
