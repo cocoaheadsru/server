@@ -57,4 +57,5 @@ extension Config {
   private func setupMiddleware() throws {
     self.addConfigurable(middleware: ClientMiddleware.init, name: Constants.Middleware.client)
   }
+
 }

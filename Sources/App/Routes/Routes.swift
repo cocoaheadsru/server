@@ -3,8 +3,7 @@ import Vapor
 extension Droplet {
   func setupRoutes() throws {
     let clientMiddlewareGroup = self.grouped(try ClientMiddleware(config: config))
-
-    // TODO: add TokenMiddleware 
+    // TODO: add TokenMiddleware
     let userMiddlewareGroup = self.grouped([try ClientMiddleware(config: config)])
 
     clientMiddlewareGroup.get("hello") { _ in
