@@ -1,10 +1,10 @@
 import Vapor
 import FluentProvider
-import Crypto
 import Foundation
+import Crypto
 
 // sourcery: AutoModelGeneratable
-// sourcery: fromJSON, toJSON, Preparation, Timestampable, Updateable
+// sourcery: Preparation, Timestampable
 final class Session: Model {
     
   let storage = Storage()
@@ -13,7 +13,7 @@ final class Session: Model {
   var userId: Identifier
   var token: String
   var actual: Bool
-
+  
   init(userId: Identifier,
        token: String,
        actual: Bool = true) {
@@ -47,8 +47,18 @@ final class Session: Model {
   // sourcery:end
 }
 
-extension Session {
+extension Session: JSONRepresentable {
   
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.token, token)
+    try json.set(Keys.actual, actual)
+    return json
+  }
+}
+
+extension Session {
+
   static func find(by token: String) throws -> Session? {
     return try Session.makeQuery().filter(Keys.token, token).first()
   }
@@ -56,33 +66,27 @@ extension Session {
   var user: User? {
     return try? parent(id: userId).get()!
   }
-
+  
   static func find(by user: User) throws -> Session? {
-    guard let userId = user.id else {
-      throw Abort(.internalServerError, reason: "User not found")
-    }
-    return try Session.makeQuery().filter(Keys.userId, userId).first()
+      guard let userId = user.id else {
+          throw Abort(.internalServerError, reason: "User not found")
+      }
+      return try Session.makeQuery().filter(Keys.userId, userId).first()
   }
-
-  static func generateToken()  throws -> String {
+  
+  static func generateToken() throws -> String {
     let random = try Crypto.Random.bytes(count: 16)
     return random.base64Encoded.makeString()
   }
 
-  @discardableResult
-  static func updateToken(for user: User) throws -> Session {
-
-    guard let session = try Session.find(by: user), let updatedAt = session.updatedAt else {
-      throw Abort.serverError
+  func updateToken() throws {
+    guard
+      let date = updatedAt,
+      let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date)
+      else { throw Abort.serverError }
+    if referenceDate < Date() {
+      self.token = try Session.generateToken()
+      try self.save()
     }
-
-    if let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: updatedAt),
-      referenceDate < Date() {
-      session.token = try generateToken()
-      try session.save()
-    }
-
-    return session
   }
-  
 }

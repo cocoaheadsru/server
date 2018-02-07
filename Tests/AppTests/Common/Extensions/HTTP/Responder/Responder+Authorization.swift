@@ -22,7 +22,10 @@ extension Responder {
       path: path,
       query: query
     )
+
     req.headers[.host] = hostname
+    req.headers[.contentType] = TestConstants.Header.Value.applicationJson
+
     return try self.testResponse(
       to: req,
       file: file,

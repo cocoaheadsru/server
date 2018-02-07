@@ -109,11 +109,16 @@ extension RouteTests {
    ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
-extension VkontakteAuthControllerTest {
-  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
-   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
-   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
-   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte)
+extension UserControllerTests {
+  static var allTests: [(String, (UserControllerTests) -> () throws -> Void)] = [
+   ("testThatUserIsCreatedFromRequest", testThatUserIsCreatedFromRequest),
+   ("testThatUserIsNotCreatedFromIncompleteRequest", testThatUserIsNotCreatedFromIncompleteRequest),
+   ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
+   ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
+   ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),
+   ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth),
+   ("testThatUpdateMethodUpdatesUserCredentials", testThatUpdateMethodUpdatesUserCredentials),
+   ("testThatUpdateMethodReturnsUpdatedUser", testThatUpdateMethodReturnsUpdatedUser)
   ]
 }
 
@@ -128,6 +133,6 @@ XCTMain([
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
-  testCase(VkontakteAuthControllerTest.allTests)
+  testCase(UserControllerTests.allTests)
 ])
 #endif

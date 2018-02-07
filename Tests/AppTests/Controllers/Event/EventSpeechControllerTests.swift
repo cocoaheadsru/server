@@ -96,6 +96,8 @@ class EventSpeechControllerTests: TestCase {
       return
     }
     
+    let photoPath = "\(TestConstants.Path.userPhotosPath + (user.id?.string)!)/\(user.photo!)"
+    
     XCTAssertEqual(speechJSON?["id"]?.int, speech.id?.int)
     XCTAssertEqual(speechJSON?["title"]?.string, speech.title)
     XCTAssertEqual(speechJSON?["description"]?.string, speech.description)
@@ -104,7 +106,7 @@ class EventSpeechControllerTests: TestCase {
     XCTAssertEqual(speakerJSON?["id"]?.int, speaker.id?.int)
     XCTAssertEqual(speakerJSON?["name"]?.string, user.name)
     XCTAssertEqual(speakerJSON?["lastname"]?.string, user.lastname)
-    XCTAssertEqual(speakerJSON?["photo"]?.string, user.photo)
+    XCTAssertEqual(speakerJSON?["photo"]?.string, photoPath)
     XCTAssertEqual(speakerJSON?["phone"]?.string, user.phone)
     XCTAssertEqual(speakerJSON?["company"]?.string, user.company)
     XCTAssertEqual(speakerJSON?["email"]?.string, user.email)

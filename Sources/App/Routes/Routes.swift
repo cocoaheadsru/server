@@ -24,5 +24,9 @@ extension Droplet {
 
     let userAuthorizationController = UserAuthorizationController(drop: self)
     clientMiddlewareGroup.resource("user/auth", userAuthorizationController)
+    let userController = UserController(droplet: self)
+    try userMiddlewareGroup.resource("user", userController)
+    try userMiddlewareGroup.resource("user", UserUnauthorizedController.self)
+    
   }
 }
