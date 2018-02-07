@@ -15,4 +15,4 @@ DerivedData/
 # End of https://www.gitignore.io/api/vapor
 
 # Production files
-/images
+/Public/user_photos/

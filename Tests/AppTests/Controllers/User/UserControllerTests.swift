@@ -22,25 +22,30 @@ class UserControllerTests: TestCase {
   override func setUp() {
     super.setUp()
     do {
-      drop = try! Droplet.testable()
+      drop = try Droplet.testable()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
     }
   }
 
-  func testThatUserCreatesFromRequest() throws {
+  func testThatUserIsCreatedFromRequest() throws {
     let userJSON = try generatedUserJSON()
     
     try sendPostRequest(with: userJSON)
     XCTAssertEqual(try User.all().count, 1)
   }
   
-  func testThatUserDoesNotCreateFromIncompleteRequest() throws {
+  func testThatUserIsNotCreatedFromIncompleteRequest() throws {
     var json = JSON()
     try json.set("name", firstName)
     
-    try drop.clientAuthorizedTestResponse(to: .post, at: "user", body: json).assertStatus(is: .internalServerError)
+    try drop
+      .clientAuthorizedTestResponse(
+        to: .post,
+        at: "user",
+        body: json)
+      .assertStatus(is: .internalServerError)
   }
 
   func testThatStoreMethodReturnsUser() throws {
@@ -114,7 +119,7 @@ class UserControllerTests: TestCase {
     let newCompany = String.randomValue
     let newPosition = String.randomValue
     let newEmail = String.randomEmail
-    let newPhoto = String.randomURL
+    let newPhoto = String.randomPhotoName
     
     var json = JSON()
     try json.set("name", newName)
@@ -125,13 +130,14 @@ class UserControllerTests: TestCase {
     try json.set("photo", newPhoto)
     
     let response = try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\((user.id?.int)!)", body: json)
+    let photoPath = "\(TestConstants.Path.userPhotosPath + (user.id?.string)!)/\(newPhoto)"
     
     try response.assertJSON("name", equals: newName)
     try response.assertJSON("lastname", equals: newLastName)
     try response.assertJSON("company", equals: newCompany)
     try response.assertJSON("position", equals: newPosition)
     try response.assertJSON("email", equals: newEmail)
-    try response.assertJSON("photo", equals: newPhoto)
+    try response.assertJSON("photo", equals: photoPath)
   }
 }
 

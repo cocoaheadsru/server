@@ -16,4 +16,8 @@ struct Constants {
   struct Middleware {
     static let client = "client-middleware"
   }
+  
+  struct Path {
+    static let userPhotos = "user_photos"
+  }
 }

@@ -18,11 +18,11 @@ extension String {
     }
   }
   
-  static var randomPhotoURL: String {
+  static var randomPhotoName: String {
     if Bool.randomValue {
-      return  "\(String.randomURL)/\(String.randomValue).png"
+      return  "\(String.randomValue).png"
     } else {
-      return  "\(String.randomURL)/\(String.randomValue).jpeg"
+      return  "\(String.randomValue).jpeg"
     }
   }
   

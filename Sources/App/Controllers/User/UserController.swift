@@ -17,13 +17,13 @@ final class UserController {
 
   func update(_ request: Request, user: User) throws -> ResponseRepresentable {
     try updateSessionToken(for: user)
-    try user.update(for: request)
     if
       let userId = user.id?.string,
       let bytes = request.formData?["photo"]?.bytes,
       let filename = request.formData?["photo"]?.filename {
-      try user.photo = newPhotoURL(for: userId, photoBytes: bytes, filename: filename)
+      try savePhoto(for: userId, photoBytes: bytes, filename: filename)
     }
+    try user.update(for: request)
     try user.save()
     return user
   }
@@ -36,18 +36,17 @@ final class UserController {
     }
   }
   
-  func newPhotoURL(for userId: String, photoBytes: [UInt8], filename: String) throws -> String {
-    let userDir = URL(fileURLWithPath: droplet.config.workDir)
-      .appendingPathComponent("images")
+  func savePhoto(for userId: String, photoBytes: [UInt8], filename: String) throws {
+    let userDir = URL(fileURLWithPath: droplet.config.publicDir)
       .appendingPathComponent("user_photos")
       .appendingPathComponent(userId)
     let fileManager = FileManager.default
     
     if fileManager.fileExists(atPath: userDir.path) {
-      let filePathes = try fileManager.contentsOfDirectory(atPath: userDir.path)
-      for path in filePathes {
-        let fullURL = userDir.appendingPathComponent(path)
-        try fileManager.removeItem(at: fullURL)
+      let filenames = try fileManager.contentsOfDirectory(atPath: userDir.path)
+      for name in filenames {
+        let fileURL = userDir.appendingPathComponent(name)
+        try fileManager.removeItem(at: fileURL)
       }
     } else {
       try fileManager.createDirectory(at: userDir, withIntermediateDirectories: true, attributes: nil)
@@ -55,8 +54,6 @@ final class UserController {
     let userDirWithImage = userDir.appendingPathComponent(filename)
     let data = Data(bytes: photoBytes)
     fileManager.createFile(atPath: userDirWithImage.path, contents: data, attributes: nil)
-    
-    return userDirWithImage.path
   }
 }
 

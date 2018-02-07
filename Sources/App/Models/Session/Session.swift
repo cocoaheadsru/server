@@ -58,17 +58,18 @@ extension Session {
   var user: User? {
     return try? parent(id: userId).get()!
   }
-  
+
   static func generateToken() throws -> String {
     let random = try Crypto.Random.bytes(count: 16)
     return random.base64Encoded.makeString()
   }
-  
+
   func updateToken() throws {
-    if
+    guard
       let date = updatedAt,
-      let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date),
-      referenceDate < Date() {
+      let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date)
+      else { throw Abort.serverError }
+    if referenceDate < Date() {
       self.token = try Session.generateToken()
       try self.save()
     }

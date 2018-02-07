@@ -5,7 +5,7 @@ import Crypto
 // sourcery: AutoModelGeneratable
 // sourcery: fromJSON, Preparation, Updateable, ResponseRepresentable, Timestampable
 final class User: Model {
-    
+
   let storage = Storage()
   
   var name: String
@@ -66,11 +66,24 @@ extension User: JSONRepresentable {
     try json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photo)
+    try? json.set(Keys.photo, photoURL(for: photo))
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
     try json.set("session", session()?.makeJSON())
     return json
+  }
+  
+  func photoURL(for photo: String?) -> String? {
+    guard
+      let config = try? Config(),
+      let domain = config["server", "domain"]?.string,
+      let userId = self.id?.string,
+      let photoPath = photo
+    else {
+      return nil
+    }
+    let photosFolder = Constants.Path.userPhotos
+    return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"
   }
 }
 

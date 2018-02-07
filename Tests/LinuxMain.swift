@@ -105,8 +105,8 @@ extension RouteTests {
 }
 extension UserControllerTests {
   static var allTests: [(String, (UserControllerTests) -> () throws -> Void)] = [
-   ("testThatUserCreatesFromRequest", testThatUserCreatesFromRequest),
-   ("testThatUserDoesNotCreateFromIncompleteRequest", testThatUserDoesNotCreateFromIncompleteRequest),
+   ("testThatUserIsCreatedFromRequest", testThatUserIsCreatedFromRequest),
+   ("testThatUserIsNotCreatedFromIncompleteRequest", testThatUserIsNotCreatedFromIncompleteRequest),
    ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
    ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
    ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),

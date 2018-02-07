@@ -15,7 +15,7 @@ class AutoapproveTest: TestCase {
   override func setUp() {
     super.setUp()
     do {
-      drop = try! Droplet.testable()
+      drop = try Droplet.testable()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
