@@ -31,7 +31,7 @@ final class User: Model {
     self.email = email
     self.phone = phone
   }
-  
+
   // sourcery:inline:auto:User.AutoModelGeneratable
   init(row: Row) throws {
     name = try row.get(Keys.name)
@@ -89,6 +89,10 @@ extension User {
     }
   }
 
+  func didUpdate() {
+    try? updateSessionToken()
+  }
+
   func updateSessionToken() throws {
     try Session.updateToken(for: self)
   }
@@ -96,5 +100,5 @@ extension User {
 }
 
 extension User: TokenAuthenticatable {
-  typealias TokenType = Session 
+  typealias TokenType = Session
 }
