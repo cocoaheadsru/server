@@ -1,0 +1,8 @@
+{
+  "api_url": "https://api.vk.com/",
+  "method": "/method/users.get",
+  "fields": "photo_max,city,verified",
+  "//": "For tests",
+  "secret": "c5f95b290abdefb7fb",
+  "access_token": "40304fc324619460dfb8e2b39d80ead4ecbca2129f3d0e06e20ce155c6506744218bacdae41681ac83553"
+}
