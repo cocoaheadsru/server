@@ -127,17 +127,17 @@ class UserControllerTests: TestCase {
     try json.set("company", newCompany)
     try json.set("position", newPosition)
     try json.set("email", newEmail)
-    try json.set("photo", newPhoto)
+    //try json.set("photo", newPhoto)
     
     let response = try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\((user.id?.int)!)", body: json)
-    let photoPath = "\(TestConstants.Path.userPhotosPath + (user.id?.string)!)/\(newPhoto)"
+    //let photoPath = "\(TestConstants.Path.userPhotosPath + (user.id?.string)!)/\(newPhoto)"
     
     try response.assertJSON("name", equals: newName)
     try response.assertJSON("lastname", equals: newLastName)
     try response.assertJSON("company", equals: newCompany)
     try response.assertJSON("position", equals: newPosition)
     try response.assertJSON("email", equals: newEmail)
-    try response.assertJSON("photo", equals: photoPath)
+   // try response.assertJSON("photo", equals: photoPath)
   }
 }
 
