@@ -3,8 +3,9 @@ import HTTP
 struct Constants {
   
   struct Config {
-    static let server = "server"
+    static let app = "app"
     static let clientToken = "client-token"
+    static let domain = "domain"
   }
   
   struct Header {
