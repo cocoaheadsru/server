@@ -8,7 +8,7 @@ import Fluent
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
-class VkontakteAuthControllerTest: TestCase {
+class GithubAuthControllerTest: TestCase {
 
   override func setUp() {
     super.setUp()
@@ -20,9 +20,9 @@ class VkontakteAuthControllerTest: TestCase {
     }
   }
 
-  func testThatUserCreatedAndStoredFromVkontakteAccount() throws {
+  func testThatUserCreatedAndStoredFromGithubAccount() throws {
 
-    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
       return
     }
@@ -37,7 +37,7 @@ class VkontakteAuthControllerTest: TestCase {
         return
     }
 
-    guard let expected = try! VkontakteAuthControllerTestHelper.getUserInfoFromSocial(drop: drop) else {
+    guard let expected = try! GithubAuthControllerTestHelper.getUserInfoFromSocial(drop: drop) else {
       XCTFail("Can't get test user info from social")
       return
     }
@@ -48,6 +48,8 @@ class VkontakteAuthControllerTest: TestCase {
     }
 
     var stored = try storedUser.makeJSON()
+    print("\n\ntoken: \(stored["token"]?.string ?? "" )\n\n")
+    
     stored.removeKey("id")
     stored.removeKey("token")
 
@@ -62,9 +64,9 @@ class VkontakteAuthControllerTest: TestCase {
 
   }
 
-  func testThatSessionTokenCreatedAndStoredFromVkontakteAccount() throws {
+  func testThatSessionTokenCreatedAndStoredFromGithubAccount() throws {
 
-    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
       return
     }
@@ -86,9 +88,9 @@ class VkontakteAuthControllerTest: TestCase {
 
   }
 
-  func testThatIfUserExistThenUserProfileUpdatedFromVkontakte() throws {
+  func testThatIfUserExistThenUserProfileUpdatedFromGithub() throws {
 
-    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
       return
     }
@@ -98,7 +100,7 @@ class VkontakteAuthControllerTest: TestCase {
     guard
       let returned = user.json,
       let token = returned["token"]?.string
-      else {
+    else {
         XCTFail("Can't get user token from response")
         return
     }
@@ -112,13 +114,13 @@ class VkontakteAuthControllerTest: TestCase {
 
   }
 
-  func testThatUserPhotoFromVkontakteIsSaved() throws {
-    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+  func testThatUserPhotoFromGithubIsSaved() throws {
+    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
       return
     }
 
-    let fileName = "VKcocoaheadsdev.jpg"
+    let fileName = "github.png"
     let photoPath = "user_photos/1/"
     let filePath = drop.config.workDir + "Tests/Resources/" + fileName
     let fileManager = Foundation.FileManager()
@@ -132,7 +134,7 @@ class VkontakteAuthControllerTest: TestCase {
       let updatedUser = response.json,
       let newPhotoURL = updatedUser["photo"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
-    else {
+      else {
         XCTFail("Can't get photo path")
         return
     }
@@ -144,7 +146,7 @@ class VkontakteAuthControllerTest: TestCase {
 
 }
 
-extension  VkontakteAuthControllerTest {
+extension  GithubAuthControllerTest {
 
   func postUserAuth(body: JSON) throws -> Response {
     return try! drop

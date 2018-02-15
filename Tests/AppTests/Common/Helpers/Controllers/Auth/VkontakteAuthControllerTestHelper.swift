@@ -61,11 +61,17 @@ final class VkontakteAuthControllerTestHelper {
     var json = JSON()
     try json.set(Keys.name, name)
     try json.set(Keys.lastname, lastname)
-    try json.set(Keys.company, "")
-    try json.set(Keys.position, "")
-    try json.set(Keys.photo, photo)
-    try json.set(Keys.email, "")
-    try json.set(Keys.phone, "")
+    try json.set(Keys.company, JSON.null)
+    try json.set(Keys.position, JSON.null)
+    if
+      let url = URL(string: photo),
+      let domen = drop.config["app", "domain"]?.string {
+      try json.set(Keys.photo, "\(domen)/user_photos/1/\(url.lastPathComponent)")
+    } else {
+      try json.set(Keys.photo, photo)
+    }
+    try json.set(Keys.email, JSON.null)
+    try json.set(Keys.phone, JSON.null)
     return json
   }
 

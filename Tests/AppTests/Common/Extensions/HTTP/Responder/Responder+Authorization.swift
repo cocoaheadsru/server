@@ -1,7 +1,11 @@
 import Vapor
 import HTTP
+@testable import Vapor
+@testable import App
 
-typealias HTTPHeader = [HTTP.HeaderKey: String]
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
+//swiftlint:disable force_cast
 
 extension Responder {
   public func unauthorizedTestResponse(
@@ -45,7 +49,7 @@ extension Responder {
     ) throws -> HTTP.Response {
 
     let droplet = self as? Droplet
-    let token = droplet?.config["server", "client-token"]?.string
+    let token = droplet?.config["app", "client-token"]?.string
 
     var appHeaders = headers
     appHeaders["client-token"] = token
@@ -72,9 +76,26 @@ extension Responder {
     headers: [HTTP.HeaderKey: String] = [:],
     body: BodyRepresentable? = nil,
     file: StaticString = #file,
-    line: UInt = #line
+    line: UInt = #line,
+    bearer token: String? = nil
     ) throws -> HTTP.Response {
-    let userHeaders = headers
+
+    var userHeaders = headers
+    var bearerToken = "Bearer "
+
+    if let token = token {
+      bearerToken += token
+    } else if body != nil {
+      let json =  body as! JSON
+      let tokenFromBody = json["token"]?.string
+      bearerToken += tokenFromBody!
+    } else {
+      let user = User()
+      try! user.save()
+      bearerToken += try! user.token()
+    }
+
+    userHeaders[HTTP.HeaderKey.authorization] = bearerToken
     return try self.clientAuthorizedTestResponse(
       to: method,
       at: path,

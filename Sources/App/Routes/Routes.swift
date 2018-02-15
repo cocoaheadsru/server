@@ -1,10 +1,13 @@
 import Vapor
+import AuthProvider
 
 extension Droplet {
   func setupRoutes() throws {
-    let clientMiddlewareGroup = self.grouped(try ClientMiddleware(config: config))
-    // TODO: add TokenMiddleware
-    let userMiddlewareGroup = self.grouped([try ClientMiddleware(config: config)])
+    let clientMiddlewareGroup = grouped(try ClientMiddleware(config: config))
+    let userMiddlewareGroup = grouped([
+      try ClientMiddleware(config: config),
+      TokenAuthenticationMiddleware(User.self)
+    ])
 
     clientMiddlewareGroup.get("hello") { _ in
       var json = JSON()
@@ -24,9 +27,9 @@ extension Droplet {
 
     let userAuthorizationController = UserAuthorizationController(drop: self)
     clientMiddlewareGroup.resource("user/auth", userAuthorizationController)
-    let userController = UserController(droplet: self)
-    try userMiddlewareGroup.resource("user", userController)
-    try userMiddlewareGroup.resource("user", UserUnauthorizedController.self)
+
+    let userController = UserController(drop: self)
+    userMiddlewareGroup.resource("user", userController)
     
   }
 }

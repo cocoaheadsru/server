@@ -83,7 +83,10 @@ extension Session {
     guard
       let date = updatedAt,
       let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date)
-      else { throw Abort.serverError }
+    else {
+        throw Abort.serverError
+    }
+    
     if referenceDate < Date() {
       self.token = try Session.generateToken()
       try self.save()

@@ -10,19 +10,17 @@ import Fluent
 // swiftlint:disable force_try
 class FacebookSocialControllerTest: TestCase {
 
-  var drop: Droplet!
-
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
     }
   }
 
-  func testThatUserCreatedAndStoredFromFacebookAccount() throws {
+  func testThatUserIsCreatedAndStoredFromFacebookAccount() throws {
 
     guard let body = try! FacebookAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
@@ -64,7 +62,7 @@ class FacebookSocialControllerTest: TestCase {
 
   }
 
-  func testThatSessionTokenCreatedAndStoredFromFacebookAccount() throws {
+  func testThatSessionTokenIsCreatedAndStoredFromFacebookAccount() throws {
 
     guard let body = try! FacebookAuthControllerTestHelper.getTestRequest(config: drop.config) else {
       XCTFail("Can't get test request")
@@ -111,6 +109,36 @@ class FacebookSocialControllerTest: TestCase {
 
     let userCount = try User.count()
     XCTAssertTrue(userCount == 1, "We must update user,  don't create once more.. User count is: \(userCount)")
+
+  }
+
+  func testThatUserPhotoFromFacebookIsSaved() throws {
+    guard let body = try! FacebookAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+      XCTFail("Can't get test request")
+      return
+    }
+
+    let fileName = "1716396_original2.jpg"
+    let photoPath = "user_photos/1/"
+    let filePath = drop.config.workDir + "Tests/Resources/" + fileName
+    let fileManager = Foundation.FileManager()
+    let storedDir = drop.config.publicDir + photoPath
+
+    try! fileManager.removeAllFiles(atPath: storedDir)
+
+    let response = try! postUserAuth(body: body).assertStatus(is: .ok)
+
+    guard
+      let updatedUser = response.json,
+      let newPhotoURL = updatedUser["photo"]?.string,
+      let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
+      else {
+        XCTFail("Can't get photo path")
+        return
+    }
+
+    let storedFilePath = storedDir + photoFileName
+    XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
 
   }
 

@@ -50,11 +50,3 @@ extension Social {
       .first()
   }
 }
-
-extension Social {
-  struct Nets {
-    static let fb = "facebook"
-    static let vk = "vkontakte"
-    static let git = "github"
-  }
-}

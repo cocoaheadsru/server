@@ -10,7 +10,7 @@ final class User: Model {
   let storage = Storage()
   
   var name: String
-  var lastname: String
+  var lastname: String?
   var company: String?
   var position: String?
   var photo: String?
@@ -18,12 +18,12 @@ final class User: Model {
   var phone: String?
 
   init(name: String,
-       lastname: String,
-       company: String?,
-       position: String?,
-       photo: String?,
-       email: String?,
-       phone: String?) {
+       lastname: String? = nil,
+       company: String? = nil,
+       position: String? = nil,
+       photo: String? = nil,
+       email: String? = nil,
+       phone: String? = nil) {
     self.name = name
     self.lastname = lastname
     self.company = company
@@ -36,7 +36,7 @@ final class User: Model {
   // sourcery:inline:auto:User.AutoModelGeneratable
   init(row: Row) throws {
     name = try row.get(Keys.name)
-    lastname = try row.get(Keys.lastname)
+    lastname = try? row.get(Keys.lastname)
     company = try? row.get(Keys.company)
     position = try? row.get(Keys.position)
     photo = try? row.get(Keys.photo)
@@ -47,7 +47,7 @@ final class User: Model {
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.name, name)
-    try row.set(Keys.lastname, lastname)
+    try? row.set(Keys.lastname, lastname)
     try? row.set(Keys.company, company)
     try? row.set(Keys.position, position)
     try? row.set(Keys.photo, photo)
@@ -64,20 +64,20 @@ extension User: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.name, name)
-    try json.set(Keys.lastname, lastname)
+    try? json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
     try? json.set(Keys.photo, photoURL(for: photo))
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
-    try json.set("session", session()?.makeJSON())
+    try json.set(Session.Keys.token, token())
     return json
   }
   
   func photoURL(for photo: String?) -> String? {
     guard
       let config = try? Config(),
-      let domain = config["server", "domain"]?.string,
+      let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
       let userId = self.id?.string,
       let photoPath = photo
     else {
@@ -85,6 +85,23 @@ extension User: JSONRepresentable {
     }
     let photosFolder = Constants.Path.userPhotos
     return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"
+  }
+}
+
+// MARK: Token
+extension User {
+  func token() throws -> String {
+    guard let token = try session()?.token else {
+      throw Abort(.internalServerError, reason: "User no have token")
+    }
+    return token
+  }
+
+  func updateSessionToken() throws {
+    guard let session = try? self.session() else {
+      throw Abort(.internalServerError, reason: "Can't get session for User\(self.id?.int ?? -1)")
+    }
+    try session?.updateToken()
   }
 }
 
@@ -103,14 +120,11 @@ extension User {
     return try sessions.first()
   }
 
-  // sourcery: nestedJSONField
-  func token() throws -> String {
-    guard let token = try session()?.token else {
-     throw Abort(.internalServerError, reason: "User no have token")
-    }
-    return token
-  }
+}
 
+// MARK: Lifecylce triggers
+extension User {
+  
   func didCreate() {
     do {
       let session = try Session(user: self)
@@ -124,12 +138,9 @@ extension User {
     try? updateSessionToken()
   }
 
-  func updateSessionToken() throws {
-    try Session.updateToken(for: self)
-  }
-
 }
 
+// MARK: TokenAuthenticationMiddleware
 extension User: TokenAuthenticatable {
   typealias TokenType = Session
 }
