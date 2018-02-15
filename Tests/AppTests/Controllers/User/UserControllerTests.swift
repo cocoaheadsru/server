@@ -8,7 +8,6 @@ import Sockets
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
 class UserControllerTests: TestCase {
-  var drop: Droplet!
   
   let firstName = "Cocoa"
   let lastName = "Heads"
@@ -22,63 +21,25 @@ class UserControllerTests: TestCase {
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
     }
   }
 
-  func testThatUserIsCreatedFromRequest() throws {
-    let userJSON = try generatedUserJSON()
-    
-    try sendPostRequest(with: userJSON)
-    XCTAssertEqual(try User.all().count, 1)
-  }
-  
-  func testThatUserIsNotCreatedFromIncompleteRequest() throws {
-    var json = JSON()
-    try json.set("name", firstName)
-    
-    try drop
-      .clientAuthorizedTestResponse(
-        to: .post,
-        at: "user",
-        body: json)
-      .assertStatus(is: .internalServerError)
-  }
-
-  func testThatStoreMethodReturnsUser() throws {
-    let userJSON = try generatedUserJSON(full: true)
-    let response = try drop.clientAuthorizedTestResponse(to: .post, at: "/user", body: userJSON)
-    
-    XCTAssertEqual(response.json?["name"]?.string, firstName)
-    XCTAssertEqual(response.json?["lastname"]?.string, lastName)
-    XCTAssertEqual(response.json?["company"]?.string, company)
-    XCTAssertEqual(response.json?["position"]?.string, position)
-    XCTAssertEqual(response.json?["email"]?.string, email)
-    XCTAssertEqual(response.json?["phone"]?.string, phone)
-  }
-
-  func testThatStoreMethodCreatesUserSession() throws {
-    let userJSON = try generatedUserJSON()
-    
-    try sendPostRequest(with: userJSON)
-    XCTAssertEqual(try Session.all().count, 1)
-  }
-
   func testThatSessionTokenDoesNotUpdateOnEveryShowRequest() throws {
-    let user = try storeUser()
-    let token = try user.session()?.token
+    let user = try! storeUser()
+    let token = try! user.session()?.token
     
-    try sendGetRequest(for: user.id!)
+    try sendGetRequest(for: user)
     
-    XCTAssertEqual(token, try user.session()?.token)
+    XCTAssertEqual(token, try! user.session()?.token)
   }
 
   func testThatShowMethodUpdatesSessionTokenAfterOneMonth() throws {
-    let user = try storeUser()
-    let session = try user.session()
+    let user = try! storeUser()
+    let session = try! user.session()
     let formatter = isoFormatter()
     
     let newUpdatedAt = Calendar.current.date(byAdding: .month, value: -2, to: Date())
@@ -91,9 +52,9 @@ class UserControllerTests: TestCase {
       """
     )
     
-    try sendGetRequest(for: user.id!)
+    try sendGetRequest(for: user)
     
-    let updatedAt = try user.session()?.updatedAt
+    let updatedAt = try! user.session()?.updatedAt
     let updatedAtMonth = Calendar.current.component(.month, from: updatedAt!)
     let currentMonth = Calendar.current.component(.month, from: Date())
     
@@ -101,9 +62,10 @@ class UserControllerTests: TestCase {
   }
   
   func testThatUpdateMethodUpdatesUserCredentials() throws {
-    let user = try storeUser()
-    var updatedUserJSON = try generatedUserJSON()
-    try updatedUserJSON.set("lastname", updatedLastName)
+    let user = try! storeUser()
+    var updatedUserJSON = try! generatedUserJSON()
+    try! updatedUserJSON.set("lastname", updatedLastName)
+    try! updatedUserJSON.set("token", try! user.token())
 
     try sendPatchRequest(for: user.id!, with: updatedUserJSON)
     
@@ -119,26 +81,28 @@ class UserControllerTests: TestCase {
     let newCompany = String.randomValue
     let newPosition = String.randomValue
     let newEmail = String.randomEmail
-    let newPhoto = String.randomPhotoName
-    
+
     var json = JSON()
-    try json.set("name", newName)
-    try json.set("lastname", newLastName)
-    try json.set("company", newCompany)
-    try json.set("position", newPosition)
-    try json.set("email", newEmail)
-    //try json.set("photo", newPhoto)
-    
-    let response = try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\((user.id?.int)!)", body: json)
-    //let photoPath = "\(TestConstants.Path.userPhotosPath + (user.id?.string)!)/\(newPhoto)"
-    
-    try response.assertJSON("name", equals: newName)
-    try response.assertJSON("lastname", equals: newLastName)
-    try response.assertJSON("company", equals: newCompany)
-    try response.assertJSON("position", equals: newPosition)
-    try response.assertJSON("email", equals: newEmail)
-   // try response.assertJSON("photo", equals: photoPath)
+    try! json.set("name", newName)
+    try! json.set("lastname", newLastName)
+    try! json.set("company", newCompany)
+    try! json.set("position", newPosition)
+    try! json.set("email", newEmail)
+    try! json.set("token", try! user.token())
+
+    let response = try! drop
+      .userAuthorizedTestResponse(
+        to: .patch,
+        at: "/user/\((user.id?.int)!)",
+        body: json)
+
+    try! response.assertJSON("name", equals: newName)
+    try! response.assertJSON("lastname", equals: newLastName)
+    try! response.assertJSON("company", equals: newCompany)
+    try! response.assertJSON("position", equals: newPosition)
+    try! response.assertJSON("email", equals: newEmail)
   }
+
 }
 
 extension UserControllerTests {
@@ -150,14 +114,14 @@ extension UserControllerTests {
 
   func generatedUserJSON(full: Bool = false) throws -> JSON {
     var json = JSON()
-    try json.set("name", firstName)
-    try json.set("lastname", lastName)
+    try! json.set("name", firstName)
+    try! json.set("lastname", lastName)
     if full {
-      try json.set("company", company)
-      try json.set("position", position)
-      try json.set("email", email)
-      try json.set("phone", phone)
-      try json.set("photo", photo)
+      try! json.set("company", company)
+      try! json.set("position", position)
+      try! json.set("email", email)
+      try! json.set("phone", phone)
+      try! json.set("photo", photo)
     }
     return json
   }
@@ -172,22 +136,24 @@ extension UserControllerTests {
 
   func storeUser() throws -> User {
     let user = User()
-    try user.save()
+    try! user.save()
     return user
   }
-  
+
   @discardableResult
-  func sendPostRequest(with json: JSON) throws -> Response {
-    return try drop.clientAuthorizedTestResponse(to: .post, at: "/user", body: json)
-  }
-  
-  @discardableResult
-  func sendGetRequest(for id: Identifier) throws -> Response {
-    return try drop.clientAuthorizedTestResponse(to: .get, at: "/user/\(id.int!)")
+  func sendGetRequest(for user: User) throws -> Response {
+    return try! drop.userAuthorizedTestResponse(
+      to: .get,
+      at: "/user/\(user.id!.int!)",
+      bearer: try! user.token()
+    )
   }
   
   @discardableResult
   func sendPatchRequest(for id: Identifier, with json: JSON) throws -> Response {
-    return try drop.clientAuthorizedTestResponse(to: .patch, at: "/user/\(id.int!)", body: json)
+    return try! drop.userAuthorizedTestResponse(
+      to: .patch,
+      at: "/user/\(id.int!)",
+      body: json)
   }
 }

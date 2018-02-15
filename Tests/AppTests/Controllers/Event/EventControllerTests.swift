@@ -2,17 +2,17 @@ import XCTest
 import Testing
 @testable import Vapor
 @testable import App
-
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
+
 class EventControllerTests: TestCase {
-  var drop: Droplet!
-  let eventContoller = EventController()
   
+  let eventContoller = EventController()
+
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return

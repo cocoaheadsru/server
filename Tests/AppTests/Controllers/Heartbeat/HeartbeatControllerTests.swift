@@ -10,10 +10,20 @@ import Fluent
 // swiftlint:disable force_try
 
 class HeartbeatControllerTests: TestCase {
-  let drop = try! Droplet.testable()
+//  let drop = try! Droplet.testable()
   let controller = HeartbeatController()
   let validToken = TestConstants.Middleware.validToken
-  
+
+  override func setUp() {
+    super.setUp()
+    do {
+      try drop.truncateTables()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
+  }
+
   func testThatPostSetBeatAnyValue() throws {
     // arrange
     let beat = Int.randomValue
@@ -75,11 +85,10 @@ class HeartbeatControllerTests: TestCase {
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
     let json = try! heartbeat.makeJSON()
-    let header: HTTPHeader = ["Content-Type": "application/json"]
     // act & assert
     print(try! json.serialize(prettyPrint: true).makeString())
     try! drop
-      .testResponse(to: .post, at: "heartbeat", headers: header, body: json)
+      .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -111,22 +120,21 @@ class HeartbeatControllerTests: TestCase {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
       let json = try! heartbeat.makeJSON()
-      let header: HTTPHeader = ["Content-Type": "application/json"]
       // act & assert
-      try drop
-        .testResponse(to: .post, at: "heartbeat", headers: header, body: json)
+      try! drop
+        .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
-      try drop
-        .userAuthorizedTestResponse(to: .get, at: "heartbeat")
+      try! drop
+        .clientAuthorizedTestResponse(to: .get, at: "heartbeat")
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
     }
     
-    try makePostRequestForHeartbeat(with: 1)
-    try makePostRequestForHeartbeat(with: 2)
-    try makePostRequestForHeartbeat(with: 1)
-    try makePostRequestForHeartbeat(with: 2)
+    try! makePostRequestForHeartbeat(with: 1)
+    try! makePostRequestForHeartbeat(with: 2)
+    try! makePostRequestForHeartbeat(with: 1)
+    try! makePostRequestForHeartbeat(with: 2)
   }
 }
 

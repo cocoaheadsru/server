@@ -5,17 +5,15 @@ import Sockets
 import Fluent
 @testable import Vapor
 @testable import App
-
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
+
 class AutoapproveTest: TestCase {
-  
-  var drop: Droplet!
-  
+
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
@@ -42,17 +40,7 @@ class AutoapproveTest: TestCase {
       return
     }
     
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     XCTAssertTrue(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
@@ -89,17 +77,7 @@ class AutoapproveTest: TestCase {
       return
     }
     
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     XCTAssertFalse(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
@@ -137,17 +115,7 @@ class AutoapproveTest: TestCase {
       return
     }
     
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     XCTAssertFalse(try EventRegHelper.userIsApproved(with: userAnswers.sessionToken, for: regForm))
@@ -167,4 +135,27 @@ class AutoapproveTest: TestCase {
     
   }
   
+}
+
+extension AutoapproveTest {
+
+  @discardableResult
+  func eventRegistration(_ json: JSON, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        body: json,
+        bearer: token)
+  }
+
+  @discardableResult
+  func cancellationOfRegistration(_ eventRegId: Int, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .delete,
+        at: "event/register/\(eventRegId)",
+        bearer: token)
+  }
+
 }

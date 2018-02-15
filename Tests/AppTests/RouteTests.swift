@@ -6,9 +6,17 @@ import HTTP
 @testable import App
 
 class RouteTests: TestCase {
-  //swiftlint:disable force_try
-  let drop = try! Droplet.testable()
-  //swiftlint:eanble force_try
+
+  override func setUp() {
+    super.setUp()
+    do {
+      try drop.truncateTables()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
+  }
+  
   func testThatRequestWithNoClientTokenFails() throws {
     try drop
       .unauthorizedTestResponse(to: .get, at: "hello")

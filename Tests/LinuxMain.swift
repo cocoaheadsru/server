@@ -15,7 +15,7 @@ extension AutoapproveTest {
 extension CancelRegistrationTest {
   static var allTests: [(String, (CancelRegistrationTest) -> () throws -> Void)] = [
    ("testThatCancelRegistrationGetErrorForNotApprovedUser", testThatCancelRegistrationGetErrorForNotApprovedUser),
-   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration),
+   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotSelfRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotSelfRegistration),
    ("testThatCancelRegistrationIsDone", testThatCancelRegistrationIsDone)
   ]
 }
@@ -65,9 +65,10 @@ extension EventSpeechControllerTests {
 }
 extension FacebookSocialControllerTest {
   static var allTests: [(String, (FacebookSocialControllerTest) -> () throws -> Void)] = [
-   ("testThatUserCreatedAndStoredFromFacebookAccount", testThatUserCreatedAndStoredFromFacebookAccount),
-   ("testThatSessionTokenCreatedAndStoredFromFacebookAccount", testThatSessionTokenCreatedAndStoredFromFacebookAccount),
-   ("testThatIfUserExistThenUserProfileUpdatedFromFacebook", testThatIfUserExistThenUserProfileUpdatedFromFacebook)
+   ("testThatUserIsCreatedAndStoredFromFacebookAccount", testThatUserIsCreatedAndStoredFromFacebookAccount),
+   ("testThatSessionTokenIsCreatedAndStoredFromFacebookAccount", testThatSessionTokenIsCreatedAndStoredFromFacebookAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromFacebook", testThatIfUserExistThenUserProfileUpdatedFromFacebook),
+   ("testThatUserPhotoFromFacebookIsSaved", testThatUserPhotoFromFacebookIsSaved)
   ]
 }
 extension GetRegFormTests {
@@ -78,6 +79,14 @@ extension GetRegFormTests {
    ("testThatRegFieldLinkedWithRegFormAndHasExpectedFields", testThatRegFieldLinkedWithRegFormAndHasExpectedFields),
    ("testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields", testThatRegFieldAnswerLinkedWithRegFieldAndHasExpectedFields),
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
+  ]
+}
+extension GithubAuthControllerTest {
+  static var allTests: [(String, (GithubAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromGithubAccount", testThatUserCreatedAndStoredFromGithubAccount),
+   ("testThatSessionTokenCreatedAndStoredFromGithubAccount", testThatSessionTokenCreatedAndStoredFromGithubAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromGithub", testThatIfUserExistThenUserProfileUpdatedFromGithub),
+   ("testThatUserPhotoFromGithubIsSaved", testThatUserPhotoFromGithubIsSaved)
   ]
 }
 extension HeartbeatControllerTests {
@@ -109,16 +118,34 @@ extension RouteTests {
    ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
+extension UserAuthByTokenTest {
+  static var allTests: [(String, (UserAuthByTokenTest) -> () throws -> Void)] = [
+   ("testThatGotUnauthorizedWithEmptyAccessToken", testThatGotUnauthorizedWithEmptyAccessToken),
+   ("testThatGotUnauthorizedWithIncorrectAccessToken", testThatGotUnauthorizedWithIncorrectAccessToken),
+   ("testThatGotAccessWithCorrectAccessToken", testThatGotAccessWithCorrectAccessToken)
+  ]
+}
 extension UserControllerTests {
   static var allTests: [(String, (UserControllerTests) -> () throws -> Void)] = [
-   ("testThatUserIsCreatedFromRequest", testThatUserIsCreatedFromRequest),
-   ("testThatUserIsNotCreatedFromIncompleteRequest", testThatUserIsNotCreatedFromIncompleteRequest),
-   ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
-   ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
    ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),
    ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth),
    ("testThatUpdateMethodUpdatesUserCredentials", testThatUpdateMethodUpdatesUserCredentials),
    ("testThatUpdateMethodReturnsUpdatedUser", testThatUpdateMethodReturnsUpdatedUser)
+  ]
+}
+extension UserPhotoTest {
+  static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
+   ("testThatUserPhotoIsUpdatedByFormDataSend", testThatUserPhotoIsUpdatedByFormDataSend),
+   ("testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString", testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString),
+   ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
+  ]
+}
+extension VkontakteAuthControllerTest {
+  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
+   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
+   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
   ]
 }
 
@@ -130,9 +157,13 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
+  testCase(GithubAuthControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
-  testCase(UserControllerTests.allTests)
+  testCase(UserAuthByTokenTest.allTests),
+  testCase(UserControllerTests.allTests),
+  testCase(UserPhotoTest.allTests),
+  testCase(VkontakteAuthControllerTest.allTests)
 ])
 #endif

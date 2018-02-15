@@ -6,13 +6,13 @@ import Testing
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
 class EventSpeechControllerTests: TestCase {
-  var drop: Droplet!
+
   let eventSpeechContoller = EventSpeechController()
   
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
