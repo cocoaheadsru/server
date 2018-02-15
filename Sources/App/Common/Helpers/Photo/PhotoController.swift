@@ -54,7 +54,7 @@ struct PhotoConroller {
 
   func savePhoto(for userId: String, photoBytes: Bytes, filename: String) throws {
     let userDir = URL(fileURLWithPath: drop.config.publicDir)
-      .appendingPathComponent("user_photos")
+      .appendingPathComponent(Constants.Path.userPhotos)
       .appendingPathComponent(userId)
     let fileManager = FileManager.default
 

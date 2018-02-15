@@ -16,6 +16,7 @@ struct TestConstants {
     
     struct Value {
       static let applicationJson = "application/json"
+      static let multipartFormData = "multipart/form-data"
     }
   }
   
