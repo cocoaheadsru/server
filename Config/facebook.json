@@ -1,0 +1,11 @@
+{
+  "//": "User auth",
+  "token_request_url": "https://graph.facebook.com/v2.12/oauth/access_token",
+  "client_id": "$CH_FB_CLIENT_ID",
+  "redirect_uri": "$CH_FB_REDIRECT",
+  "scope": "email",
+  "client_secret": "$CH_FB_CLIENT_SECRET",
+  "user_info_url": "https://graph.facebook.com/me",
+  "fields": "id,email,first_name,last_name,picture.height(961)"
+}
+
