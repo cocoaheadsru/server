@@ -40,8 +40,6 @@ final class GithubAuthControllerTestHelper {
         throw Abort(.badRequest, reason: "Can't get user profile from Github")
     }
 
-    let socialUserId = "github.com/\(login)"
-
     let names = response["name"]?.string ?? login
     let fullNameArr = names.components(separatedBy: " ")
     let name: String = fullNameArr[0]

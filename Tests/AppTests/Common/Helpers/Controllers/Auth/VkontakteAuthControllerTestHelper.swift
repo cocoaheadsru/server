@@ -49,7 +49,6 @@ final class VkontakteAuthControllerTestHelper {
 
     guard
       let response = userInfo.json?["response"]?.array?.first,
-      let socialUserId = response["uid"]?.string,
       let name = response["first_name"]?.string,
       let lastname = response["last_name"]?.string,
       let photo = response["photo_max"]?.string

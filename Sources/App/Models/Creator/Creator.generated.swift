@@ -39,18 +39,3 @@ extension Creator: Preparation {
     try database.delete(self)
   }
 }
-
-extension Creator: JSONRepresentable {
-
-  func makeJSON() throws -> JSON {
-    var json = JSON()
-    try json.set(Keys.id, id)
-    try json.set(Keys.userId, userId)
-    try json.set(Keys.position, position)
-    try json.set(Keys.photoUrl, photoUrl)
-    try json.set(Keys.info, info)
-    try json.set(Keys.url, url)
-    try json.set(Keys.active, active)
-    return json
-  }
-}

@@ -18,7 +18,7 @@ extension Responder {
     file: StaticString = #file,
     line: UInt = #line
     ) throws -> HTTP.Response {
-    let req = Request.makeTest(
+    let request = Request.makeTest(
       method: method,
       headers: headers,
       body: body?.makeBody() ?? .data([]),
@@ -27,11 +27,11 @@ extension Responder {
       query: query
     )
 
-    req.headers[.host] = hostname
-    req.headers[.contentType] = TestConstants.Header.Value.applicationJson
+    request.headers[.host] = hostname
+    request.headers[.contentType] = TestConstants.Header.Value.applicationJson
 
     return try self.testResponse(
-      to: req,
+      to: request,
       file: file,
       line: line
     )

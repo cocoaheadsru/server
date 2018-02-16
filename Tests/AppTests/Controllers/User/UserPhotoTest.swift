@@ -129,7 +129,7 @@ class UserPhotoTest: TestCase {
     XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
 
   }
-//  TODO - ask Vapor's devteam how to get file from Public  from tests 
+//  TODO - ask Vapor's devteam how to get file from Public  from tests
 //  func testThatUserPhotoIsDownloadedFromServer() throws {
 //
 //    let fileName = "robot-1469114466kSY.jpg"

@@ -36,15 +36,15 @@ class EventControllerTests: TestCase {
   
   func testThatIndexEventsReturnsOkStatusForBeforeQueryKey() throws {
     let query = "before=\(Date.randomValue.mysqlString)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try! eventContoller.index(req).makeResponse()
+    let request = Request.makeTest(method: .get, query: query)
+    let res = try! eventContoller.index(request).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
   func testThatIndexEventsReturnsOkStatusForAfterQueryKey() throws {
     let query = "after=\(Date.randomValue.mysqlString)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try! eventContoller.index(req).makeResponse()
+    let request = Request.makeTest(method: .get, query: query)
+    let res = try! eventContoller.index(request).makeResponse()
     XCTAssertEqual(res.status, .ok)
   }
   
@@ -227,16 +227,16 @@ fileprivate extension EventControllerTests {
   
   func fetchPastEvents() throws -> Response {
     let query = "before=\(Date().mysqlString)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
-    return res
+    let request = Request.makeTest(method: .get, query: query)
+    let result = try eventContoller.index(request).makeResponse()
+    return result
   }
   
   func fetchComingEvents() throws -> Response {
     let query = "after=\(Date().mysqlString)"
-    let req = Request.makeTest(method: .get, query: query)
-    let res = try eventContoller.index(req).makeResponse()
-    return res
+    let request = Request.makeTest(method: .get, query: query)
+    let result = try eventContoller.index(request).makeResponse()
+    return result
   }
   
   func storeEvent() throws -> Identifier? {

@@ -30,13 +30,13 @@ extension RegistrationController {
     }
   }
   
-  func storeEventRegAnswers(_ req: Request, eventReg: EventReg) throws {
+  func storeEventRegAnswers(_ request: Request, eventReg: EventReg) throws {
    
     guard let eventRegId = eventReg.id else {
       throw Abort(.internalServerError, reason: "Can't get eventRegId")
     }
     
-    guard let fields = req.json?[Keys.fields]?.array else {
+    guard let fields = request.json?[Keys.fields]?.array else {
         throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
     

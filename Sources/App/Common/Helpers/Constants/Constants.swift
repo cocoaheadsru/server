@@ -20,5 +20,14 @@ struct Constants {
   
   struct Path {
     static let userPhotos = "user_photos"
+    static let creatorsPhotos = "creators"
   }
+
+  struct Status {
+    struct Registration {
+      static let closed = "registrationClosed"
+      static let canRegister = "canRegister"
+    }
+  }
+
 }

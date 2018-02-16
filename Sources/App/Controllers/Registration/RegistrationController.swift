@@ -6,15 +6,14 @@ final class  RegistrationController {
   
   let autoapprove = try? AutoapproveController()
   
-  func store(_ req: Request) throws -> ResponseRepresentable {
+  func store(_ request: Request) throws -> ResponseRepresentable {
 
-    let user = try req.user()
-
+    let user = try request.user()
     guard let userId = user.id else {
       throw Abort(.internalServerError, reason: "Can't get user.id")
     }
     
-    guard let regFormId = try req.json?.get(Keys.regFormId) as Identifier! else {
+    guard let regFormId = try request.json?.get(Keys.regFormId) as Identifier! else {
       throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
   
@@ -37,14 +36,14 @@ final class  RegistrationController {
       status: grandApprove ? EventReg.RegistrationStatus.approved : EventReg.RegistrationStatus.waiting)
     try eventReg.save()
 
-    try storeEventRegAnswers(req, eventReg: eventReg)
+    try storeEventRegAnswers(request, eventReg: eventReg)
     
     return eventReg
   }
 
-  func cancel(_ req: Request, eventReg: EventReg) throws -> ResponseRepresentable {
+  func cancel(_ request: Request, eventReg: EventReg) throws -> ResponseRepresentable {
     
-    let user = try req.user()
+    let user = try request.user()
 
     guard
       let userId = user.id,

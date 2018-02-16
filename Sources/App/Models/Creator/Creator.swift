@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: Preparation
 final class Creator: Model {
     
   let storage = Storage()
@@ -14,7 +14,12 @@ final class Creator: Model {
   var url: String
   var active: Bool
   
-  init(userId: Identifier, position: Int, photoUrl: String, info: String, url: String, active: Bool) {
+  init(userId: Identifier,
+       position: Int,
+       photoUrl: String,
+       info: String,
+       url: String,
+       active: Bool) {
     self.userId = userId
     self.position = position
     self.photoUrl = photoUrl
@@ -46,13 +51,38 @@ final class Creator: Model {
   // sourcery:end
 }
 
+extension Creator: JSONRepresentable {
+
+  func makeJSON() throws -> JSON {
+    var json = JSON()
+    try json.set(Keys.id, id)
+    try json.set(Keys.userId, userId)
+    try json.set(Keys.position, position)
+    try json.set(Keys.photoUrl, photoURL())
+    try json.set(Keys.info, info)
+    try json.set(Keys.url, url)
+    try json.set(Keys.active, active)
+    return json
+  }
+
+}
+
 extension Creator {
 
   func user() throws -> User? {
     return try parent(id: userId).get()
   }
-  
-  func photo() throws -> String {
-    return "http://upapi.ru/photos/creators/\(photoUrl)"
+
+  func photoURL() -> String? {
+    guard
+      let config = try? Config(),
+      let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
+      let userId = self.id?.string
+      else {
+        return nil
+    }
+    let photosFolder = Constants.Path.creatorsPhotos
+    return "\(domain)/\(photosFolder)/\(userId)/\(self.photoUrl)"
   }
+
 }

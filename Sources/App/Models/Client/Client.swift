@@ -32,7 +32,7 @@ final class Client: Model {
 }
 
 extension Client {
-
+  // TODO: use for push token controller
   convenience init(request: Request) throws {
     self.init(
       pushToken: try request.json!.get(Keys.pushToken),

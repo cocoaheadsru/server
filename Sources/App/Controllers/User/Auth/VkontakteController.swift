@@ -18,7 +18,7 @@ final class VkontakteController {
 
   func createOrUpdateUserProfile(use token: String, secret: String) throws -> User {
 
-    let (profile, socialUserId)  = try getUserProfile(use: token, secret: secret)
+    let (profile, socialUserId) = try getUserProfile(use: token, secret: secret)
 
     if let user = try SocialAccount.find(by: socialUserId) {
       user.name = profile.name
@@ -55,12 +55,13 @@ final class VkontakteController {
       vk.sig: signature
     ])
 
+    let profile = vk.Profile.self
     guard
-      let response = userInfo.json?[vk.Profile.response]?.array?.first,
-      let socialUserId = response[vk.Profile.socialUserId]?.string,
-      let name = response[vk.Profile.name]?.string,
-      let lastname = response[vk.Profile.lastname]?.string,
-      let photo = response[vk.Profile.photo]?.string
+      let response = userInfo.json?[profile.response]?.array?.first,
+      let socialUserId = response[profile.socialUserId]?.string,
+      let name = response[profile.name]?.string,
+      let lastname = response[profile.lastname]?.string,
+      let photo = response[profile.photo]?.string
       else {
         throw Abort(.badRequest, reason: "Can't get user profile from Vkontakte")
     }

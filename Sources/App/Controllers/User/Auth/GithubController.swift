@@ -79,30 +79,31 @@ final class GithubController {
 
   fileprivate func getUserProfile(use token: String) throws -> (user: User, socialUserId: String) {
 
-    let userInfoUrl =  config[git.name, git.userInfoURL]?.string ?? ""
+    let userInfoUrl = config[git.name, git.userInfoURL]?.string ?? ""
     let userInfo = try drop.client.get(userInfoUrl, query: [
       git.accessToken: token
     ])
 
+    let profile = git.Profile.self
     guard
       let response = userInfo.json,
-      let login = response[git.Profile.login]?.string,
-      let photo = response[git.Profile.photo]?.string
+      let login = response[profile.login]?.string,
+      let photo = response[profile.photo]?.string
     else {
         throw Abort(.badRequest, reason: "Can't get user profile from Github")
     }
 
-    let names = response[git.Profile.name]?.string ?? login
-    let fullNameArr = names.components(separatedBy: " ")
-    let name: String = fullNameArr[0]
-    let lastname: String? = fullNameArr.count > 1 ? fullNameArr[1] : nil
+    let names = response[profile.name]?.string ?? login
+    let fullName = names.components(separatedBy: " ")
+    let name: String = fullName[0]
+    let lastname: String? = fullName.count > 1 ? fullName[1] : nil
 
     let user = User(
       name: name,
       lastname: lastname,
       photo: photo)
 
-    let socialUserId = git.Profile.socialUserId + login
+    let socialUserId = profile.socialUserId + login
 
     return (user, socialUserId)
   }

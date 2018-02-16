@@ -61,9 +61,9 @@ class HeartbeatControllerTests: TestCase {
   func testThatShowGet204NoContentForEmptyBeatTable() throws {
     // arange
     try! cleanHeartbeatTable()
-    let req = Request.makeTest(method: .get)
+    let request = Request.makeTest(method: .get)
     // act
-    let res = try! controller.index(req: req).makeResponse()
+    let res = try! controller.index(request: request).makeResponse()
     // assert
     res.assertStatus(is: .noContent)
   }
@@ -73,11 +73,11 @@ class HeartbeatControllerTests: TestCase {
     try! cleanHeartbeatTable()
     let beat = Int.randomValue
     _ = try! setBeat(to: beat)
-    let req = Request.makeTest(method: .get)
+    let request = Request.makeTest(method: .get)
     // act
-    let res = try! controller.index(req: req).makeResponse()
+    let result = try! controller.index(request: request).makeResponse()
     // assert
-    try! res.assertJSON("beat", equals: beat)
+    try! result.assertJSON("beat", equals: beat)
   }
   
   func testThatRoutePostMethodShouldSetAnyIntValue() throws {
@@ -142,10 +142,10 @@ extension HeartbeatControllerTests {
   
   // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
-    let req = Request.makeTest(method: .post)
-    req.json =  try! JSON(node: ["beat": value])
-    let res = try! controller.store(req: req).makeResponse()
-    return res
+    let request = Request.makeTest(method: .post)
+    request.json =  try! JSON(node: ["beat": value])
+    let result = try! controller.store(request: request).makeResponse()
+    return result
   }
   
   fileprivate func cleanHeartbeatTable() throws {

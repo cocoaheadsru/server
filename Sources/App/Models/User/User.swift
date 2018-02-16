@@ -67,19 +67,19 @@ extension User: JSONRepresentable {
     try? json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photoURL(for: photo))
+    try? json.set(Keys.photo, photoURL)
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
     try json.set(Session.Keys.token, token())
     return json
   }
   
-  func photoURL(for photo: String?) -> String? {
+  var photoURL: String? {
     guard
+      let photoPath = self.photo,
       let config = try? Config(),
       let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
-      let userId = self.id?.string,
-      let photoPath = photo
+      let userId = self.id?.string
     else {
       return nil
     }

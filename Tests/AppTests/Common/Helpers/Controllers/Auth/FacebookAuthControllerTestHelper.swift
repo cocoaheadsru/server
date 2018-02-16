@@ -33,7 +33,6 @@ final class FacebookAuthControllerTestHelper {
     ])
 
     guard
-      let socialUserId = userInfo.json?["id"]?.string,
       let name = userInfo.json?["first_name"]?.string,
       let lastname = userInfo.json?["last_name"]?.string,
       let email = userInfo.json?["email"]?.string,

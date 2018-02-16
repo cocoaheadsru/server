@@ -18,7 +18,7 @@ final class FacebookController {
   func createOrUpdateUserProfile(use authorizateCode: String) throws -> User {
 
     let accessToken = try authorizate(by: authorizateCode)
-    let (profile, socialUserId)  = try getUserProfile(use: accessToken)
+    let (profile, socialUserId) = try getUserProfile(use: accessToken)
 
     if let user = try SocialAccount.find(by: socialUserId) {
       user.name = profile.name

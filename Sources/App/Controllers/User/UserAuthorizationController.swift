@@ -18,13 +18,13 @@ final class UserAuthorizationController {
     git = GithubController(drop: self.drop)
   }
 
-  func store(_ req: Request) throws -> ResponseRepresentable {
+  func store(_ request: Request) throws -> ResponseRepresentable {
 
-    guard let token = req.json?["token"]?.string else {
+    guard let token = request.json?[RequestKeys.token]?.string else {
       throw Abort(.badRequest, reason: "Can't get 'token' from request")
     }
 
-    guard let social = req.json?["social"]?.string else {
+    guard let social = request.json?[RequestKeys.social]?.string else {
       throw Abort(.badRequest, reason: "Can't get 'social' from request")
     }
 
@@ -32,12 +32,12 @@ final class UserAuthorizationController {
     case Social.Nets.fb:
       return try fb.createOrUpdateUserProfile(use: token)
     case Social.Nets.vk:
-      guard let secret = req.json?["secret"]?.string else {
+      guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
       return try vk.createOrUpdateUserProfile(use: token, secret: secret)
     case Social.Nets.git:
-      guard let secret = req.json?["secret"]?.string else {
+      guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
       return try git.createOrUpdateUserProfile(use: token, secret: secret)
@@ -56,4 +56,14 @@ extension UserAuthorizationController: ResourceRepresentable {
       store: store
     )
   }
+}
+
+extension UserAuthorizationController {
+
+  struct RequestKeys {
+    static let token = "token"
+    static let social = "social"
+    static let secret = "secret"
+  }
+
 }

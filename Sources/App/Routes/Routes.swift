@@ -20,8 +20,10 @@ extension Droplet {
     }
 
     try resource("heartbeat", HeartbeatController.self)
+
     try clientMiddlewareGroup.resource("event", EventController.self)
     try clientMiddlewareGroup.resource("event/:id/speech", EventSpeechController.self)
+    
     try userMiddlewareGroup.resource("event/:id/form", RegistrationFormController.self)
     try userMiddlewareGroup.resource("event/register", RegistrationController.self)
 

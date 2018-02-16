@@ -2,8 +2,8 @@ import Vapor
 
 final class EventSpeechController {
 
-  func index(req: Request) throws -> ResponseRepresentable {
-    guard let id = req.parameters["id"]?.int else {
+  func index(request: Request) throws -> ResponseRepresentable {
+    guard let id = request.parameters["id"]?.int else {
       throw Abort(.badRequest, reason: "Id parameter is missing.")
     }
     guard let event = try Event.find(id) else {

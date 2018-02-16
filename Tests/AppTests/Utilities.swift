@@ -30,9 +30,11 @@ private var tableForTruncate: [String] {
   }
 
   let dbName = drop.config["mysql", "database"]?.string ?? ""
-  _tableList = jsons.map { (json) -> String in
-    json["Tables_in_\(dbName)"]?.string ?? ""
-    }.filter({ (table) -> Bool in
+  _tableList = jsons
+    .map { (json) -> String in
+      json["Tables_in_\(dbName)"]?.string ?? ""
+    }
+    .filter({ (table) -> Bool in
       table != "social"
     })
 

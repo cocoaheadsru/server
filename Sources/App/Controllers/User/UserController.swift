@@ -64,23 +64,32 @@ extension UserController {
 
     // get photo from formData
     if
-      let bytes = request.formData?["photo"]?.bytes,
-      let filename = request.formData?["photo"]?.filename {
+      let bytes = request.formData?[RequestKeys.photo]?.bytes,
+      let filename = request.formData?[RequestKeys.photo]?.filename {
       try photoConroller.savePhoto(for: userId, photoBytes: bytes, filename: filename)
       return filename
     }
 
     // get photo from body as base64EncodedString
-    if let photoString = request.json?["photo"]?.string {
-      return try photoConroller.savePhoto(for: userId, photoString: photoString)
+    if let photoString = request.json?[RequestKeys.photo]?.string {
+      return try photoConroller.savePhoto(for: userId, photoAsString: photoString)
     }
 
     // get photo by url download
-    if let photoURL = request.json?["photoURL"]?.string {
+    if let photoURL = request.json?[RequestKeys.photoURL]?.string {
       return try photoConroller.downloadAndSavePhoto(for: userId, by: photoURL)
     }
 
     return nil
+  }
+
+}
+
+extension UserController {
+
+  struct RequestKeys {
+    static let photo = "photo"
+    static let photoURL = "photoURL"
   }
 
 }
