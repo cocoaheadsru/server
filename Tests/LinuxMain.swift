@@ -81,14 +81,6 @@ extension GetRegFormTests {
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
-extension GithubAuthControllerTest {
-  static var allTests: [(String, (GithubAuthControllerTest) -> () throws -> Void)] = [
-   ("testThatUserCreatedAndStoredFromGithubAccount", testThatUserCreatedAndStoredFromGithubAccount),
-   ("testThatSessionTokenCreatedAndStoredFromGithubAccount", testThatSessionTokenCreatedAndStoredFromGithubAccount),
-   ("testThatIfUserExistThenUserProfileUpdatedFromGithub", testThatIfUserExistThenUserProfileUpdatedFromGithub),
-   ("testThatUserPhotoFromGithubIsSaved", testThatUserPhotoFromGithubIsSaved)
-  ]
-}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -157,7 +149,6 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
-  testCase(GithubAuthControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),

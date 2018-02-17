@@ -82,7 +82,8 @@ extension Event {
 }
 
 extension Event {
-  
+
+  // sourcery: nestedJSONRepresentableField
   func place() throws -> Place? {
     return try parent(id: placeId).get()
   }
@@ -90,7 +91,8 @@ extension Event {
   func speeches() throws -> [Speech] {
     return try children().all()
   }
-  
+
+  // sourcery: nestedJSONField
   func status(for request: Request) throws -> String {
 
     if request.auth.isAuthenticated(User.self) {
@@ -113,7 +115,8 @@ extension Event {
     }
     return Constants.Status.Registration.canRegister
   }
-  
+
+  // sourcery: nestedJSONField
   func speakersPhotos() throws -> [String] {
     return try speeches().flatMap { speech in
         return try speech.speakers().flatMap { speaker in
