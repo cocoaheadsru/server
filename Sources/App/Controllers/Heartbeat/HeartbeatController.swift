@@ -17,7 +17,7 @@ final class HeartbeatController {
       try Heartbeat.makeQuery().delete()
     }
     guard let json = request.json else {
-      return try Response(status: .badRequest, message: "JSON is missing")
+      return try Response(.badRequest, message: "JSON is missing")
     }
     let beat = try Heartbeat(json: json)
     try beat.save()

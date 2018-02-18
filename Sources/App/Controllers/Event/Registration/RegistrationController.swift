@@ -54,10 +54,7 @@ final class  RegistrationController {
     }
     
     try eventReg.delete()
-    return try Response(
-      status: .ok,
-      message: "Registration is canceled"
-    )
+    return try Response( .ok, message: "Registration is canceled")
   }
   
 }
