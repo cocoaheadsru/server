@@ -93,6 +93,13 @@ extension HeartbeatControllerTests {
    ("testThatRouteHearbeatScenarioIsCorrect", testThatRouteHearbeatScenarioIsCorrect)
   ]
 }
+extension PushNotificationControllerTest {
+  static var allTests: [(String, (PushNotificationControllerTest) -> () throws -> Void)] = [
+   ("testThatPushTokenIsRegistered", testThatPushTokenIsRegistered),
+   ("testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser", testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser),
+   ("testThatPushNotificationIsCanceled", testThatPushNotificationIsCanceled)
+  ]
+}
 extension RegistrationControllerTests {
   static var allTests: [(String, (RegistrationControllerTests) -> () throws -> Void)] = [
    ("testThatUserRegFormAnswersStoredForEvent", testThatUserRegFormAnswersStoredForEvent),
@@ -150,6 +157,7 @@ XCTMain([
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
+  testCase(PushNotificationControllerTest.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
