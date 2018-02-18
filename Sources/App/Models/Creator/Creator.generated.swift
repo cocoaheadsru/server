@@ -39,3 +39,5 @@ extension Creator: Preparation {
     try database.delete(self)
   }
 }
+
+extension Creator: ResponseRepresentable { }

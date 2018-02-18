@@ -30,6 +30,11 @@ extension ClientMiddlewareTests {
    ("testThatResponseFailWithIncoincidentToken", testThatResponseFailWithIncoincidentToken)
   ]
 }
+extension CreatorsControllerTest {
+  static var allTests: [(String, (CreatorsControllerTest) -> () throws -> Void)] = [
+   ("testCreatorsCountFromGetEqualStoredCreators", testCreatorsCountFromGetEqualStoredCreators)
+  ]
+}
 extension EventControllerTests {
   static var allTests: [(String, (EventControllerTests) -> () throws -> Void)] = [
    ("testThatEventHasPlaceRelation", testThatEventHasPlaceRelation),
@@ -157,6 +162,7 @@ XCTMain([
   testCase(AutoapproveTest.allTests),
   testCase(CancelRegistrationTest.allTests),
   testCase(ClientMiddlewareTests.allTests),
+  testCase(CreatorsControllerTest.allTests),
   testCase(EventControllerTests.allTests),
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),

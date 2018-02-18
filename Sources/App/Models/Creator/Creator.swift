@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: Preparation
+// sourcery: Preparation, ResponseRepresentable
 final class Creator: Model {
     
   let storage = Storage()
