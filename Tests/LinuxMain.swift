@@ -81,6 +81,11 @@ extension GetRegFormTests {
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
+extension GiveSeechControllerTest {
+  static var allTests: [(String, (GiveSeechControllerTest) -> () throws -> Void)] = [
+   ("testThatGiveSpeechIsPosted", testThatGiveSpeechIsPosted)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -91,6 +96,13 @@ extension HeartbeatControllerTests {
    ("testThatRouteGet204NoContentForEmptyBeatTable", testThatRouteGet204NoContentForEmptyBeatTable),
    ("testThatRouteGetCurrentValueIfBeatTableIsNotEmpty", testThatRouteGetCurrentValueIfBeatTableIsNotEmpty),
    ("testThatRouteHearbeatScenarioIsCorrect", testThatRouteHearbeatScenarioIsCorrect)
+  ]
+}
+extension PushNotificationControllerTest {
+  static var allTests: [(String, (PushNotificationControllerTest) -> () throws -> Void)] = [
+   ("testThatPushTokenIsRegistered", testThatPushTokenIsRegistered),
+   ("testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser", testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser),
+   ("testThatPushNotificationIsCanceled", testThatPushNotificationIsCanceled)
   ]
 }
 extension RegistrationControllerTests {
@@ -149,7 +161,9 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
+  testCase(GiveSeechControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
+  testCase(PushNotificationControllerTest.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),

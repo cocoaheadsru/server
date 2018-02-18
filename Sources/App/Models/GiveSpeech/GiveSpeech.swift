@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, fromJSON, Preparation
+// sourcery: toJSON, fromJSON, Preparation, ResponseRepresentable
 final class GiveSpeech: Model {
   
   let storage = Storage()
