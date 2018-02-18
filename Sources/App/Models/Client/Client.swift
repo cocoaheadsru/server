@@ -32,11 +32,17 @@ final class Client: Model {
 }
 
 extension Client {
-  // TODO: use for push token controller
+
   convenience init(request: Request) throws {
     self.init(
       pushToken: try request.json!.get(Keys.pushToken),
-      userId: (try request.parameters.next(User.self).id)!
+      userId: try request.user().id
     )
+  }
+
+  static func returnIfExcists(request: Request) throws -> Client? {
+    return try Client.makeQuery()
+      .filter(Keys.userId, try request.user().id)
+      .first()
   }
 }
