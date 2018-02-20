@@ -21,8 +21,5 @@ extension Date {
     let negativeFiveHourseInterval: Double = -18000
     return self.addingTimeInterval(negativeFiveHourseInterval)
   }
-  
-  var mysqlString: String {
-    return DateFormatter.mysql.string(from: self)
-  }
+
 }

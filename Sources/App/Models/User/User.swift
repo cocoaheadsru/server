@@ -17,6 +17,29 @@ final class User: Model {
   var email: String?
   var phone: String?
 
+  // sourcery: ignoreInJSON
+  var token: String? {
+
+    get {
+      guard let result  = try? session()?.token else {
+       return nil
+      }
+      return result
+    }
+
+    set {
+      guard
+        let newToken = newValue,
+        let session = try! session()
+      else {
+        return
+      }
+      session.token = newToken
+      try! session.save()
+    }
+
+  }
+
   init(name: String,
        lastname: String? = nil,
        company: String? = nil,
@@ -70,7 +93,7 @@ extension User: JSONRepresentable {
     try? json.set(Keys.photo, photoURL)
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
-    try json.set(Session.Keys.token, token())
+    try json.set(Session.Keys.token, token)
     return json
   }
   
@@ -90,12 +113,13 @@ extension User: JSONRepresentable {
 
 // MARK: Token
 extension User {
-  func token() throws -> String {
-    guard let token = try session()?.token else {
-      throw Abort(.internalServerError, reason: "User no have token")
-    }
-    return token
-  }
+
+//  func token() throws -> String {
+//    guard let token = try session()?.token else {
+//      throw Abort(.internalServerError, reason: "User no have token")
+//    }
+//    return token
+//  }
 
   func updateSessionToken() throws {
     guard let session = try? self.session() else {
@@ -122,9 +146,8 @@ extension User {
 
 }
 
-// MARK: Lifecylce triggers
+// MARK: Lifecycle
 extension User {
-  
   func didCreate() {
     do {
       let session = try Session(user: self)

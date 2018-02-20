@@ -20,7 +20,7 @@ final class  RegistrationController {
     guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
       throw Abort(
         .internalServerError,
-        reason: "User with token '\(try user.token())' has alredy registered to this event")
+        reason: "User with token '\(user.token ?? "")' has alredy registered to this event")
     }
   
     guard
