@@ -127,9 +127,9 @@ extension UserControllerTests {
 }
 extension UserPhotoTest {
   static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
-   ("testThatUserPhotoIsUpdatedByFormDataSend", testThatUserPhotoIsUpdatedByFormDataSend),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString", testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
+   ("testThatUserPhotoisUpdatedUsingFormDataContent", testThatUserPhotoisUpdatedUsingFormDataContent),
+   ("testThatUsingPhotoWithBase64EncodedStringContent", testThatUsingPhotoWithBase64EncodedStringContent),
+   ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
 extension VkontakteAuthControllerTest {
