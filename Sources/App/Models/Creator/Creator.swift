@@ -72,7 +72,7 @@ extension Creator {
   func user() throws -> User? {
     return try parent(id: userId).get()
   }
-
+  
   func photoURL() -> String? {
     guard
       let config = try? Config(),

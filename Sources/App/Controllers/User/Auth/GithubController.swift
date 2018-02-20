@@ -6,13 +6,13 @@ final class GithubController {
 
   private let drop: Droplet
   private let config: Config
-  private let photoController: PhotoConroller
+  private let photoController: PhotoController
   private let git = Social.GIT.self
 
   init(drop: Droplet) {
     self.drop = drop
     self.config = drop.config
-    self.photoController = PhotoConroller(drop: self.drop)
+    self.photoController = PhotoController(drop: self.drop)
   }
 
   func createOrUpdateUserProfile(use authorizateCode: String, secret: String) throws -> User {

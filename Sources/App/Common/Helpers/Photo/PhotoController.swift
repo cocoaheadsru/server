@@ -3,7 +3,7 @@ import HTTP
 import Vapor
 import FluentProvider
 
-struct PhotoConroller {
+struct PhotoController {
 
   private let drop: Droplet
 

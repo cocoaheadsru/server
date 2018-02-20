@@ -40,7 +40,7 @@ extension Client {
     )
   }
 
-  static func returnIfExcists(request: Request) throws -> Client? {
+  static func returnIfExists(request: Request) throws -> Client? {
     return try Client.makeQuery()
       .filter(Keys.userId, try request.user().id)
       .first()

@@ -96,7 +96,7 @@ extension HeartbeatControllerTests {
 extension PushNotificationControllerTest {
   static var allTests: [(String, (PushNotificationControllerTest) -> () throws -> Void)] = [
    ("testThatPushTokenIsRegistered", testThatPushTokenIsRegistered),
-   ("testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser", testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser),
+   ("testThatPushTokenIsRegisteredOnlyOnceForCertainUser", testThatPushTokenIsRegisteredOnlyOnceForCertainUser),
    ("testThatPushNotificationIsCanceled", testThatPushNotificationIsCanceled)
   ]
 }
@@ -139,14 +139,6 @@ extension UserPhotoTest {
    ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
   ]
 }
-extension VkontakteAuthControllerTest {
-  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
-   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
-   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
-   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
-   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
-  ]
-}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -162,7 +154,6 @@ XCTMain([
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
   testCase(UserControllerTests.allTests),
-  testCase(UserPhotoTest.allTests),
-  testCase(VkontakteAuthControllerTest.allTests)
+  testCase(UserPhotoTest.allTests)
 ])
 #endif
