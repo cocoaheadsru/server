@@ -46,7 +46,7 @@ extension Speaker: JSONRepresentable {
   
   func makeJSON() throws -> JSON {
     guard let userJSON = try user()?.makeJSON() else {
-      throw Abort(.internalServerError, reason: "Speaker is no have User")
+      throw Abort(.internalServerError, reason: "Speaker doesn't have associated User")
     }
     var json = JSON(json: userJSON)
     try json.set(Keys.id, id)

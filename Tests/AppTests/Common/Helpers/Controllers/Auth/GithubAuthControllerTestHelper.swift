@@ -8,15 +8,15 @@ final class GithubAuthControllerTestHelper {
 
   static func getTestRequest(config: Config) throws -> JSON? {
     guard
-      let token = config[Social.Nets.git, "code"]?.string,
-      let secret = config[Social.Nets.git, "state"]?.string
+      let token = config[Social.Nets.github, "code"]?.string,
+      let secret = config[Social.Nets.github, "state"]?.string
       else {
         return nil
     }
     let result = try! JSON(
       node: [
         "token": token,
-        "social": Social.Nets.git,
+        "social": Social.Nets.github,
         "secret": secret
       ])
     return result
@@ -25,8 +25,8 @@ final class GithubAuthControllerTestHelper {
   static func getUserInfoFromSocial(drop: Droplet) throws -> JSON? {
 
     let config = drop.config
-    let apiURL = config[Social.Nets.git, "user_info_url"]?.string ?? ""
-    let token = config[Social.Nets.git, "access_token"]?.string ?? ""
+    let apiURL = config[Social.Nets.github, "user_info_url"]?.string ?? ""
+    let token = config[Social.Nets.github, "access_token"]?.string ?? ""
 
     let userInfo = try! drop.client.get(apiURL, query: [
       "access_token": token
@@ -40,10 +40,10 @@ final class GithubAuthControllerTestHelper {
         throw Abort(.badRequest, reason: "Can't get user profile from Github")
     }
 
-    let names = response["name"]?.string ?? login
-    let fullNameArr = names.components(separatedBy: " ")
-    let name: String = fullNameArr[0]
-    let lastname: String? = fullNameArr.count > 1 ? fullNameArr[1] : nil
+    let fullName = response["name"]?.string ?? login
+    let nameComponents = fullName.components(separatedBy: " ")
+    let name = nameComponents[0]
+    let lastname = nameComponents[safe: 1]
 
     let Keys = User.Keys.self
     var json = JSON()

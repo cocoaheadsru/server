@@ -5,7 +5,7 @@ extension Social {
   struct Nets {
     static let fb = "facebook"
     static let vk = "vkontakte"
-    static let git = "github"
+    static let github = "github"
   }
 
   struct FB {
@@ -46,8 +46,8 @@ extension Social {
     }
   }
 
-  struct GIT {
-    static let name = Nets.git
+  struct Github {
+    static let name = Nets.github
     static let tokenRequestURL = "token_request_url"
     static let clientId = "client_id"
     static let clientSecret = "client_secret"

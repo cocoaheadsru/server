@@ -45,8 +45,8 @@ class EventSpeechControllerTests: TestCase {
     
     try storeSpeech(for: eventId)
 
-    let result = try! fetchSpeeches(by: id)
-    let speechJSON = result.json?.array?.first
+    let response = try! fetchSpeeches(by: id)
+    let speechJSON = response.json?.array?.first
     
     XCTAssertNotNil(speechJSON)
     XCTAssertNotNil(speechJSON?["id"])
@@ -83,8 +83,8 @@ class EventSpeechControllerTests: TestCase {
     
     try storeSpeech(for: eventId)
     
-    let result = try fetchSpeeches(by: id)
-    let speechJSON = result.json?.array?.first
+    let response = try fetchSpeeches(by: id)
+    let speechJSON = response.json?.array?.first
     
     guard
       let speech = try! findEvent(by: eventId)?.speeches().first,
@@ -129,8 +129,8 @@ class EventSpeechControllerTests: TestCase {
     let expectedSpeechesCount = Int.random(min: 1, max: 6)
     try! storeSpeeches(count: expectedSpeechesCount, for: eventId)
     
-    let result = try! fetchSpeeches(by: id)
-    let arrayJSON = result.json?.array
+    let response = try! fetchSpeeches(by: id)
+    let arrayJSON = response.json?.array
     
     XCTAssertEqual(arrayJSON?.count, expectedSpeechesCount)
   }
@@ -144,8 +144,8 @@ class EventSpeechControllerTests: TestCase {
     let expectedSpeakersCount = Int.random(min: 1, max: 6)
     try storeSpeech(for: eventId, speakersCount: expectedSpeakersCount)
     
-    let result = try! fetchSpeeches(by: id)
-    let speechJSON = result.json?.array?.first
+    let response = try! fetchSpeeches(by: id)
+    let speechJSON = response.json?.array?.first
     let speakersArrayJSON = speechJSON?["speakers"]?.array
     
     XCTAssertEqual(speakersArrayJSON?.count, expectedSpeakersCount)
@@ -160,8 +160,8 @@ class EventSpeechControllerTests: TestCase {
     let expectedContentsCount = Int.random(min: 1, max: 6)
     try storeSpeech(for: eventId, contentCount: expectedContentsCount)
     
-    let result = try! fetchSpeeches(by: id)
-    let speechJSON = result.json?.array?.first
+    let response = try! fetchSpeeches(by: id)
+    let speechJSON = response.json?.array?.first
     let contentsArrayJSON = speechJSON?["contents"]?.array
     
     XCTAssertEqual(contentsArrayJSON?.count, expectedContentsCount)
@@ -204,8 +204,8 @@ fileprivate extension EventSpeechControllerTests {
   func fetchSpeeches(by id: Int) throws -> Response {
     let request = Request.makeTest(method: .get)
     try request.parameters.set("id", id)
-    let result = try eventSpeechContoller.index(request: request).makeResponse()
-    return result
+    let response = try eventSpeechContoller.index(request: request).makeResponse()
+    return response
   }
   
   func storeSpeech(

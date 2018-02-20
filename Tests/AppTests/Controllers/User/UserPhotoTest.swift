@@ -39,7 +39,7 @@ class UserPhotoTest: TestCase {
     }
   }
 
-  func testThatUserPhotoIsUpdatedByFormDataSend() throws {
+  func testThatUserPhotoisUpdatedUsingFormDataContent() throws {
 
     let user = User()
     user.photo = nil
@@ -77,7 +77,7 @@ class UserPhotoTest: TestCase {
     XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
   }
 
-  func testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString() throws {
+  func testThatUsingPhotoWithBase64EncodedStringContent() throws {
 
     let fileName = "robot-1469114466kSY.jpg"
     let filePath = drop.config.workDir + testResouces + fileName
@@ -98,7 +98,7 @@ class UserPhotoTest: TestCase {
 
   }
 
-  func testThatUserPhotoIsUpdatedByPhotoSendAsURL() throws {
+  func testThatUserPhotoIsUpdatedUsingPhotoAtURL() throws {
 
     let user = User()
     user.photo = nil
