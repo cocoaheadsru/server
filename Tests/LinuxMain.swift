@@ -32,7 +32,7 @@ extension ClientMiddlewareTests {
 }
 extension CreatorsControllerTest {
   static var allTests: [(String, (CreatorsControllerTest) -> () throws -> Void)] = [
-   ("testCreatorsCountFromGetEqualStoredCreators", testCreatorsCountFromGetEqualStoredCreators)
+   ("testThatGetCreatorsReturnsEqualStoredCreatorsCount", testThatGetCreatorsReturnsEqualStoredCreatorsCount)
   ]
 }
 extension EventControllerTests {
