@@ -41,4 +41,17 @@ extension SocialAccount {
   func social() throws -> Social? {
     return try parent(id: socialId).get()
   }
+
+  func user() throws ->  User? {
+    return try parent(id: userId).get()
+  }
+
+  static func find(by socialUserId: String) throws  -> User? {
+    return try SocialAccount
+      .makeQuery()
+      .filter(SocialAccount.Keys.socialUserId, socialUserId)
+      .first()?
+      .user()
+  }
+
 }

@@ -4,6 +4,8 @@ import Fluent
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
 final class UserSessionHelper {
  
   static func store() throws {

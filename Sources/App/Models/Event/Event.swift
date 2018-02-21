@@ -64,7 +64,7 @@ final class Event: Model {
 
 extension Event {
     
-    func makeJSON(with req: Request) throws -> JSON {
+    func makeJSON(with request: Request) throws -> JSON {
         var json = JSON()
         try json.set(Keys.id, id)
         try json.set(Keys.title, title)
@@ -75,14 +75,14 @@ extension Event {
         try json.set(Keys.endDate, endDate.mysqlString)
         try json.set(Keys.hide, hide)
         try json.set(Keys.place, place()?.makeJSON())
-        try json.set(Keys.status, status(token: req.headers["token"]))
+        try json.set(Keys.status, status(for: request))
         try json.set(Keys.speakersPhotos, speakersPhotos())
         return json
     }
 }
 
 extension Event {
-  
+
   // sourcery: nestedJSONRepresentableField
   func place() throws -> Place? {
     return try parent(id: placeId).get()
@@ -91,15 +91,16 @@ extension Event {
   func speeches() throws -> [Speech] {
     return try children().all()
   }
-  
+
   // sourcery: nestedJSONField
-  func status(token: String?) throws -> String {
-    if let token = token {
-      let userId = try Session.makeQuery().filter(Session.Keys.token, token).first()?.userId
+  func status(for request: Request) throws -> String {
+
+    if request.auth.isAuthenticated(User.self) {
+      let userId = try request.user().id
       let eventRegForm = try RegForm.makeQuery().filter(RegForm.Keys.eventId, id).first()
       let registration = try EventReg
         .makeQuery()
-        .filter(EventReg.Keys.status, .notEquals, "canceled")
+        .filter(EventReg.Keys.status, .notEquals, EventReg.RegistrationStatus.canceled.string)
         .filter(EventReg.Keys.userId, .equals, userId)
         .filter(EventReg.Keys.regFormId, .equals, eventRegForm?.id)
         .first()
@@ -110,20 +111,18 @@ extension Event {
     }
     
     if !isRegistrationOpen {
-      return "registrationClosed"
+      return Constants.Status.Registration.closed
     }
-    return "canRegister"
+    return Constants.Status.Registration.canRegister
   }
-  
+
   // sourcery: nestedJSONField
   func speakersPhotos() throws -> [String] {
-    let photoPaths = try speeches().flatMap { speech in
+    return try speeches().flatMap { speech in
         return try speech.speakers().flatMap { speaker in
-            return try speaker.user()?.photo
+            return try speaker.user()?.photoURL
         }
     }
-    let photoURLs = photoPaths.map { "http://upapi.ru/photos/" + $0 }
-    return photoURLs
   }
   
   func registrationForm() throws -> RegForm? {

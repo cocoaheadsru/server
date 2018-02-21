@@ -1,3 +1,4 @@
 {
-	"foo": "foo-bar"
+  "domain": "$CH_APP_DOMAIN",
+  "client-token": "$CH_APP_CLIENT_TOKEN"
 }

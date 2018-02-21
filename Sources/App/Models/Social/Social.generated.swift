@@ -24,9 +24,9 @@ extension Social: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       name: try json.get(Keys.name),
-      appId: try json.get(Keys.appId),
-      secureKey: try json.get(Keys.secureKey),
-      serviceToken: try json.get(Keys.serviceToken)
+      appId: try? json.get(Keys.appId),
+      secureKey: try? json.get(Keys.secureKey),
+      serviceToken: try? json.get(Keys.serviceToken)
     )
   }
 }
@@ -36,10 +36,10 @@ extension Social: Preparation {
   static func prepare(_ database: Database) throws {
     try database.create(self) { builder in
       builder.id()
-      builder.string(Keys.name)
-      builder.string(Keys.appId)
-      builder.string(Keys.secureKey)
-      builder.string(Keys.serviceToken)
+      builder.string(Keys.name, unique: true)
+      builder.string(Keys.appId, optional: true)
+      builder.string(Keys.secureKey, optional: true)
+      builder.string(Keys.serviceToken, optional: true)
     }
   }
 
@@ -54,9 +54,9 @@ extension Social: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.name, name)
-    try json.set(Keys.appId, appId)
-    try json.set(Keys.secureKey, secureKey)
-    try json.set(Keys.serviceToken, serviceToken)
+    try? json.set(Keys.appId, appId)
+    try? json.set(Keys.secureKey, secureKey)
+    try? json.set(Keys.serviceToken, serviceToken)
     return json
   }
 }

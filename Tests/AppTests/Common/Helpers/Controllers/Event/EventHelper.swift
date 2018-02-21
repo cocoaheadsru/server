@@ -4,7 +4,7 @@ import Foundation
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-class EventHelper {
+final class EventHelper {
   
   static var invalidQueryKeyParameter: String {
     let parameter = String.randomValue

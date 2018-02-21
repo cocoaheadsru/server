@@ -9,13 +9,11 @@ import Fluent
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
 class CancelRegistrationTest: TestCase {
-  
-  var drop: Droplet!
-  
+
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
@@ -39,40 +37,26 @@ class CancelRegistrationTest: TestCase {
       XCTFail("Can't get user with the empty required fields answers")
       return
     }
-    
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    let res = try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
-    guard let eventRegId = try res.json?.get("id") as Int! else {
+    guard let eventRegId = try response.json?.get("id") as Int! else {
       XCTFail("Can't get eventRegId from 'event/register' response")
       return
     }
     
-    let delres = try drop
-      .userAuthorizedTestResponse(
-        to: .delete,
-        at: "event/register/\(eventRegId)",
-        headers: headers)
+    let deleteResponse = try cancelRegistration(eventRegId, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "Can't find approved User's registraion for cancel")
     
-    let json = delres.json!
+    let json = deleteResponse.json!
     
     print("***** \n\n\(try! json.serialize(prettyPrint: true).makeString())\n\n *****")
     
   }
   
-  func testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration() throws {
+  func testThatTheUserReceivesErrorWhenAttemptingToCancelNotSelfRegistration() throws {
     
     try! EventRegHelper.store()
     guard let userToken = try! EventRegHelper.generateUserForGrantApprove(AutoapproveTest.approveRules) else {
@@ -90,40 +74,21 @@ class CancelRegistrationTest: TestCase {
       return
     }
     
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    let res = try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
-    guard let eventRegId = try res.json?.get("id") as Int! else {
+    guard let eventRegId = try response.json?.get("id") as Int! else {
       XCTFail("Can't get eventRegId from 'event/register' response")
       return
     }
     
     let wrongToken = try getWrongToken(rightToken: userAnswers.sessionToken)!
-    
-    let headersWithWrongToken: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: wrongToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    let delres = try drop
-      .userAuthorizedTestResponse(
-        to: .delete,
-        at: "event/register/\(eventRegId)",
-        headers: headersWithWrongToken)
+
+    let deleteResponse = try cancelRegistration(eventRegId, token: wrongToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "Can't find approved User's registraion for cancel")
     
-    let json = delres.json!
+    let json = deleteResponse.json!
     print("***** \n\n\(try! json.serialize(prettyPrint: true).makeString())\n\n *****")
     
   }
@@ -145,30 +110,16 @@ class CancelRegistrationTest: TestCase {
       XCTFail("Can't get user with the empty required fields answers")
       return
     }
-    
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-    
-    let res = try! drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
-    guard let eventRegId = try res.json?.get("id") as Int! else {
+    guard let eventRegId = try response.json?.get("id") as Int! else {
       XCTFail("Can't get eventRegId from 'event/register' response")
       return
     }
     
-     try! drop
-      .userAuthorizedTestResponse(
-        to: .delete,
-        at: "event/register/\(eventRegId)",
-        headers: headers)
+     try cancelRegistration(eventRegId, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     let countEvenRegAnsewer = try EventRegAnswer.makeQuery()
@@ -200,5 +151,24 @@ extension CancelRegistrationTest {
     }
     return wrongToken
   }
-  
+
+  @discardableResult
+  func registerToEvent(_ json: JSON, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        body: json,
+        bearer: token)
+  }
+
+  @discardableResult
+  func cancelRegistration(_ eventRegId: Int, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .delete,
+        at: "event/register/\(eventRegId)",
+        bearer: token)
+  }
+
 }

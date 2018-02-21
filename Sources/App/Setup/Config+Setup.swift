@@ -1,5 +1,6 @@
 import FluentProvider
 import MySQLProvider
+import AuthProvider
 
 extension Config {
   public func setup() throws {
@@ -15,6 +16,7 @@ extension Config {
   private func setupProviders() throws {
     try addProvider(FluentProvider.Provider.self)
     try addProvider(MySQLProvider.Provider.self)
+    try addProvider(AuthProvider.Provider.self)
   }
 
   /// Add all models that should have their
@@ -57,4 +59,5 @@ extension Config {
   private func setupMiddleware() throws {
     self.addConfigurable(middleware: ClientMiddleware.init, name: Constants.Middleware.client)
   }
+
 }

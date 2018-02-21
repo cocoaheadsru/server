@@ -26,19 +26,19 @@ class EventSpeechHelper {
     contentCount: Int = 2
   ) throws {
     let speech = Speech(eventId: eventId)
-    try speech.save()
+    try! speech.save()
     
     for _ in 0..<speakersCount {
       let user = User()
-      try user.save()
+      try! user.save()
       
       let speaker = Speaker(userId: user.id!, speechId: speech.id!)
-      try speaker.save()
+      try! speaker.save()
     }
     
     for _ in 0..<contentCount {
       let content = App.Content(speechId: speech.id!)
-      try content.save()
+      try! content.save()
     }
   }
   

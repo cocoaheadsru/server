@@ -22,6 +22,14 @@ final class Session: Model {
     self.actual = actual
   }
 
+  convenience init (user: User, actual: Bool = true) throws {
+    self.init(
+      userId: try user.assertExists(),
+      token: try Session.generateToken(),
+      actual: actual
+    )
+  }
+
   // sourcery:inline:auto:Session.AutoModelGeneratable
   init(row: Row) throws {
     userId = try row.get(Keys.userId)
@@ -58,7 +66,14 @@ extension Session {
   var user: User? {
     return try? parent(id: userId).get()!
   }
-
+  
+  static func find(by user: User) throws -> Session? {
+      guard let userId = user.id else {
+          throw Abort(.internalServerError, reason: "User not found")
+      }
+      return try Session.makeQuery().filter(Keys.userId, userId).first()
+  }
+  
   static func generateToken() throws -> String {
     let random = try Crypto.Random.bytes(count: 16)
     return random.base64Encoded.makeString()
@@ -68,7 +83,10 @@ extension Session {
     guard
       let date = updatedAt,
       let referenceDate = Calendar.current.date(byAdding: .month, value: 1, to: date)
-      else { throw Abort.serverError }
+    else {
+        throw Abort.serverError
+    }
+    
     if referenceDate < Date() {
       self.token = try Session.generateToken()
       try self.save()

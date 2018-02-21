@@ -19,7 +19,7 @@ final class ClientMiddleware: Middleware {
 extension ClientMiddleware: ConfigInitializable {
   convenience init(config: Config) throws {
     let constants = Constants.Config.self
-    if let token = config[constants.server, constants.clientToken]?.string.ifNotEmpty {
+    if let token = config[constants.app, constants.clientToken]?.string.ifNotEmpty {
       self.init(token)
     } else {
       throw MiddlewareError.missingClientToken

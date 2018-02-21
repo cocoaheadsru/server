@@ -1,13 +1,16 @@
 import Vapor
 import FluentProvider
 import Foundation
+import Multipart
 
 final class UserController {
   
-  let droplet: Droplet!
+  let drop: Droplet!
+  let photoConroller: PhotoController
   
-  init(droplet: Droplet) {
-    self.droplet = droplet
+  init(drop: Droplet) {
+    self.drop = drop
+    self.photoConroller = PhotoController(drop: self.drop)
   }
 
   func show(_ request: Request, user: User) throws -> ResponseRepresentable {
@@ -16,14 +19,12 @@ final class UserController {
   }
 
   func update(_ request: Request, user: User) throws -> ResponseRepresentable {
-    try updateSessionToken(for: user)
-    if
-      let userId = user.id?.string,
-      let bytes = request.formData?["photo"]?.bytes,
-      let filename = request.formData?["photo"]?.filename {
-      try savePhoto(for: userId, photoBytes: bytes, filename: filename)
-    }
+
+    let photo = try updatePhoto(by: request, for: user)
     try user.update(for: request)
+    if photo != nil {
+      user.photo = photo
+    }
     try user.save()
     return user
   }
@@ -34,26 +35,6 @@ final class UserController {
     } catch {
       throw Abort.badRequest
     }
-  }
-  
-  func savePhoto(for userId: String, photoBytes: [UInt8], filename: String) throws {
-    let userDir = URL(fileURLWithPath: droplet.config.publicDir)
-      .appendingPathComponent("user_photos")
-      .appendingPathComponent(userId)
-    let fileManager = FileManager.default
-    
-    if fileManager.fileExists(atPath: userDir.path) {
-      let filenames = try fileManager.contentsOfDirectory(atPath: userDir.path)
-      for name in filenames {
-        let fileURL = userDir.appendingPathComponent(name)
-        try fileManager.removeItem(at: fileURL)
-      }
-    } else {
-      try fileManager.createDirectory(at: userDir, withIntermediateDirectories: true, attributes: nil)
-    }
-    let userDirWithImage = userDir.appendingPathComponent(filename)
-    let data = Data(bytes: photoBytes)
-    fileManager.createFile(atPath: userDirWithImage.path, contents: data, attributes: nil)
   }
 }
 
@@ -71,4 +52,44 @@ extension UserController: EmptyInitializable {
   convenience init() throws {
     try self.init()
   }
+}
+
+extension UserController {
+
+  func updatePhoto(by request: Request, for user: User) throws -> String? {
+
+    guard let userId = user.id?.string else {
+      throw Abort.badRequest
+    }
+
+    // get photo from formData
+    if
+      let bytes = request.formData?[RequestKeys.photo]?.bytes,
+      let filename = request.formData?[RequestKeys.photo]?.filename {
+      try photoConroller.savePhoto(for: userId, photoBytes: bytes, filename: filename)
+      return filename
+    }
+
+    // get photo from body as base64EncodedString
+    if let photoString = request.json?[RequestKeys.photo]?.string {
+      return try photoConroller.savePhoto(for: userId, photoAsString: photoString)
+    }
+
+    // get photo by url download
+    if let photoURL = request.json?[RequestKeys.photoURL]?.string {
+      return try photoConroller.downloadAndSavePhoto(for: userId, by: photoURL)
+    }
+
+    return nil
+  }
+
+}
+
+extension UserController {
+
+  struct RequestKeys {
+    static let photo = "photo"
+    static let photoURL = "photoURL"
+  }
+
 }

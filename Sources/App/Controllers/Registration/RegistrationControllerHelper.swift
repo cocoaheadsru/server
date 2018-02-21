@@ -9,17 +9,6 @@ extension RegistrationController {
     static let userAnswers = "user_answers"
   }
   
-  func getUserId(from req: Request) throws -> Identifier {
-    guard
-      let token = req.headers.userToken,
-      let session = try Session.find(by: token),
-      let userId = session.user?.id
-      else {
-        throw Abort(.internalServerError, reason: "Can't find User and get user id by token")
-    }
-    return userId
-  }
-  
   func checkRadio(fieldId: Identifier, answerCount: Int) throws -> Bool {
     let fieldType = try RegField.find(fieldId)?.type
     if fieldType == RegField.FieldType.radio {
@@ -41,13 +30,13 @@ extension RegistrationController {
     }
   }
   
-  func storeEventRegAnswers(_ req: Request, eventReg: EventReg) throws {
+  func storeEventRegAnswers(_ request: Request, eventReg: EventReg) throws {
    
     guard let eventRegId = eventReg.id else {
       throw Abort(.internalServerError, reason: "Can't get eventRegId")
     }
     
-    guard let fields = req.json?[Keys.fields]?.array else {
+    guard let fields = request.json?[Keys.fields]?.array else {
         throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
     

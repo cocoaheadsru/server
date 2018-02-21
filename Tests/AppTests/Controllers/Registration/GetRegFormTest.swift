@@ -10,12 +10,10 @@ import Fluent
 // swiftlint:disable force_try
 class GetRegFormTests: TestCase {
   
-  var drop: Droplet!
-  
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return

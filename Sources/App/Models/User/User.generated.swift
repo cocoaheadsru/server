@@ -44,7 +44,7 @@ extension User: JSONInitializable {
   convenience init(json: JSON) throws {
     self.init(
       name: try json.get(Keys.name),
-      lastname: try json.get(Keys.lastname),
+      lastname: try? json.get(Keys.lastname),
       company: try? json.get(Keys.company),
       position: try? json.get(Keys.position),
       photo: try? json.get(Keys.photo),
@@ -60,7 +60,7 @@ extension User: Preparation {
     try database.create(self) { builder in
       builder.id()
       builder.string(Keys.name)
-      builder.string(Keys.lastname)
+      builder.string(Keys.lastname, optional: true)
       builder.string(Keys.company, optional: true)
       builder.string(Keys.position, optional: true)
       builder.string(Keys.photo, optional: true)

@@ -6,18 +6,29 @@ import Fluent
 @testable import Vapor
 @testable import App
 
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable force_try
+
 class HeartbeatControllerTests: TestCase {
-  //swiftlint:disable force_try
-  let drop = try! Droplet.testable()
-  //swiftlint:enable force_try
+//  let drop = try! Droplet.testable()
   let controller = HeartbeatController()
   let validToken = TestConstants.Middleware.validToken
-  
+
+  override func setUp() {
+    super.setUp()
+    do {
+      try drop.truncateTables()
+    } catch {
+      XCTFail("Droplet set raise exception: \(error.localizedDescription)")
+      return
+    }
+  }
+
   func testThatPostSetBeatAnyValue() throws {
     // arrange
     let beat = Int.randomValue
     // act
-    guard let res = try setBeat(to: beat) as? Response else {
+    guard let res = try! setBeat(to: beat) as? Response else {
       XCTFail("Can't set beat and get current value for beat: \(beat)")
       return
     }
@@ -31,75 +42,74 @@ class HeartbeatControllerTests: TestCase {
     let beat2 = Int.randomValue
     let beat3 = Int.randomValue
     // act
-    _ = try setBeat(to: beat1)
-    let count1 = try Heartbeat.count()
+    _ = try! setBeat(to: beat1)
+    let count1 = try! Heartbeat.count()
     //assert
     XCTAssert(count1 == 1)
     // act
-    _ = try setBeat(to: beat2)
-    let count2 = try Heartbeat.count()
+    _ = try! setBeat(to: beat2)
+    let count2 = try! Heartbeat.count()
     // assert
     XCTAssert(count2 == 1)
     // act
     _ = try setBeat(to: beat3)
-    let count3 = try Heartbeat.count()
+    let count3 = try! Heartbeat.count()
     // assert
     XCTAssert(count3 == 1)
   }
   
   func testThatShowGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try cleanHeartbeatTable()
-    let req = Request.makeTest(method: .get)
+    try! cleanHeartbeatTable()
+    let request = Request.makeTest(method: .get)
     // act
-    let res = try controller.index(req: req).makeResponse()
+    let res = try! controller.index(request: request).makeResponse()
     // assert
     res.assertStatus(is: .noContent)
   }
   
   func testThatShowGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     let beat = Int.randomValue
-    _ = try setBeat(to: beat)
-    let req = Request.makeTest(method: .get)
+    _ = try! setBeat(to: beat)
+    let request = Request.makeTest(method: .get)
     // act
-    let res = try controller.index(req: req).makeResponse()
+    let result = try! controller.index(request: request).makeResponse()
     // assert
-    try res.assertJSON("beat", equals: beat)
+    try! result.assertJSON("beat", equals: beat)
   }
   
   func testThatRoutePostMethodShouldSetAnyIntValue() throws {
     // arrange
     let beat = Int.randomValue
     let heartbeat = Heartbeat(beat: beat)
-    let json = try heartbeat.makeJSON()
-    let header: HTTPHeader = ["Content-Type": "application/json"]
+    let json = try! heartbeat.makeJSON()
     // act & assert
-    print(json)
-    try drop
-      .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
+    print(try! json.serialize(prettyPrint: true).makeString())
+    try! drop
+      .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
   
   func testThatRouteGet204NoContentForEmptyBeatTable() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     // act & assert
-    try drop
-      .userAuthorizedTestResponse(to: .get, at: "heartbeat")
+    try! drop
+      .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .noContent)
   }
   
   func testThatRouteGetCurrentValueIfBeatTableIsNotEmpty() throws {
     // arange
-    try cleanHeartbeatTable()
+    try! cleanHeartbeatTable()
     let beat = Int.randomValue
-    _ = try setBeat(to: beat)
+    _ = try! setBeat(to: beat)
     // act & assert
-    try drop
-      .testResponse(to: .get, at: "heartbeat", headers: ["client-token": validToken])
+    try! drop
+      .testResponse(to: .get, at: "heartbeat")
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -109,23 +119,22 @@ class HeartbeatControllerTests: TestCase {
     func makePostRequestForHeartbeat(with beat: Int) throws {
       // arrange
       let heartbeat = Heartbeat(beat: beat)
-      let json = try heartbeat.makeJSON()
-      let header: HTTPHeader = ["Content-Type": "application/json"]
+      let json = try! heartbeat.makeJSON()
       // act & assert
-      try drop
-        .userAuthorizedTestResponse(to: .post, at: "heartbeat", headers: header, body: json)
+      try! drop
+        .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
-      try drop
-        .userAuthorizedTestResponse(to: .get, at: "heartbeat")
+      try! drop
+        .clientAuthorizedTestResponse(to: .get, at: "heartbeat")
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
     }
     
-    try makePostRequestForHeartbeat(with: 1)
-    try makePostRequestForHeartbeat(with: 2)
-    try makePostRequestForHeartbeat(with: 1)
-    try makePostRequestForHeartbeat(with: 2)
+    try! makePostRequestForHeartbeat(with: 1)
+    try! makePostRequestForHeartbeat(with: 2)
+    try! makePostRequestForHeartbeat(with: 1)
+    try! makePostRequestForHeartbeat(with: 2)
   }
 }
 
@@ -133,10 +142,10 @@ extension HeartbeatControllerTests {
   
   // MARK: - Helper functions & extensions
   func setBeat(to value: Int) throws -> ResponseRepresentable {
-    let req = Request.makeTest(method: .post)
-    req.json =  try JSON(node: ["beat": value])
-    let res = try controller.store(req: req).makeResponse()
-    return res
+    let request = Request.makeTest(method: .post)
+    request.json =  try! JSON(node: ["beat": value])
+    let result = try! controller.store(request: request).makeResponse()
+    return result
   }
   
   fileprivate func cleanHeartbeatTable() throws {

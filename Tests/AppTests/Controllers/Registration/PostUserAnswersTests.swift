@@ -10,12 +10,10 @@ import Fluent
 // swiftlint:disable force_try
 class RegistrationControllerTests: TestCase {
  
-  var drop: Droplet!
-  
   override func setUp() {
     super.setUp()
     do {
-      drop = try Droplet.testable()
+      try drop.truncateTables()
     } catch {
       XCTFail("Droplet set raise exception: \(error.localizedDescription)")
       return
@@ -31,18 +29,8 @@ class RegistrationControllerTests: TestCase {
       return
     }
 
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
-      .assertStatus(is: .ok)
+   try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    .assertStatus(is: .ok)
 
     guard let storedAnswers = try EventRegAnswerHelper.getStoredAnswers(by: userAnswers.sessionToken, regForm: regForm) else {
       XCTFail("Can't get stored user answers")
@@ -67,25 +55,10 @@ class RegistrationControllerTests: TestCase {
       return
     }
 
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
 
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "User with token '\(userAnswers.sessionToken)' has alredy registered to this event")
 
@@ -101,18 +74,8 @@ class RegistrationControllerTests: TestCase {
       XCTFail("Can't get user with wrong radio answers")
       return
     }
-
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+    
+    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "The answer to field with type radio should be only one")
   }
@@ -126,17 +89,7 @@ class RegistrationControllerTests: TestCase {
       return
     }
 
-    let headers: [HeaderKey: String] = [
-      TestConstants.Header.Key.userToken: userAnswers.sessionToken,
-      TestConstants.Header.Key.contentType: TestConstants.Header.Value.applicationJson
-    ]
-
-    try drop
-      .userAuthorizedTestResponse(
-        to: .post,
-        at: "event/register",
-        headers: headers,
-        body: userAnswers.body)
+   try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "The field must have at least one answer")
 
@@ -154,6 +107,25 @@ extension RegistrationControllerTests {
         fatalError()
     }
     return regForm
+  }
+
+  @discardableResult
+  func eventRegistration(_ json: JSON, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .post,
+        at: "event/register",
+        body: json,
+        bearer: token)
+  }
+
+  @discardableResult
+  func cancellationOfRegistration(_ eventRegId: Int, token: String) throws -> Response {
+    return try drop
+      .userAuthorizedTestResponse(
+        to: .delete,
+        at: "event/register/\(eventRegId)",
+        bearer: token)
   }
 
 }

@@ -1,5 +1,6 @@
 import Vapor
 import FluentProvider
+import AuthProvider
 import Crypto
 
 // sourcery: AutoModelGeneratable
@@ -9,7 +10,7 @@ final class User: Model {
   let storage = Storage()
   
   var name: String
-  var lastname: String
+  var lastname: String?
   var company: String?
   var position: String?
   var photo: String?
@@ -17,12 +18,12 @@ final class User: Model {
   var phone: String?
 
   init(name: String,
-       lastname: String,
-       company: String?,
-       position: String?,
-       photo: String?,
-       email: String?,
-       phone: String?) {
+       lastname: String? = nil,
+       company: String? = nil,
+       position: String? = nil,
+       photo: String? = nil,
+       email: String? = nil,
+       phone: String? = nil) {
     self.name = name
     self.lastname = lastname
     self.company = company
@@ -31,11 +32,11 @@ final class User: Model {
     self.email = email
     self.phone = phone
   }
-  
+
   // sourcery:inline:auto:User.AutoModelGeneratable
   init(row: Row) throws {
     name = try row.get(Keys.name)
-    lastname = try row.get(Keys.lastname)
+    lastname = try? row.get(Keys.lastname)
     company = try? row.get(Keys.company)
     position = try? row.get(Keys.position)
     photo = try? row.get(Keys.photo)
@@ -46,7 +47,7 @@ final class User: Model {
   func makeRow() throws -> Row {
     var row = Row()
     try row.set(Keys.name, name)
-    try row.set(Keys.lastname, lastname)
+    try? row.set(Keys.lastname, lastname)
     try? row.set(Keys.company, company)
     try? row.set(Keys.position, position)
     try? row.set(Keys.photo, photo)
@@ -63,27 +64,44 @@ extension User: JSONRepresentable {
     var json = JSON()
     try json.set(Keys.id, id)
     try json.set(Keys.name, name)
-    try json.set(Keys.lastname, lastname)
+    try? json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photoURL(for: photo))
+    try? json.set(Keys.photo, photoURL)
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
-    try json.set("session", session()?.makeJSON())
+    try json.set(Session.Keys.token, token())
     return json
   }
   
-  func photoURL(for photo: String?) -> String? {
+  var photoURL: String? {
     guard
+      let photoPath = self.photo,
       let config = try? Config(),
-      let domain = config["server", "domain"]?.string,
-      let userId = self.id?.string,
-      let photoPath = photo
+      let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
+      let userId = self.id?.string
     else {
       return nil
     }
     let photosFolder = Constants.Path.userPhotos
     return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"
+  }
+}
+
+// MARK: Token
+extension User {
+  func token() throws -> String {
+    guard let token = try session()?.token else {
+      throw Abort(.internalServerError, reason: "User no have token")
+    }
+    return token
+  }
+
+  func updateSessionToken() throws {
+    guard let session = try? self.session() else {
+      throw Abort(.internalServerError, reason: "Can't get session for User\(self.id?.int ?? -1)")
+    }
+    try session?.updateToken()
   }
 }
 
@@ -93,23 +111,36 @@ extension User {
   var clients: Children<User, Client> {
     return children()
   }
-  
+
   private var sessions: Children<User, Session> {
     return children()
   }
-  
+
   func session() throws -> Session? {
     return try sessions.first()
   }
+
+}
+
+// MARK: Lifecylce triggers
+extension User {
   
   func didCreate() {
     do {
-      let userId = try self.assertExists()
-      let token = try Session.generateToken()
-      let session = Session(userId: userId, token: token)
+      let session = try Session(user: self)
       try session.save()
     } catch {
       try? self.delete()
     }
   }
+
+  func didUpdate() {
+    try? updateSessionToken()
+  }
+
+}
+
+// MARK: TokenAuthenticationMiddleware
+extension User: TokenAuthenticatable {
+  typealias TokenType = Session
 }

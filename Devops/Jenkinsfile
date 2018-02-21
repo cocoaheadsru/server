@@ -88,10 +88,6 @@ def setenv_develop() {
     WORK_DIR = "${env.WORKSPACE}"
     SCRIPTS_DIR = "${WORK_DIR}/Devops"
 
-    //MySQL config
-    MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/development/"
-
     //Build config
     VAPOR = "/usr/local/bin/vapor"
     BUILD_PARAM = "--verbose"
@@ -118,10 +114,6 @@ def setenv_production() {
     //Local paths
     WORK_DIR = "${env.WORKSPACE}"
     SCRIPTS_DIR = "${WORK_DIR}/Devops"
-
-    //MySQL config
-    MYSQL_CONFIG = "/home/jenkins/ch-stage/scripts/mysql.json"
-    SERVER_CONFIG_DIR = "${WORK_DIR}/Config/production/"
 
     //Build config
     VAPOR = "/usr/local/bin/vapor"
@@ -172,8 +164,6 @@ def checkout(){
 def build() {
   stage("Build"){
     try{
-      echo "Copy ${MYSQL_CONFIG} to ${SERVER_CONFIG_DIR}"
-      sh "cp ${MYSQL_CONFIG} ${SERVER_CONFIG_DIR}"
       echo "Start build: '${VAPOR} build ${BUILD_PARAM}"
       ansiColor('xterm') {
         sh "$VAPOR build $BUILD_PARAM"

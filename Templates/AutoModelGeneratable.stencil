@@ -159,7 +159,7 @@ extension {{ type.name }}: Updateable {
 {% endmacro %}
 
 {% macro PlainType variable %}
-      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }}{% if variable.isOptional %}, optional: true{% endif %})
+      builder.{{ variable.unwrappedTypeName|lowercase }}(Keys.{{ variable.name }}{% if variable.isOptional %}, optional: true{% endif %}{% if variable|annotated:"unique" %}, unique: true{% endif %})
 {% endmacro %}
 
 {% macro PrepareEnum variable %}

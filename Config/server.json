@@ -8,5 +8,5 @@
     
     "//": "It's very rare that a server manages its own TLS.",
     "//": "More commonly, vapor is served behind a proxy like nginx.",
-    "securityLayer": "none"
+    "securityLayer": "none",
 }

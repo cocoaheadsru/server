@@ -6,22 +6,24 @@ final class  RegistrationController {
   
   let autoapprove = try? AutoapproveController()
   
-  func store(_ req: Request) throws -> ResponseRepresentable {
+  func store(_ request: Request) throws -> ResponseRepresentable {
+
+    let user = try request.user()
+    guard let userId = user.id else {
+      throw Abort(.internalServerError, reason: "Can't get user.id")
+    }
     
-    let userId = try getUserId(from: req)
-    
-    guard let regFormId = try req.json?.get(Keys.regFormId) as Identifier! else {
+    guard let regFormId = try request.json?.get(Keys.regFormId) as Identifier! else {
       throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
     }
   
     guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
       throw Abort(
         .internalServerError,
-        reason: "User with token '\(req.headers.userToken ?? "no_token")' has alredy registered to this event")
+        reason: "User with token '\(try user.token())' has alredy registered to this event")
     }
   
     guard
-      let user = try User.find(userId),
       let event = try RegForm.find(regFormId)?.event,
       let grandApprove = try autoapprove?.grandApprove(to: user, on: event)
     else {
@@ -34,16 +36,17 @@ final class  RegistrationController {
       status: grandApprove ? EventReg.RegistrationStatus.approved : EventReg.RegistrationStatus.waiting)
     try eventReg.save()
 
-    try storeEventRegAnswers(req, eventReg: eventReg)
+    try storeEventRegAnswers(request, eventReg: eventReg)
     
     return eventReg
   }
 
-  func cancel(_ req: Request, eventReg: EventReg) throws -> ResponseRepresentable {
+  func cancel(_ request: Request, eventReg: EventReg) throws -> ResponseRepresentable {
     
-    let userId = try getUserId(from: req)
-    
+    let user = try request.user()
+
     guard
+      let userId = user.id,
       eventReg.status == EventReg.RegistrationStatus.approved,
       eventReg.userId == userId
     else {

@@ -1,0 +1,7 @@
+{
+  "token_request_url": "https://github.com/login/oauth/access_token",
+  "client_id": "$CH_GIT_CLIENT_ID",
+  "client_secret": "$CH_GIT_CLIENT_SECRET",
+  "user_info_url": "https://api.github.com/user"
+}
+

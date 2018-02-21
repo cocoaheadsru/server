@@ -1,0 +1,6 @@
+{
+  "api_url": "https://api.vk.com/",
+  "method": "/method/users.get",
+  "fields": "photo_max,city,verified"
+}
+

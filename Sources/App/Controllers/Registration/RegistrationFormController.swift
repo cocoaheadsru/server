@@ -4,9 +4,9 @@ import Fluent
 
 final class  RegistrationFormController {
   
-  func index(_ req: Request) throws -> ResponseRepresentable {
+  func index(_ request: Request) throws -> ResponseRepresentable {
     
-    guard let eventId = req.parameters["id"]?.int else {
+    guard let eventId = request.parameters["id"]?.int else {
       throw Abort(.badRequest, reason: "EventId parameters is missing in URL request")
     }
     

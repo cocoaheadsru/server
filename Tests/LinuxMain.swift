@@ -15,13 +15,12 @@ extension AutoapproveTest {
 extension CancelRegistrationTest {
   static var allTests: [(String, (CancelRegistrationTest) -> () throws -> Void)] = [
    ("testThatCancelRegistrationGetErrorForNotApprovedUser", testThatCancelRegistrationGetErrorForNotApprovedUser),
-   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotHisRegistration),
+   ("testThatTheUserReceivesErrorWhenAttemptingToCancelNotSelfRegistration", testThatTheUserReceivesErrorWhenAttemptingToCancelNotSelfRegistration),
    ("testThatCancelRegistrationIsDone", testThatCancelRegistrationIsDone)
   ]
 }
 extension ClientMiddlewareTests {
   static var allTests: [(String, (ClientMiddlewareTests) -> () throws -> Void)] = [
-   ("testThatMiddlewarePresentInConfig", testThatMiddlewarePresentInConfig),
    ("testThatConfigInitializationFailWithoutToken", testThatConfigInitializationFailWithoutToken),
    ("testThatConfigInitializationFailWithEmptyToken", testThatConfigInitializationFailWithEmptyToken),
    ("testThatFailedConfigInitializationThrowsProperError", testThatFailedConfigInitializationThrowsProperError),
@@ -64,6 +63,14 @@ extension EventSpeechControllerTests {
    ("testThatGetSpeechesRouteFailsWithNonIntParameterValue", testThatGetSpeechesRouteFailsWithNonIntParameterValue)
   ]
 }
+extension FacebookSocialControllerTest {
+  static var allTests: [(String, (FacebookSocialControllerTest) -> () throws -> Void)] = [
+   ("testThatUserIsCreatedAndStoredFromFacebookAccount", testThatUserIsCreatedAndStoredFromFacebookAccount),
+   ("testThatSessionTokenIsCreatedAndStoredFromFacebookAccount", testThatSessionTokenIsCreatedAndStoredFromFacebookAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromFacebook", testThatIfUserExistThenUserProfileUpdatedFromFacebook),
+   ("testThatUserPhotoFromFacebookIsSaved", testThatUserPhotoFromFacebookIsSaved)
+  ]
+}
 extension GetRegFormTests {
   static var allTests: [(String, (GetRegFormTests) -> () throws -> Void)] = [
    ("testThatRegFormGetNotFoundForWrongEventId", testThatRegFormGetNotFoundForWrongEventId),
@@ -103,16 +110,26 @@ extension RouteTests {
    ("testThatRequestToPlainTextReturnsProperData", testThatRequestToPlainTextReturnsProperData)
   ]
 }
+extension UserAuthByTokenTest {
+  static var allTests: [(String, (UserAuthByTokenTest) -> () throws -> Void)] = [
+   ("testThatGotUnauthorizedWithEmptyAccessToken", testThatGotUnauthorizedWithEmptyAccessToken),
+   ("testThatGotUnauthorizedWithIncorrectAccessToken", testThatGotUnauthorizedWithIncorrectAccessToken),
+   ("testThatGotAccessWithCorrectAccessToken", testThatGotAccessWithCorrectAccessToken)
+  ]
+}
 extension UserControllerTests {
   static var allTests: [(String, (UserControllerTests) -> () throws -> Void)] = [
-   ("testThatUserIsCreatedFromRequest", testThatUserIsCreatedFromRequest),
-   ("testThatUserIsNotCreatedFromIncompleteRequest", testThatUserIsNotCreatedFromIncompleteRequest),
-   ("testThatStoreMethodReturnsUser", testThatStoreMethodReturnsUser),
-   ("testThatStoreMethodCreatesUserSession", testThatStoreMethodCreatesUserSession),
    ("testThatSessionTokenDoesNotUpdateOnEveryShowRequest", testThatSessionTokenDoesNotUpdateOnEveryShowRequest),
    ("testThatShowMethodUpdatesSessionTokenAfterOneMonth", testThatShowMethodUpdatesSessionTokenAfterOneMonth),
    ("testThatUpdateMethodUpdatesUserCredentials", testThatUpdateMethodUpdatesUserCredentials),
    ("testThatUpdateMethodReturnsUpdatedUser", testThatUpdateMethodReturnsUpdatedUser)
+  ]
+}
+extension UserPhotoTest {
+  static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
+   ("testThatUserPhotoisUpdatedUsingFormDataContent", testThatUserPhotoisUpdatedUsingFormDataContent),
+   ("testThatUsingPhotoWithBase64EncodedStringContent", testThatUsingPhotoWithBase64EncodedStringContent),
+   ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
 
@@ -122,10 +139,13 @@ XCTMain([
   testCase(ClientMiddlewareTests.allTests),
   testCase(EventControllerTests.allTests),
   testCase(EventSpeechControllerTests.allTests),
+  testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
-  testCase(UserControllerTests.allTests)
+  testCase(UserAuthByTokenTest.allTests),
+  testCase(UserControllerTests.allTests),
+  testCase(UserPhotoTest.allTests)
 ])
 #endif
