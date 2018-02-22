@@ -7,7 +7,11 @@ final class GithubController {
   private let drop: Droplet
   private let config: Config
   private let photoController: PhotoController
+<<<<<<< HEAD
+  private let git = Social.GIT.self
+=======
   private let git = Social.Github.self
+>>>>>>> eb2831f979727c0dccbd94084048a1b1e2247dbd
 
   init(drop: Droplet) {
     self.drop = drop

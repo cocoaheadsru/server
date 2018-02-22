@@ -134,9 +134,15 @@ extension UserControllerTests {
 }
 extension UserPhotoTest {
   static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
+<<<<<<< HEAD
+   ("testThatUserPhotoIsUpdatedByFormDataSend", testThatUserPhotoIsUpdatedByFormDataSend),
+   ("testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString", testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString),
+   ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
+=======
    ("testThatUserPhotoisUpdatedUsingFormDataContent", testThatUserPhotoisUpdatedUsingFormDataContent),
    ("testThatUsingPhotoWithBase64EncodedStringContent", testThatUsingPhotoWithBase64EncodedStringContent),
    ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
+>>>>>>> eb2831f979727c0dccbd94084048a1b1e2247dbd
   ]
 }
 

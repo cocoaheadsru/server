@@ -11,11 +11,11 @@ struct PhotoController {
     self.drop = drop
   }
 
-  func downloadAndSavePhoto(for user: User, by url: String?) throws -> String {
+  func downloadAndSavePhoto(for user: User, with url: String?) throws -> String {
 
     guard
       let photoURL = url,
-      !photoURL.isEmpty,
+      photoURL.isNotEmpty,
       let userId = user.id?.string
     else {
         throw Abort(.badRequest, reason: "Can't get photo from url: '\(url ?? "empty URL")'")

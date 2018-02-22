@@ -30,17 +30,17 @@ final class UserAuthorizationController {
 
     switch social {
     case Social.Nets.fb:
-      return try fb.createOrUpdateUserProfile(use: token)
+      return try fb.createOrUpdateUserProfile(with: token)
     case Social.Nets.vk:
       guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
       return try vk.createOrUpdateUserProfile(use: token, secret: secret)
-    case Social.Nets.git:
+    case Social.Nets.github:
       guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
-      return try git.createOrUpdateUserProfile(use: token, secret: secret)
+      return try git.createOrUpdateUserProfile(with: token, secret: secret)
     default:
       throw Abort(.badRequest, reason: "Wrong social id: \(social)")
     }

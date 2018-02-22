@@ -18,12 +18,12 @@ final class VkontakteController {
 
   func createOrUpdateUserProfile(use token: String, secret: String) throws -> User {
 
-    let (profile, socialUserId) = try getUserProfile(use: token, secret: secret)
+    let (profile, socialUserId) = try getUserProfile(with: token, secret: secret)
 
     if let user = try SocialAccount.find(by: socialUserId) {
       user.name = profile.name
       user.lastname = profile.lastname
-      user.photo = try photoController.downloadAndSavePhoto(for: user, by: profile.photo)
+      user.photo = try photoController.downloadAndSavePhoto(for: user, with: profile.photo)
       try user.save()
       return user
     }
@@ -31,7 +31,7 @@ final class VkontakteController {
     try profile.save()
 
     if let url = profile.photo, !url.isEmpty {
-      profile.photo = try photoController.downloadAndSavePhoto(for: profile, by: profile.photo)
+      profile.photo = try photoController.downloadAndSavePhoto(for: profile, with: profile.photo)
       try profile.save()
     }
     
@@ -40,7 +40,7 @@ final class VkontakteController {
     return profile
   }
 
-  fileprivate func getUserProfile(use token: String, secret: String) throws -> (user: User, socialUserId: String) {
+  fileprivate func getUserProfile(with token: String, secret: String) throws -> (user: User, socialUserId: String) {
     let apiURL = config[vk.name, vk.apiURL]?.string ?? ""
     let fields = config[vk.name, vk.fields]?.string ?? ""
     let method = config[vk.name, vk.method]?.string ?? ""
@@ -62,7 +62,7 @@ final class VkontakteController {
       let name = response[profile.name]?.string,
       let lastname = response[profile.lastname]?.string,
       let photo = response[profile.photo]?.string
-      else {
+    else {
         throw Abort(.badRequest, reason: "Can't get user profile from Vkontakte")
     }
 
