@@ -6,14 +6,12 @@ import Crypto
 final class VkontakteController {
 
   private let drop: Droplet
-  //private let config: Config
   private let photoController: PhotoController
   private let vk = Social.VK.self
   private let config: VkontakteConfig
 
   init(drop: Droplet) {
     self.drop = drop
-    //self.config = drop.config
     self.photoController = PhotoController(drop: self.drop)
     self.config = VkontakteConfig(drop.config)
   }
@@ -43,16 +41,10 @@ final class VkontakteController {
   }
 
   fileprivate func getUserProfile(with token: String, secret: String) throws -> (user: User, socialUserId: String) {
-    let apiURL = config.apiURL //config[vk.name, vk.apiURL]?.string ?? ""
-    let fields = config.fields //config[vk.name, vk.fields]?.string ?? ""
-    let method = config.method //config[vk.name, vk.method]?.string ?? ""
-
-    //let urlForSignature =  "\(method)?\(vk.fields)=\(fields)&\(vk.accessToken)=\(token + secret)"
 
     let signature = try config.getSignatureBased(on: token, and: secret) //try CryptoHasher.makeMD5(from: urlForSignature)
-    let userInfoUrl = apiURL + method
-    let userInfo = try drop.client.get(userInfoUrl, query: [
-      vk.fields: fields,
+    let userInfo = try drop.client.get(config.userInfoURL, query: [
+      vk.fields: config.fields,
       vk.accessToken: token,
       vk.sig: signature
     ])

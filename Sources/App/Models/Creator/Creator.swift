@@ -47,7 +47,6 @@ final class Creator: Model {
   // sourcery:end
 }
 
-
 extension Creator {
 
   func user() throws -> User? {

@@ -31,15 +31,13 @@ final class VkontakteAuthControllerTestHelper {
     let configFile = try! Config(arguments: ["vapor", "--env=test"])
     let config = VkontakteConfig(configFile)
 
+    let apiURL = config.apiURL
+    let fields = config.fields
+    let method = config.method
+    let token = config.accessToken
+    let secret = config.secret
 
-    let apiURL = config.apiURL //config[Social.Nets.vk, "api_url"]?.string ?? ""
-    let fields = config.fields //config[Social.Nets.vk, "fields"]?.string ?? ""
-    let method = config.method //config[Social.Nets.vk, "method"]?.string ?? ""
-    let token = config.accessToken //config[Social.Nets.vk, "access_token"]?.string ?? ""
-    let secret = config.secret //config[Social.Nets.vk, "secret"]?.string ?? ""
-
-
-    let signature = try! config.getSignatureBased(on: token, and: secret) //try! makeMD5(string: urlForSignature)
+    let signature = try! config.getSignatureBased(on: token, and: secret)
     let userInfoUrl = apiURL + method
     let userInfo = try! drop.client.get(userInfoUrl, query: [
       "fields": fields,

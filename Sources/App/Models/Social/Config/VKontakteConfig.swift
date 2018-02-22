@@ -3,15 +3,16 @@ import Crypto
 
 struct VkontakteConfig {
   private let vk = Social.VK.self
-  private let config: Config
   let apiURL: String
   let fields: String
   let method: String
   var secret: String = ""
   var accessToken: String = ""
+  var userInfoURL: String {
+    return apiURL + method
+  }
 
   init(_ config: Config) {
-    self.config = config
     guard
       let apiURL = config[vk.name, vk.apiURL]?.string,
       let fields = config[vk.name, vk.fields]?.string,
@@ -25,11 +26,14 @@ struct VkontakteConfig {
     self.method = method
 
     if config.environment == .test {
-      guard let configTest = try? Config(arguments: ["vapor", "--env=test"]) else {
-        fatalError("Can't access to test config file")
+      guard
+        let secret = config[vk.name, vk.secret]?.string,
+        let accessToken = config[vk.name, vk.accessToken]?.string
+      else {
+        fatalError("Can't read token & secret from test vkontakte.json")
       }
-      secret = configTest[vk.name, vk.secret]?.string ?? ""
-      accessToken = configTest[vk.name, vk.accessToken]?.string ?? ""
+      self.secret = secret
+      self.accessToken = accessToken
     }
 
   }
@@ -40,5 +44,3 @@ struct VkontakteConfig {
   }
 
 }
-
-
