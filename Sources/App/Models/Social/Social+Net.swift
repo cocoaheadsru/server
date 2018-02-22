@@ -39,6 +39,7 @@ extension Social {
     static let fields = "fields"
     static let accessToken = "access_token"
     static let sig = "sig"
+    static let secret = "secret"
     struct Profile {
       static let response = "response"
       static let socialUserId = "uid"

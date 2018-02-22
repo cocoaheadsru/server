@@ -139,6 +139,14 @@ extension UserPhotoTest {
    ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
+extension VkontakteAuthControllerTest {
+  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
+   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
+   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
+  ]
+}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -154,6 +162,7 @@ XCTMain([
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
   testCase(UserControllerTests.allTests),
-  testCase(UserPhotoTest.allTests)
+  testCase(UserPhotoTest.allTests),
+  testCase(VkontakteAuthControllerTest.allTests)
 ])
 #endif
