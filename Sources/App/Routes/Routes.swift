@@ -32,6 +32,8 @@ extension Droplet {
 
     let userController = UserController(drop: self)
     userMiddlewareGroup.resource("user", userController)
+
+    try userMiddlewareGroup.resource("user/notification", PushNotificationController.self)
     
   }
 }

@@ -5,13 +5,14 @@ import Fluent
 final class FacebookController {
 
   private let drop: Droplet
-  private let config: Config
+  //private let config: Config
   private let photoController: PhotoController
   private let fb = Social.FB.self
+  private let config: FacebookConfig
 
   init(drop: Droplet) {
     self.drop = drop
-    self.config = drop.config
+    self.config = FacebookConfig(drop.config)
     self.photoController = PhotoController(drop: self.drop)
   }
 
@@ -44,26 +45,21 @@ final class FacebookController {
   fileprivate func authorize(by authorizationCode: String) throws -> String {
 
     if
-      config.environment == .test,
+      drop.config.environment == .test,
       authorizationCode.isEmpty,
-      let accessTokenFromConfig = config[fb.name, fb.accessToken]?.string,
+      let accessTokenFromConfig = config.accessToken,
       accessTokenFromConfig.isNotEmpty {
       print("\n\nUSING TOKEN FROM CONFIG FILE\n\n")
       return accessTokenFromConfig
     }
 
-    let authURL = config[fb.name, fb.tokenRequestURL]?.string ?? ""
-    let clientId = config[fb.name, fb.clientId]?.string ?? ""
-    let redirectURI = config[fb.name, fb.redirectURI]?.string ?? ""
-    let scope = config[fb.name, fb.scope]?.string ?? ""
-    let clientSecret = config[fb.name, fb.clientSecret]?.string ?? ""
     let code = authorizationCode + "#_=_"
     
-    let authRequest = try drop.client.get(authURL, query: [
-      fb.clientId: clientId,
-      fb.redirectURI: redirectURI,
-      fb.scope: scope,
-      fb.clientSecret: clientSecret,
+    let authRequest = try drop.client.get(config.tokenRequestURL, query: [
+      fb.clientId: config.clientId,
+      fb.redirectURI: config.redirectURI,
+      fb.scope: config.scope,
+      fb.clientSecret: config.clientSecret,
       fb.code: code
     ])
 
@@ -76,9 +72,9 @@ final class FacebookController {
 
   fileprivate func getUserProfile(with token: String) throws -> (user: User, socialUserId: String) {
 
-    let userInfoUrl =  config[fb.name, fb.userInfoURL]?.string ?? ""
-    let fields  =  config[fb.name, fb.fields]?.string ?? ""
-    let scope = config[fb.name, fb.scope]?.string ?? ""
+    let userInfoUrl =  config.userInfoURL
+    let fields  =  config.fields
+    let scope = config.scope
 
     let userInfo = try drop.client.get(userInfoUrl, query: [
       fb.fields: fields,

@@ -6,13 +6,12 @@ import Foundation
 //swiftlint:disable force_try
 final class VkontakteAuthControllerTestHelper {
 
-  static func getTestRequest(config: Config) throws -> JSON? {
-    guard
-      let token = config[Social.Nets.vk, "access_token"]?.string,
-      let secret = config[Social.Nets.vk, "secret"]?.string
-    else {
-      return nil
-    }
+  static func getTestRequest() throws -> JSON? {
+    let configFile = try! Config(arguments: ["vapor", "--env=test"])
+    let config = VkontakteConfig(configFile)
+    let token = config.accessToken
+    let secret = config.secret
+
     let result = try! JSON(
       node: [
         "token": token,
@@ -29,17 +28,16 @@ final class VkontakteAuthControllerTestHelper {
       let signature = try md5.make(string.makeBytes())
       return signature.makeString()
     }
+    let configFile = try! Config(arguments: ["vapor", "--env=test"])
+    let config = VkontakteConfig(configFile)
 
-    let config = drop.config
-    let apiURL = config[Social.Nets.vk, "api_url"]?.string ?? ""
-    let fields = config[Social.Nets.vk, "fields"]?.string ?? ""
-    let method = config[Social.Nets.vk, "method"]?.string ?? ""
-    let token = config[Social.Nets.vk, "access_token"]?.string ?? ""
-    let secret = config[Social.Nets.vk, "secret"]?.string ?? ""
+    let apiURL = config.apiURL
+    let fields = config.fields
+    let method = config.method
+    let token = config.accessToken
+    let secret = config.secret
 
-    let urlForSignature =  "\(method)?fields=\(fields)&access_token=\(token + secret)"
-
-    let signature = try! makeMD5(string: urlForSignature)
+    let signature = try! config.getSignatureBased(on: token, and: secret)
     let userInfoUrl = apiURL + method
     let userInfo = try! drop.client.get(userInfoUrl, query: [
       "fields": fields,
