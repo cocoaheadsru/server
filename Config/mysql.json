@@ -1,6 +1,6 @@
 {
-  "hostname": "$CH_DB_HOST",
-  "user": "$CH_DB_USER",
-  "password": "$CH_DB_PASSWORD",
-  "database": "$CH_DB_DATABASE"
+  "hostname": "$CH_DB_HOST:localhost",
+  "user": "$CH_DB_USER:root",
+  "password": "$CH_DB_PASSWORD:",
+  "database": "$CH_DB_DATABASE:cocoaheads"
 }
