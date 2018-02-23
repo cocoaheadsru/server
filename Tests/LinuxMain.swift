@@ -81,6 +81,14 @@ extension GetRegFormTests {
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
+extension GithubAuthControllerTest {
+  static var allTests: [(String, (GithubAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromGithubAccount", testThatUserCreatedAndStoredFromGithubAccount),
+   ("testThatSessionTokenCreatedAndStoredFromGithubAccount", testThatSessionTokenCreatedAndStoredFromGithubAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromGithub", testThatIfUserExistThenUserProfileUpdatedFromGithub),
+   ("testThatUserPhotoFromGithubIsSaved", testThatUserPhotoFromGithubIsSaved)
+  ]
+}
 extension GiveSeechControllerTest {
   static var allTests: [(String, (GiveSeechControllerTest) -> () throws -> Void)] = [
    ("testThatGiveSpeechIsPosted", testThatGiveSpeechIsPosted)
@@ -144,6 +152,14 @@ extension UserPhotoTest {
    ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
+extension VkontakteAuthControllerTest {
+  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
+   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
+   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
+  ]
+}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -153,6 +169,7 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
+  testCase(GithubAuthControllerTest.allTests),
   testCase(GiveSeechControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(PushNotificationControllerTest.allTests),
@@ -160,6 +177,7 @@ XCTMain([
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
   testCase(UserControllerTests.allTests),
-  testCase(UserPhotoTest.allTests)
+  testCase(UserPhotoTest.allTests),
+  testCase(VkontakteAuthControllerTest.allTests)
 ])
 #endif
