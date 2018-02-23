@@ -6,11 +6,13 @@ import Foundation
 //swiftlint:disable force_try
 final class GithubAuthControllerTestHelper {
 
-  static func getTestRequest(config: Config) throws -> JSON? {
+  static func getTestRequest() throws -> JSON? {
+    let configFile = try! Config(arguments: ["vapor", "--env=test"])
+    let config = GithubConfig(configFile)
     guard
-      let token = config[Social.Nets.github, "code"]?.string,
-      let secret = config[Social.Nets.github, "state"]?.string
-      else {
+      let token = config.code,
+      let secret = config.state
+    else {
         return nil
     }
     let result = try! JSON(
@@ -23,14 +25,9 @@ final class GithubAuthControllerTestHelper {
   }
 
   static func getUserInfoFromSocial(drop: Droplet) throws -> JSON? {
-
-    let config = drop.config
-    let apiURL = config[Social.Nets.github, "user_info_url"]?.string ?? ""
-    let token = config[Social.Nets.github, "access_token"]?.string ?? ""
-
-    let userInfo = try! drop.client.get(apiURL, query: [
-      "access_token": token
-    ])
+    
+    let config = GithubConfig(drop.config)
+    let userInfo = try! drop.client.get(config.testUserInfoURL!)
 
     guard
       let response = userInfo.json,

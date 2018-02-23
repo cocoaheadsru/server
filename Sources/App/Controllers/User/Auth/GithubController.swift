@@ -5,13 +5,14 @@ import Fluent
 final class GithubController {
 
   private let drop: Droplet
-  private let config: Config
+ // private let config: Config
   private let photoController: PhotoController
   private let git = Social.Github.self
+  private let config: GithubConfig
 
   init(drop: Droplet) {
     self.drop = drop
-    self.config = drop.config
+    self.config = GithubConfig(drop.config)
     self.photoController = PhotoController(drop: self.drop)
   }
 
@@ -43,24 +44,21 @@ final class GithubController {
   fileprivate func authorize(by authorizationCode: String, secret: String) throws -> String {
 
     if
-      config.environment == .test,
+      drop.config.environment == .test,
       authorizationCode.isEmpty,
-      let accessTokenFromConfig = config[git.name, git.accessToken]?.string,
+      let accessTokenFromConfig = config.accessToken,
       accessTokenFromConfig.isNotEmpty {
       print("\n\nUSING TOKEN FROM CONFIG FILE\n\n")
       return accessTokenFromConfig
     }
 
-    let authURL = config[git.name, git.tokenRequestURL]?.string ?? ""
-    let clientId = config[git.name, git.clientId]?.string ?? ""
-    let clientSecret = config[git.name, git.clientSecret]?.string ?? ""
     let code = authorizationCode
     let state = secret
 
-    let authRequest = try drop.client.get(authURL, query: [
-      git.clientId: clientId,
+    let authRequest = try drop.client.get(config.tokenRequestURL, query: [
+      git.clientId: config.clientId,
       git.state: state,
-      git.clientSecret: clientSecret,
+      git.clientSecret: config.clientSecret,
       git.code: code
     ])
 
@@ -79,8 +77,7 @@ final class GithubController {
 
   fileprivate func getUserProfile(with token: String) throws -> (user: User, socialUserId: String) {
 
-    let userInfoUrl = config[git.name, git.userInfoURL]?.string ?? ""
-    let userInfo = try drop.client.get(userInfoUrl, query: [
+    let userInfo = try drop.client.get( config.userInfoURL, query: [
       git.accessToken: token
     ])
 

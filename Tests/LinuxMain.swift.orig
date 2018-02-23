@@ -81,6 +81,11 @@ extension GetRegFormTests {
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
+extension GiveSeechControllerTest {
+  static var allTests: [(String, (GiveSeechControllerTest) -> () throws -> Void)] = [
+   ("testThatGiveSpeechIsPosted", testThatGiveSpeechIsPosted)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -96,7 +101,11 @@ extension HeartbeatControllerTests {
 extension PushNotificationControllerTest {
   static var allTests: [(String, (PushNotificationControllerTest) -> () throws -> Void)] = [
    ("testThatPushTokenIsRegistered", testThatPushTokenIsRegistered),
+<<<<<<< HEAD
+   ("testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser", testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser),
+=======
    ("testThatPushTokenIsRegisteredOnlyOnceForCertainUser", testThatPushTokenIsRegisteredOnlyOnceForCertainUser),
+>>>>>>> c9dde1396915386df0a2669ada539575000496c8
    ("testThatPushNotificationIsCanceled", testThatPushNotificationIsCanceled)
   ]
 }
@@ -134,15 +143,17 @@ extension UserControllerTests {
 }
 extension UserPhotoTest {
   static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
-<<<<<<< HEAD
-   ("testThatUserPhotoIsUpdatedByFormDataSend", testThatUserPhotoIsUpdatedByFormDataSend),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString", testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
-=======
    ("testThatUserPhotoisUpdatedUsingFormDataContent", testThatUserPhotoisUpdatedUsingFormDataContent),
    ("testThatUsingPhotoWithBase64EncodedStringContent", testThatUsingPhotoWithBase64EncodedStringContent),
    ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
->>>>>>> eb2831f979727c0dccbd94084048a1b1e2247dbd
+  ]
+}
+extension VkontakteAuthControllerTest {
+  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
+   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
+   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
+   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
+   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
   ]
 }
 
@@ -154,12 +165,14 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
+  testCase(GiveSeechControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(PushNotificationControllerTest.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
   testCase(UserControllerTests.allTests),
-  testCase(UserPhotoTest.allTests)
+  testCase(UserPhotoTest.allTests),
+  testCase(VkontakteAuthControllerTest.allTests)
 ])
 #endif

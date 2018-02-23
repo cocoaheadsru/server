@@ -58,6 +58,7 @@ extension Social {
     static let accessToken = "access_token"
     static let state = "state"
     static let code = "code"
+    static let testUserInfoURL = "test_user_info_url"
     struct Profile {
       static let socialUserId = "github.com/"
       static let login = "login"

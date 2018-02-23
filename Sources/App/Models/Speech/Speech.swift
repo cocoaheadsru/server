@@ -38,7 +38,7 @@ final class Speech: Model {
 }
 
 extension Speech {
-  
+
   func event() throws -> Event? {
     return try parent(id: eventId).get()
   }

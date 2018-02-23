@@ -81,6 +81,11 @@ extension GetRegFormTests {
    ("testThatRegFormFetchedByEventId", testThatRegFormFetchedByEventId)
   ]
 }
+extension GiveSeechControllerTest {
+  static var allTests: [(String, (GiveSeechControllerTest) -> () throws -> Void)] = [
+   ("testThatGiveSpeechIsPosted", testThatGiveSpeechIsPosted)
+  ]
+}
 extension HeartbeatControllerTests {
   static var allTests: [(String, (HeartbeatControllerTests) -> () throws -> Void)] = [
    ("testThatPostSetBeatAnyValue", testThatPostSetBeatAnyValue),
@@ -139,14 +144,6 @@ extension UserPhotoTest {
    ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
-extension VkontakteAuthControllerTest {
-  static var allTests: [(String, (VkontakteAuthControllerTest) -> () throws -> Void)] = [
-   ("testThatUserCreatedAndStoredFromVkontakteAccount", testThatUserCreatedAndStoredFromVkontakteAccount),
-   ("testThatSessionTokenCreatedAndStoredFromVkontakteAccount", testThatSessionTokenCreatedAndStoredFromVkontakteAccount),
-   ("testThatIfUserExistThenUserProfileUpdatedFromVkontakte", testThatIfUserExistThenUserProfileUpdatedFromVkontakte),
-   ("testThatUserPhotoFromVkontakteIsSaved", testThatUserPhotoFromVkontakteIsSaved)
-  ]
-}
 
 XCTMain([
   testCase(AutoapproveTest.allTests),
@@ -156,13 +153,13 @@ XCTMain([
   testCase(EventSpeechControllerTests.allTests),
   testCase(FacebookSocialControllerTest.allTests),
   testCase(GetRegFormTests.allTests),
+  testCase(GiveSeechControllerTest.allTests),
   testCase(HeartbeatControllerTests.allTests),
   testCase(PushNotificationControllerTest.allTests),
   testCase(RegistrationControllerTests.allTests),
   testCase(RouteTests.allTests),
   testCase(UserAuthByTokenTest.allTests),
   testCase(UserControllerTests.allTests),
-  testCase(UserPhotoTest.allTests),
-  testCase(VkontakteAuthControllerTest.allTests)
+  testCase(UserPhotoTest.allTests)
 ])
 #endif

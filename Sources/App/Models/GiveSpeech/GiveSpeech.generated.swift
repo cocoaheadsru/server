@@ -18,6 +18,8 @@ extension GiveSpeech {
   }
 }
 
+extension GiveSpeech: ResponseRepresentable { }
+
 extension GiveSpeech: JSONInitializable {
 
   convenience init(json: JSON) throws {

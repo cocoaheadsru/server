@@ -1,5 +1,4 @@
 import Vapor
-import Crypto
 
 struct FacebookConfig {
   private let fb = Social.FB.self
