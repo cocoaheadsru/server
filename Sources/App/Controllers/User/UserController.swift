@@ -6,11 +6,11 @@ import Multipart
 final class UserController {
   
   let drop: Droplet!
-  let photoConroller: PhotoConroller
+  let photoConroller: PhotoController
   
   init(drop: Droplet) {
     self.drop = drop
-    self.photoConroller = PhotoConroller(drop: self.drop)
+    self.photoConroller = PhotoController(drop: self.drop)
   }
 
   func show(_ request: Request, user: User) throws -> ResponseRepresentable {

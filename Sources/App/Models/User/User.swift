@@ -81,7 +81,7 @@ extension User: JSONRepresentable {
       let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
       let userId = self.id?.string
     else {
-      return nil
+      return self.photo
     }
     let photosFolder = Constants.Path.userPhotos
     return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"

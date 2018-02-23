@@ -7,7 +7,7 @@ extension Droplet {
     let socials = [
       Social.Nets.fb,
       Social.Nets.vk,
-      Social.Nets.git]
+      Social.Nets.github]
 
     try socials.forEach { socialName in
       if try Social.find(by: socialName) == nil {
