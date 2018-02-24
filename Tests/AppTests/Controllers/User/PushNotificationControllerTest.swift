@@ -27,7 +27,7 @@ class PushNotificationControllerTest: TestCase {
 
     let pushToken = String.randomValue
 
-    let body = try! JSON(node: [ "push_token": pushToken ])
+    let body = try! JSON(node: ["push_token": pushToken])
 
     try! subscribeNotification(for: user, with: body).assertStatus(is: .ok)
 
@@ -38,14 +38,14 @@ class PushNotificationControllerTest: TestCase {
     XCTAssert(count == 1, "Expected count 1, recived count: '\(count)'")
   }
 
-  func testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser() throws {
+  func testThatPushTokenIsRegisteredOnlyOnceForCertainUser() throws {
 
     let user = User()
     try! user.save()
 
     // create
     let pushToken = String.randomValue
-    let body = try! JSON(node: [ "push_token": pushToken ])
+    let body = try! JSON(node: ["push_token": pushToken])
 
     try! subscribeNotification(for: user, with: body).assertStatus(is: .ok)
 
@@ -57,7 +57,7 @@ class PushNotificationControllerTest: TestCase {
 
     // update
     let pushTokenUpdated = String.randomValue
-    let bodyUpdated = try! JSON(node: [ "push_token": pushTokenUpdated ])
+    let bodyUpdated = try! JSON(node: ["push_token": pushTokenUpdated])
 
     try! subscribeNotification(for: user, with: bodyUpdated).assertStatus(is: .ok)
 
@@ -76,7 +76,7 @@ class PushNotificationControllerTest: TestCase {
 
     let pushToken = String.randomValue
 
-    let body = try! JSON(node: [ "push_token": pushToken ])
+    let body = try! JSON(node: ["push_token": pushToken])
 
     try! subscribeNotification(for: user, with: body).assertStatus(is: .ok)
 

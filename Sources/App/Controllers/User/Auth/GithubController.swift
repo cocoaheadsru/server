@@ -5,33 +5,34 @@ import Fluent
 final class GithubController {
 
   private let drop: Droplet
-  private let config: Config
-  private let photoController: PhotoConroller
-  private let git = Social.GIT.self
+ // private let config: Config
+  private let photoController: PhotoController
+  private let git = Social.Github.self
+  private let config: GithubConfig
 
   init(drop: Droplet) {
     self.drop = drop
-    self.config = drop.config
-    self.photoController = PhotoConroller(drop: self.drop)
+    self.config = GithubConfig(drop.config)
+    self.photoController = PhotoController(drop: self.drop)
   }
 
-  func createOrUpdateUserProfile(use authorizateCode: String, secret: String) throws -> User {
+  func createOrUpdateUserProfile(with authorizationCode: String, secret: String) throws -> User {
 
-    let accessToken = try authorizate(by: authorizateCode, secret: secret)
-    let (profile, socialUserId) = try getUserProfile(use: accessToken)
+    let accessToken = try authorize(by: authorizationCode, secret: secret)
+    let (profile, socialUserId) = try getUserProfile(with: accessToken)
 
     if let user = try SocialAccount.find(by: socialUserId) {
       user.name = profile.name
       user.lastname = profile.lastname
-      user.photo = try photoController.downloadAndSavePhoto(for: user, by: profile.photo)
+      user.photo = try photoController.downloadAndSavePhoto(for: user, with: profile.photo)
       try user.save()
       return user
     }
 
     try profile.save()
 
-    if let url = profile.photo, !url.isEmpty {
-      profile.photo = try photoController.downloadAndSavePhoto(for: profile, by: profile.photo)
+    if let url = profile.photo, url.isNotEmpty {
+      profile.photo = try photoController.downloadAndSavePhoto(for: profile, with: profile.photo)
       try profile.save()
     }
 
@@ -40,27 +41,24 @@ final class GithubController {
     return profile
   }
 
-  fileprivate func authorizate(by authorizateCode: String, secret: String) throws -> String {
+  fileprivate func authorize(by authorizationCode: String, secret: String) throws -> String {
 
     if
-      config.environment == .test,
-      authorizateCode.isEmpty,
-      let accessTokenFromConfig = config[git.name, git.accessToken]?.string,
-      !accessTokenFromConfig.isEmpty {
-      print("\n\nUSING TOKEN FROM CONGIG FILE\n\n")
+      drop.config.environment == .test,
+      authorizationCode.isEmpty,
+      let accessTokenFromConfig = config.accessToken,
+      accessTokenFromConfig.isNotEmpty {
+      print("\n\nUSING TOKEN FROM CONFIG FILE\n\n")
       return accessTokenFromConfig
     }
 
-    let authURL = config[git.name, git.tokenRequestURL]?.string ?? ""
-    let clientId = config[git.name, git.clientId]?.string ?? ""
-    let clientSecret = config[git.name, git.clientSecret]?.string ?? ""
-    let code = authorizateCode
+    let code = authorizationCode
     let state = secret
 
-    let authRequest = try drop.client.get(authURL, query: [
-      git.clientId: clientId,
+    let authRequest = try drop.client.get(config.tokenRequestURL, query: [
+      git.clientId: config.clientId,
       git.state: state,
-      git.clientSecret: clientSecret,
+      git.clientSecret: config.clientSecret,
       git.code: code
     ])
 
@@ -77,10 +75,9 @@ final class GithubController {
     return accessToken
   }
 
-  fileprivate func getUserProfile(use token: String) throws -> (user: User, socialUserId: String) {
+  fileprivate func getUserProfile(with token: String) throws -> (user: User, socialUserId: String) {
 
-    let userInfoUrl = config[git.name, git.userInfoURL]?.string ?? ""
-    let userInfo = try drop.client.get(userInfoUrl, query: [
+    let userInfo = try drop.client.get( config.userInfoURL, query: [
       git.accessToken: token
     ])
 
@@ -93,10 +90,10 @@ final class GithubController {
         throw Abort(.badRequest, reason: "Can't get user profile from Github")
     }
 
-    let names = response[profile.name]?.string ?? login
-    let fullName = names.components(separatedBy: " ")
-    let name: String = fullName[0]
-    let lastname: String? = fullName.count > 1 ? fullName[1] : nil
+    let fullName = response[profile.name]?.string ?? login
+    let nameComponents = fullName.components(separatedBy: " ")
+    let name = nameComponents[0]
+    let lastname = nameComponents[safe: 1]
 
     let user = User(
       name: name,

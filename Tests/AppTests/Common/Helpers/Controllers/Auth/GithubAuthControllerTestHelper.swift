@@ -6,31 +6,28 @@ import Foundation
 //swiftlint:disable force_try
 final class GithubAuthControllerTestHelper {
 
-  static func getTestRequest(config: Config) throws -> JSON? {
+  static func getTestRequest() throws -> JSON? {
+    let configFile = try! Config(arguments: ["vapor", "--env=test"])
+    let config = GithubConfig(configFile)
     guard
-      let token = config[Social.Nets.git, "code"]?.string,
-      let secret = config[Social.Nets.git, "state"]?.string
-      else {
+      let token = config.code,
+      let secret = config.state
+    else {
         return nil
     }
     let result = try! JSON(
       node: [
         "token": token,
-        "social": Social.Nets.git,
+        "social": Social.Nets.github,
         "secret": secret
       ])
     return result
   }
 
   static func getUserInfoFromSocial(drop: Droplet) throws -> JSON? {
-
-    let config = drop.config
-    let apiURL = config[Social.Nets.git, "user_info_url"]?.string ?? ""
-    let token = config[Social.Nets.git, "access_token"]?.string ?? ""
-
-    let userInfo = try! drop.client.get(apiURL, query: [
-      "access_token": token
-    ])
+    
+    let config = GithubConfig(drop.config)
+    let userInfo = try! drop.client.get(config.testUserInfoURL!)
 
     guard
       let response = userInfo.json,
@@ -40,10 +37,10 @@ final class GithubAuthControllerTestHelper {
         throw Abort(.badRequest, reason: "Can't get user profile from Github")
     }
 
-    let names = response["name"]?.string ?? login
-    let fullNameArr = names.components(separatedBy: " ")
-    let name: String = fullNameArr[0]
-    let lastname: String? = fullNameArr.count > 1 ? fullNameArr[1] : nil
+    let fullName = response["name"]?.string ?? login
+    let nameComponents = fullName.components(separatedBy: " ")
+    let name = nameComponents[0]
+    let lastname = nameComponents[safe: 1]
 
     let Keys = User.Keys.self
     var json = JSON()

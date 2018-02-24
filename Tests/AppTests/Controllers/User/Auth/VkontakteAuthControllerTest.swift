@@ -8,7 +8,8 @@ import Fluent
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
-//DISABLED FOR DEVOPS TEST PASS
+
+//test don't work under Jenkins - start tests from console or Xcode
 //class VkontakteAuthControllerTest: TestCase {
 //
 //  override func setUp() {
@@ -23,7 +24,7 @@ import Fluent
 //
 //  func testThatUserCreatedAndStoredFromVkontakteAccount() throws {
 //
-//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -65,7 +66,7 @@ import Fluent
 //
 //  func testThatSessionTokenCreatedAndStoredFromVkontakteAccount() throws {
 //
-//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -89,7 +90,7 @@ import Fluent
 //
 //  func testThatIfUserExistThenUserProfileUpdatedFromVkontakte() throws {
 //
-//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -114,7 +115,7 @@ import Fluent
 //  }
 //
 //  func testThatUserPhotoFromVkontakteIsSaved() throws {
-//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }

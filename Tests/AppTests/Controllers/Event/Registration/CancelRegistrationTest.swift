@@ -38,7 +38,7 @@ class CancelRegistrationTest: TestCase {
       return
     }
 
-    let response = try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     guard let eventRegId = try response.json?.get("id") as Int! else {
@@ -46,7 +46,7 @@ class CancelRegistrationTest: TestCase {
       return
     }
     
-    let deleteResponse = try cancellationOfRegistration(eventRegId, token: userAnswers.sessionToken)
+    let deleteResponse = try cancelRegistration(eventRegId, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "Can't find approved User's registraion for cancel")
     
@@ -74,7 +74,7 @@ class CancelRegistrationTest: TestCase {
       return
     }
     
-    let response = try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     guard let eventRegId = try response.json?.get("id") as Int! else {
@@ -84,7 +84,7 @@ class CancelRegistrationTest: TestCase {
     
     let wrongToken = try getWrongToken(rightToken: userAnswers.sessionToken)!
 
-    let deleteResponse = try cancellationOfRegistration(eventRegId, token: wrongToken)
+    let deleteResponse = try cancelRegistration(eventRegId, token: wrongToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "Can't find approved User's registraion for cancel")
     
@@ -111,7 +111,7 @@ class CancelRegistrationTest: TestCase {
       return
     }
 
-    let response = try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    let response = try registerToEvent(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     guard let eventRegId = try response.json?.get("id") as Int! else {
@@ -119,7 +119,7 @@ class CancelRegistrationTest: TestCase {
       return
     }
     
-     try cancellationOfRegistration(eventRegId, token: userAnswers.sessionToken)
+     try cancelRegistration(eventRegId, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
     
     let countEvenRegAnsewer = try EventRegAnswer.makeQuery()
@@ -153,7 +153,7 @@ extension CancelRegistrationTest {
   }
 
   @discardableResult
-  func eventRegistration(_ json: JSON, token: String) throws -> Response {
+  func registerToEvent(_ json: JSON, token: String) throws -> Response {
     return try drop
       .userAuthorizedTestResponse(
         to: .post,
@@ -163,7 +163,7 @@ extension CancelRegistrationTest {
   }
 
   @discardableResult
-  func cancellationOfRegistration(_ eventRegId: Int, token: String) throws -> Response {
+  func cancelRegistration(_ eventRegId: Int, token: String) throws -> Response {
     return try drop
       .userAuthorizedTestResponse(
         to: .delete,

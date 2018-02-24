@@ -4,9 +4,10 @@
   "client_secret": "93af327e3302d217d3efe5e0820a7ce68e047e21",
   "user_info_url": "https://api.github.com/user",
   "//": "For tests",
-  "//": "https://github.com/login/oauth/authorize?client_id=4f93f0cfa7e6bdd5e881&scope=user:email&state=sdfr3454g4h6534tf",
+  "//": "https://github.com/login/oauth/authorize?client_id=4f93f0cfa7e6bdd5e881&scope=user:email&state=asdf34rrad451bsdfweww32dsd343",
   "//": "Code for one-time use!!! Use link above to get a new one!",
   "code": "",
-  "state": "sdfr3454g4h6534tf",
-  "access_token": "cf6bd26bfbdaf33ce0006ce61ed76428d57bb308"
+  "state": "asdf34rrad451bsdfweww32dsd343",
+  "test_user_info_url": "https://api.github.com/users/JenkinsBotCH",
+  "access_token": "5d8dc9a6e1cbebd935d080c9236f77abcc19ee53"
 }
