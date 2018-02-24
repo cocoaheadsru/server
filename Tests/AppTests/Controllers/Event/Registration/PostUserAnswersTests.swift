@@ -55,10 +55,10 @@ class RegistrationControllerTests: TestCase {
       return
     }
 
-    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    try! eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .ok)
 
-    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    try! eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "User with token '\(userAnswers.sessionToken)' has alredy registered to this event")
 
@@ -75,7 +75,7 @@ class RegistrationControllerTests: TestCase {
       return
     }
     
-    try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+    try! eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "The answer to field with type radio should be only one")
   }
@@ -89,7 +89,7 @@ class RegistrationControllerTests: TestCase {
       return
     }
 
-   try eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
+   try! eventRegistration(userAnswers.body, token: userAnswers.sessionToken)
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "The field must have at least one answer")
 
@@ -101,7 +101,7 @@ extension RegistrationControllerTests {
   
   func prepareRegFieldAnswers() throws -> RegForm {
     guard
-      let regForm = try EventRegAnswerHelper.store()
+      let regForm = try! EventRegAnswerHelper.store()
       else {
         XCTFail("Can't prepare stage to RegFormAnswer")
         fatalError()
@@ -111,7 +111,7 @@ extension RegistrationControllerTests {
 
   @discardableResult
   func eventRegistration(_ json: JSON, token: String) throws -> Response {
-    return try drop
+    return try! drop
       .userAuthorizedTestResponse(
         to: .post,
         at: "event/register",
@@ -121,7 +121,7 @@ extension RegistrationControllerTests {
 
   @discardableResult
   func cancellationOfRegistration(_ eventRegId: Int, token: String) throws -> Response {
-    return try drop
+    return try! drop
       .userAuthorizedTestResponse(
         to: .delete,
         at: "event/register/\(eventRegId)",

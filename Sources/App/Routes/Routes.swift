@@ -35,6 +35,8 @@ extension Droplet {
 
     try userMiddlewareGroup.resource("user/notification", PushNotificationController.self)
     try userMiddlewareGroup.resource("user/give-speech", GiveSpeechController.self)
-    
+
+    try clientMiddlewareGroup.resource("user/creators", CreatorsController.self)
+
   }
 }
