@@ -15,7 +15,6 @@ final class Creator: Model {
   
   init(userId: Identifier,
        position: Int,
-       photoURL: String,
        info: String,
        url: String,
        active: Bool) {

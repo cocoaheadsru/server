@@ -8,7 +8,6 @@ extension Creator {
       self.init(
         userId: userId,
         position: Int.randomValue,
-        photoUrl: String.randomValue,
         info: String.randomValue,
         url: String.randomValue,
         active: Bool.randomValue
@@ -17,7 +16,6 @@ extension Creator {
       self.init(
         userId: userId,
         position: 0,
-        photoUrl: "",
         info: "",
         url: "",
         active: true

@@ -8,7 +8,7 @@ import Fluent
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
-//test don't work under Jenkins - start tests from console or Xcode 
+//test don't work under Jenkins - start tests from console or Xcode
 //class GithubAuthControllerTest: TestCase {
 //
 //  override func setUp() {
@@ -158,4 +158,3 @@ import Fluent
 //  }
 //
 //}
-
