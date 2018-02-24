@@ -5,7 +5,7 @@ extension Social {
   struct Nets {
     static let fb = "facebook"
     static let vk = "vkontakte"
-    static let git = "github"
+    static let github = "github"
   }
 
   // swiftlint:disable type_name
@@ -39,6 +39,7 @@ extension Social {
     static let fields = "fields"
     static let accessToken = "access_token"
     static let sig = "sig"
+    static let secret = "secret"
     struct Profile {
       static let response = "response"
       static let socialUserId = "uid"
@@ -48,8 +49,8 @@ extension Social {
     }
   }
 
-  struct GIT {
-    static let name = Nets.git
+  struct Github {
+    static let name = Nets.github
     static let tokenRequestURL = "token_request_url"
     static let clientId = "client_id"
     static let clientSecret = "client_secret"
@@ -57,6 +58,7 @@ extension Social {
     static let accessToken = "access_token"
     static let state = "state"
     static let code = "code"
+    static let testUserInfoURL = "test_user_info_url"
     struct Profile {
       static let socialUserId = "github.com/"
       static let login = "login"

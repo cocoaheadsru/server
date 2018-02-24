@@ -32,7 +32,7 @@ extension ClientMiddlewareTests {
 }
 extension CreatorsControllerTest {
   static var allTests: [(String, (CreatorsControllerTest) -> () throws -> Void)] = [
-   ("testCreatorsCountFromGetEqualStoredCreators", testCreatorsCountFromGetEqualStoredCreators)
+   ("testThatGetCreatorsReturnsEqualStoredCreatorsCount", testThatGetCreatorsReturnsEqualStoredCreatorsCount)
   ]
 }
 extension EventControllerTests {
@@ -106,7 +106,7 @@ extension HeartbeatControllerTests {
 extension PushNotificationControllerTest {
   static var allTests: [(String, (PushNotificationControllerTest) -> () throws -> Void)] = [
    ("testThatPushTokenIsRegistered", testThatPushTokenIsRegistered),
-   ("testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser", testThatPushTokenIsRegisteredOnlyOneTimeForCertainUser),
+   ("testThatPushTokenIsRegisteredOnlyOnceForCertainUser", testThatPushTokenIsRegisteredOnlyOnceForCertainUser),
    ("testThatPushNotificationIsCanceled", testThatPushNotificationIsCanceled)
   ]
 }
@@ -144,9 +144,9 @@ extension UserControllerTests {
 }
 extension UserPhotoTest {
   static var allTests: [(String, (UserPhotoTest) -> () throws -> Void)] = [
-   ("testThatUserPhotoIsUpdatedByFormDataSend", testThatUserPhotoIsUpdatedByFormDataSend),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString", testThatUserPhotoIsUpdatedByPhotoSendAsBase64EncodedString),
-   ("testThatUserPhotoIsUpdatedByPhotoSendAsURL", testThatUserPhotoIsUpdatedByPhotoSendAsURL)
+   ("testThatUserPhotoisUpdatedUsingFormDataContent", testThatUserPhotoisUpdatedUsingFormDataContent),
+   ("testThatUsingPhotoWithBase64EncodedStringContent", testThatUsingPhotoWithBase64EncodedStringContent),
+   ("testThatUserPhotoIsUpdatedUsingPhotoAtURL", testThatUserPhotoIsUpdatedUsingPhotoAtURL)
   ]
 }
 

@@ -14,7 +14,7 @@ final class PushNotificationController {
       throw Abort(.badRequest, reason: "Request's body no have pushToken to the push-notification registration")
     }
 
-    if let client = try Client.returnIfExcists(request: request) {
+    if let client = try Client.returnIfExists(request: request) {
       client.pushToken = pushToken
       try client.save()
       return client
@@ -28,7 +28,7 @@ final class PushNotificationController {
 
   func cancel(_ request: Request, user: User) throws -> ResponseRepresentable {
 
-    guard let client = try Client.returnIfExcists(request: request) else {
+    guard let client = try Client.returnIfExists(request: request) else {
       throw Abort(
         .internalServerError,
         reason: "Not found push-notifications registration for user.id: '\(user.id?.int ?? -1)'"

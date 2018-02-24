@@ -8,6 +8,7 @@ import Fluent
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
+//test don't work under Jenkins - start tests from console or Xcode
 //class GithubAuthControllerTest: TestCase {
 //
 //  override func setUp() {
@@ -22,7 +23,7 @@ import Fluent
 //
 //  func testThatUserCreatedAndStoredFromGithubAccount() throws {
 //
-//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -66,7 +67,7 @@ import Fluent
 //
 //  func testThatSessionTokenCreatedAndStoredFromGithubAccount() throws {
 //
-//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -90,7 +91,7 @@ import Fluent
 //
 //  func testThatIfUserExistThenUserProfileUpdatedFromGithub() throws {
 //
-//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }
@@ -115,7 +116,7 @@ import Fluent
 //  }
 //
 //  func testThatUserPhotoFromGithubIsSaved() throws {
-//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest(config: drop.config) else {
+//    guard let body = try! GithubAuthControllerTestHelper.getTestRequest() else {
 //      XCTFail("Can't get test request")
 //      return
 //    }

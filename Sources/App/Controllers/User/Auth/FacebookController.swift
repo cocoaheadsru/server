@@ -5,26 +5,27 @@ import Fluent
 final class FacebookController {
 
   private let drop: Droplet
-  private let config: Config
-  private let photoController: PhotoConroller
+  //private let config: Config
+  private let photoController: PhotoController
   private let fb = Social.FB.self
+  private let config: FacebookConfig
 
   init(drop: Droplet) {
     self.drop = drop
-    self.config = drop.config
-    self.photoController = PhotoConroller(drop: self.drop)
+    self.config = FacebookConfig(drop.config)
+    self.photoController = PhotoController(drop: self.drop)
   }
 
-  func createOrUpdateUserProfile(use authorizateCode: String) throws -> User {
+  func createOrUpdateUserProfile(with authorizationCode: String) throws -> User {
 
-    let accessToken = try authorizate(by: authorizateCode)
-    let (profile, socialUserId) = try getUserProfile(use: accessToken)
+    let accessToken = try authorize(by: authorizationCode)
+    let (profile, socialUserId) = try getUserProfile(with: accessToken)
 
     if let user = try SocialAccount.find(by: socialUserId) {
       user.name = profile.name
       user.lastname = profile.lastname
       user.email = profile.email
-      user.photo = try photoController.downloadAndSavePhoto(for: user, by: profile.photo)
+      user.photo = try photoController.downloadAndSavePhoto(for: user, with: profile.photo)
       try user.save()
       return user
     }
@@ -32,38 +33,33 @@ final class FacebookController {
     try profile.save()
 
     if let url = profile.photo, !url.isEmpty {
-      profile.photo = try photoController.downloadAndSavePhoto(for: profile, by: profile.photo)
+      profile.photo = try photoController.downloadAndSavePhoto(for: profile, with: profile.photo)
       try profile.save()
     }
 
     try SocialHelper.storeSocialProfile(for: profile, socialUserId: socialUserId, social: Social.Nets.fb)
-    
+
     return profile
   }
 
-  fileprivate func authorizate(by authorizateCode: String) throws -> String {
+  fileprivate func authorize(by authorizationCode: String) throws -> String {
 
     if
-      config.environment == .test,
-      authorizateCode.isEmpty,
-      let accessTokenFromConfig = config[fb.name, fb.accessToken]?.string,
-      !accessTokenFromConfig.isEmpty {
-      print("\n\nUSING TOKEN FROM CONGIG FILE\n\n")
+      drop.config.environment == .test,
+      authorizationCode.isEmpty,
+      let accessTokenFromConfig = config.accessToken,
+      accessTokenFromConfig.isNotEmpty {
+      print("\n\nUSING TOKEN FROM CONFIG FILE\n\n")
       return accessTokenFromConfig
     }
 
-    let authURL = config[fb.name, fb.tokenRequestURL]?.string ?? ""
-    let clientId = config[fb.name, fb.clientId]?.string ?? ""
-    let redirectURI = config[fb.name, fb.redirectURI]?.string ?? ""
-    let scope = config[fb.name, fb.scope]?.string ?? ""
-    let clientSecret = config[fb.name, fb.clientSecret]?.string ?? ""
-    let code = authorizateCode + "#_=_"
+    let code = authorizationCode + "#_=_"
     
-    let authRequest = try drop.client.get(authURL, query: [
-      fb.clientId: clientId,
-      fb.redirectURI: redirectURI,
-      fb.scope: scope,
-      fb.clientSecret: clientSecret,
+    let authRequest = try drop.client.get(config.tokenRequestURL, query: [
+      fb.clientId: config.clientId,
+      fb.redirectURI: config.redirectURI,
+      fb.scope: config.scope,
+      fb.clientSecret: config.clientSecret,
       fb.code: code
     ])
 
@@ -74,11 +70,11 @@ final class FacebookController {
     return accessToken
   }
 
-  fileprivate func getUserProfile(use token: String) throws -> (user: User, socialUserId: String) {
+  fileprivate func getUserProfile(with token: String) throws -> (user: User, socialUserId: String) {
 
-    let userInfoUrl =  config[fb.name, fb.userInfoURL]?.string ?? ""
-    let fields  =  config[fb.name, fb.fields]?.string ?? ""
-    let scope = config[fb.name, fb.scope]?.string ?? ""
+    let userInfoUrl =  config.userInfoURL
+    let fields  =  config.fields
+    let scope = config.scope
 
     let userInfo = try drop.client.get(userInfoUrl, query: [
       fb.fields: fields,

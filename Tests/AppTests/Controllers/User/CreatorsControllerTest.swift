@@ -20,7 +20,7 @@ class CreatorsControllerTest: TestCase {
     }
   }
 
-  func testCreatorsCountFromGetEqualStoredCreators() throws {
+  func testThatGetCreatorsReturnsEqualStoredCreatorsCount() throws {
 
     guard let count = try! generateCreators() else {
       XCTFail("Can't generate creators")
