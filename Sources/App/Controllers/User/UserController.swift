@@ -77,7 +77,7 @@ extension UserController {
 
     // get photo by url download
     if let photoURL = request.json?[RequestKeys.photoURL]?.string {
-      return try photoConroller.downloadAndSavePhoto(for: userId, by: photoURL)
+      return try photoConroller.downloadAndSavePhoto(for: userId, with: photoURL)
     }
 
     return nil

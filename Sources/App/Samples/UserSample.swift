@@ -2,18 +2,18 @@ import Vapor
 
 final class UserSample {
 
-  private let photoController: PhotoConroller
+  private let photoController: PhotoController
   private let drop: Droplet
   private let randomPhotoURL = "https://picsum.photos/200/300?image="
 
   init(drop: Droplet) {
     self.drop = drop
-    photoController = PhotoConroller(drop: self.drop)
+    photoController = PhotoController(drop: self.drop)
   }
+  @discardableResult
+  func createSample(count: Int = 5) throws -> [User] {
 
-  func createSample() throws {
-
-    func createUser(index: Int) throws {
+    func createUser(index: Int) throws -> User {
 
       let user = User(
         name: "TestNameUser\(index)" ,
@@ -28,15 +28,17 @@ final class UserSample {
       let photoURL = "\(randomPhotoURL)\(Int.random(min: 0, max: 200))"
       try user.save()
       user.token = "test\(index)"
-      user.photo = try photoController.downloadAndSavePhoto(for: user, by: photoURL)
+      user.photo = try photoController.downloadAndSavePhoto(for: user, with: photoURL)
       try user.save()
-
+      return user
     }
 
-    for i in 1...Int.random(min: 2, max: 5) {
-      try createUser(index: i)
+    var users: [User] = []
+    for i in 1...Int.random(min: 2, max: count) {
+     let user = try createUser(index: i)
+     users.append(user)
     }
-
+    return users
   }
 
 }

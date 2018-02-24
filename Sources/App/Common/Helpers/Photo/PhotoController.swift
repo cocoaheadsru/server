@@ -20,10 +20,10 @@ struct PhotoController {
     else {
         throw Abort(.badRequest, reason: "Can't get photo from url: '\(url ?? "empty URL")'")
     }
-    return try downloadAndSavePhoto(for: userId, by: photoURL)
+    return try downloadAndSavePhoto(for: userId, with: photoURL)
   }
 
-  func downloadAndSavePhoto(for userId: String, by url: String) throws -> String {
+  func downloadAndSavePhoto(for userId: String, with url: String) throws -> String {
 
     let request = try drop.client.get(url)
     guard let photoBytes = request.body.bytes else {

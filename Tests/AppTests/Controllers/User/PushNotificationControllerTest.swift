@@ -104,7 +104,7 @@ extension PushNotificationControllerTest {
       to: .post,
       at: "user/notification",
       body: body,
-      bearer: try! user.token())
+      bearer: user.token!)
   }
 
   func cancelNotification(for user: User) throws -> Response {
@@ -117,7 +117,7 @@ extension PushNotificationControllerTest {
     return try! drop.userAuthorizedTestResponse(
       to: .delete,
       at: "user/notification/\(userId)",
-      bearer: try! user.token())
+      bearer: user.token!)
   }
   
 }

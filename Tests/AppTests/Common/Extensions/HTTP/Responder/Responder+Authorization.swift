@@ -92,7 +92,7 @@ extension Responder {
     } else {
       let user = User()
       try! user.save()
-      bearerToken += try! user.token()
+      bearerToken += user.token!
     }
 
     userHeaders[HTTP.HeaderKey.authorization] = bearerToken

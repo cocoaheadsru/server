@@ -21,6 +21,8 @@ extension Creator {
   }
 }
 
+extension Creator: ResponseRepresentable { }
+
 extension Creator: Preparation {
 
   static func prepare(_ database: Database) throws {

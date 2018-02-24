@@ -65,7 +65,7 @@ class UserControllerTests: TestCase {
     let user = try! storeUser()
     var updatedUserJSON = try! generatedUserJSON()
     try! updatedUserJSON.set("lastname", updatedLastName)
-    try! updatedUserJSON.set("token", try! user.token())
+    try! updatedUserJSON.set("token", user.token!)
 
     try sendPatchRequest(for: user.id!, with: updatedUserJSON)
     
@@ -88,7 +88,7 @@ class UserControllerTests: TestCase {
     try! json.set("company", newCompany)
     try! json.set("position", newPosition)
     try! json.set("email", newEmail)
-    try! json.set("token", try! user.token())
+    try! json.set("token", user.token!)
 
     let response = try! drop
       .userAuthorizedTestResponse(
@@ -145,7 +145,7 @@ extension UserControllerTests {
     return try! drop.userAuthorizedTestResponse(
       to: .get,
       at: "/user/\(user.id!.int!)",
-      bearer: try! user.token()
+      bearer: user.token!
     )
   }
   

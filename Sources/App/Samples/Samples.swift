@@ -13,6 +13,9 @@ extension Droplet {
     let userSample = UserSample(drop: self)
     try userSample.createSample()
 
+    let creatorSample = CreatorSample(drop: self)
+    try creatorSample.createSample()
+
   }
 
 }

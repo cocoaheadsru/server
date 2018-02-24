@@ -57,7 +57,7 @@ class UserPhotoTest: TestCase {
     let partPhoto = Part(headers: [:], body: filePhoto)
     let photo = Field(name: "photo", filename: fileName, part: partPhoto)
 
-    headers[HeaderKey.authorization] = "Bearer \(try user.token())"
+    headers[HeaderKey.authorization] = "Bearer \(user.token!)"
 
     let request = Request(method: .patch, uri: "http://0.0.0.0:8080/user/1", headers: headers)
     request.formData = ["photo": photo]
@@ -111,7 +111,7 @@ class UserPhotoTest: TestCase {
     
     let body = try! Body(node: [
       "photoURL": url,
-      "token": try! user.token()
+      "token": user.token!
     ])
 
     let response = try! postUserPhoto(body:  body).assertStatus(is: .ok)
@@ -129,7 +129,7 @@ class UserPhotoTest: TestCase {
     XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
 
   }
-//  Need ask Vapor's devteam how to get file from Public  from tests
+//  Need change the drop call to drop.foreground
 //  func testThatUserPhotoIsDownloadedFromServer() throws {
 //
 //    let fileName = "robot-1469114466kSY.jpg"
@@ -197,7 +197,7 @@ extension UserPhotoTest {
 
     let body = try! Body(node: [
       "photo": stringPhoto,
-      "token": try! user.token()
+      "token": user.token!
     ])
     return try! postUserPhoto(body:  body)
 

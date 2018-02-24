@@ -57,7 +57,7 @@ extension GiveSeechControllerTest {
       to: .post,
       at: "user/give-speech",
       body: body,
-      bearer: try! user.token())
+      bearer: user.token!)
   }
 
 }

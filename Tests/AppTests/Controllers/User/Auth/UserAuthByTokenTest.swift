@@ -32,7 +32,7 @@ class UserAuthByTokenTest: TestCase {
     let user = User()
     try! user.save()
 
-    let token = try! user.token()
+    let token = user.token!
     let bearer = "Bearer " + token
 
     let clientToken = drop.config["server", "client-token"]?.string ?? ""
@@ -61,7 +61,7 @@ class UserAuthByTokenTest: TestCase {
     let user = User()
     try! user.save()
 
-    let token = try! user.token()
+    let token = user.token!
     let bearer = "Bearer " + token
 
     let clientToken = drop.config["server", "client-token"]?.string ?? ""

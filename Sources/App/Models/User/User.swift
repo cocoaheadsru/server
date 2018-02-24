@@ -30,10 +30,12 @@ final class User: Model {
     set {
       guard
         let newToken = newValue,
+        // swiftlint:disable force_try
         let session = try! session()
       else {
         return
       }
+      // swiftlint:disable force_try
       session.token = newToken
       try! session.save()
     }
@@ -113,13 +115,6 @@ extension User: JSONRepresentable {
 
 // MARK: Token
 extension User {
-
-//  func token() throws -> String {
-//    guard let token = try session()?.token else {
-//      throw Abort(.internalServerError, reason: "User no have token")
-//    }
-//    return token
-//  }
 
   func updateSessionToken() throws {
     guard let session = try? self.session() else {
