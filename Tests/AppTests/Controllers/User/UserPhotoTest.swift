@@ -67,7 +67,7 @@ class UserPhotoTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhoto = updatedUser["photo"]?.string
+      let newPhoto = updatedUser["photo_url"]?.string
     else {
       XCTFail("Can't get updatedUser")
       return
@@ -86,7 +86,7 @@ class UserPhotoTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhotoURL = updatedUser["photo"]?.string,
+      let newPhotoURL = updatedUser["photo_url"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
     else {
         XCTFail("Can't get photo path")
@@ -118,7 +118,7 @@ class UserPhotoTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhotoURL = updatedUser["photo"]?.string,
+      let newPhotoURL = updatedUser["photo_url"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
       else {
         XCTFail("Can't get photo path")

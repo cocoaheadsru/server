@@ -3,10 +3,16 @@ import AuthProvider
 
 extension Droplet {
   func setupRoutes() throws {
-    let clientMiddlewareGroup = grouped(try ClientMiddleware(config: config))
+
+    let clientMiddlewareGroup = grouped([
+      try ClientMiddleware(config: config),
+      try PhotoURLMiddleware(config: config)
+    ])
+
     let userMiddlewareGroup = grouped([
       try ClientMiddleware(config: config),
-      TokenAuthenticationMiddleware(User.self)
+      TokenAuthenticationMiddleware(User.self),
+      try PhotoURLMiddleware(config: config)
     ])
 
     clientMiddlewareGroup.get("hello") { _ in

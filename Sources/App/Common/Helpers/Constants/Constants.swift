@@ -16,11 +16,12 @@ struct Constants {
 
   struct Middleware {
     static let client = "client-middleware"
+    static let photoURL = "photoURL-middleware"
   }
   
   struct Path {
     static let userPhotos = "user_photos"
-    static let creatorsPhotos = "creator_photos"
+    static let eventPhotos = "event_photos"
   }
 
   struct Status {

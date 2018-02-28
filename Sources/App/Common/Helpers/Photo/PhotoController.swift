@@ -11,6 +11,18 @@ struct PhotoController {
     self.drop = drop
   }
 
+  func downloadAndSavePhoto(for event: Event, with url: String?) throws -> String {
+
+    guard
+      let photoURL = url,
+      photoURL.isNotEmpty,
+      let eventId = event.id?.string
+    else {
+      throw Abort(.badRequest, reason: "Can't get photo from url: '\(url ?? "empty URL")'")
+    }
+    return try downloadAndSavePhoto(for: eventId, with: photoURL, folder: Constants.Path.eventPhotos)
+  }
+
   func downloadAndSavePhoto(for user: User, with url: String?) throws -> String {
 
     guard
@@ -23,7 +35,7 @@ struct PhotoController {
     return try downloadAndSavePhoto(for: userId, with: photoURL)
   }
 
-  func downloadAndSavePhoto(for userId: String, with url: String) throws -> String {
+  func downloadAndSavePhoto(for objectId: String, with url: String, folder: String = Constants.Path.userPhotos) throws -> String {
 
     let request = try drop.client.get(url)
     guard let photoBytes = request.body.bytes else {
@@ -35,12 +47,12 @@ struct PhotoController {
     }
 
     let filename = photoURL.lastPathComponent
-    try savePhoto(for: userId, photoBytes: photoBytes, filename: filename)
+    try savePhoto(for: objectId, photoBytes: photoBytes, filename: filename, folder: folder)
 
     return filename
   }
 
-  func savePhoto(for userId: String, photoAsString: String) throws -> String {
+  func savePhoto(for objectId: String, photoAsString: String, folder: String = Constants.Path.userPhotos) throws -> String {
 
     let filename = UUID().uuidString + ".png"
 
@@ -49,16 +61,16 @@ struct PhotoController {
     }
 
     let photoBytes = photo.makeBytes()
-    try savePhoto(for: userId, photoBytes: photoBytes, filename: filename)
+    try savePhoto(for: objectId, photoBytes: photoBytes, filename: filename, folder: folder)
 
     return filename
   }
 
-  func savePhoto(for userId: String, photoBytes: Bytes, filename: String) throws {
+  func savePhoto(for objectId: String, photoBytes: Bytes, filename: String, folder: String = Constants.Path.userPhotos) throws {
 
     let userDir = URL(fileURLWithPath: drop.config.publicDir)
-      .appendingPathComponent(Constants.Path.userPhotos)
-      .appendingPathComponent(userId)
+      .appendingPathComponent(folder)
+      .appendingPathComponent(objectId)
 
     let fileManager = FileManager.default
 

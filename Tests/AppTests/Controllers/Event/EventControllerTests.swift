@@ -87,8 +87,8 @@ class EventControllerTests: TestCase {
     let eventJSON1 = resAfter.json?.array?.first
     let eventJSON2 = resBefore.json?.array?.first
     
-    try assertEventHasExpectedFields(json: eventJSON1, event: event1)
-    try assertEventHasExpectedFields(json: eventJSON2, event: event2)
+    try! assertEventHasExpectedFields(json: eventJSON1, event: event1)
+    try! assertEventHasExpectedFields(json: eventJSON2, event: event2)
   }
   
   func testThatIndexEventsReturnsCorrectNumberOfPastEvents() throws {
@@ -204,7 +204,7 @@ fileprivate extension EventControllerTests {
     XCTAssertEqual(json?["id"]?.int, event.id?.int)
     XCTAssertEqual(json?["title"]?.string, event.title)
     XCTAssertEqual(json?["description"]?.string, event.description)
-    XCTAssertEqual(json?["photo_url"]?.string, event.photoUrl)
+    XCTAssertEqual(json?["photo_url"]?.string, event.photoURL()!)
     XCTAssertEqual(json?["is_registration_open"]?.bool, event.isRegistrationOpen)
     XCTAssertEqual(json?["start_date"]?.string, event.startDate.mysqlString)
     XCTAssertEqual(json?["end_date"]?.string, event.endDate.mysqlString)

@@ -57,7 +57,7 @@ extension Creator {
     guard let user = try? user() else {
       return nil
     }
-    return user?.photoURL
+    return user?.photoURL()
   }
 
 }

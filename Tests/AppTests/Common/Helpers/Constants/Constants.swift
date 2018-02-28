@@ -21,7 +21,7 @@ struct TestConstants {
   }
   
   struct Path {
-    static let userPhotosPath = "http://localhost:8080/user_photos/"
+    static let userPhotosPath = "user_photos/"
   }
   
 }

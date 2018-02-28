@@ -84,7 +84,16 @@ class UserAuthByTokenTest: TestCase {
       return
     }
 
-    XCTAssertEqual(returnedJSON, try! user.makeJSON())
+    let json = try! user.makeJSON()
+    guard
+      let photoURL = json["photo_url"]?.string else {
+      XCTFail("Can't get JSON for photo_url")
+      return
+    }
+
+    var returned =  returnedJSON
+    try! returned.set("photo_url", photoURL)
+    XCTAssertEqual(returned, try! user.makeJSON())
   }
 
 }

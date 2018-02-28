@@ -19,6 +19,7 @@ extension User {
     static let photo = "photo"
     static let email = "email"
     static let phone = "phone"
+    static let photoURL = "photo_url"
   }
 }
 

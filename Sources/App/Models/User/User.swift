@@ -92,25 +92,25 @@ extension User: JSONRepresentable {
     try? json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photoURL)
+    try? json.set(Keys.photoURL, photoURL())
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
     try json.set(Session.Keys.token, token)
     return json
   }
-  
-  var photoURL: String? {
+
+  // sourcery: nestedJSONField
+  func  photoURL() -> String? {
     guard
       let photoPath = self.photo,
-      let config = try? Config(),
-      let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
       let userId = self.id?.string
     else {
       return self.photo
     }
     let photosFolder = Constants.Path.userPhotos
-    return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"
+    return "\(photosFolder)/\(userId)/\(photoPath)"
   }
+
 }
 
 // MARK: Token
