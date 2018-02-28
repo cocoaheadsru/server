@@ -1,5 +1,7 @@
 import Vapor
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 final class CreatorSample {
 
   private let photoController: PhotoController

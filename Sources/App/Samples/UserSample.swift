@@ -1,5 +1,7 @@
 import Vapor
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 final class UserSample {
 
   private let photoController: PhotoController
@@ -26,10 +28,10 @@ final class UserSample {
       )
 
       let photoURL = "\(randomPhotoURL)\(Int.random(min: 0, max: 200))"
-      try user.save()
+      try! user.save()
       user.token = "test\(index)"
-      user.photo = try photoController.downloadAndSavePhoto(for: user, with: photoURL)
-      try user.save()
+      user.photo = try! photoController.downloadAndSavePhoto(for: user, with: photoURL)
+      try! user.save()
       return user
     }
 

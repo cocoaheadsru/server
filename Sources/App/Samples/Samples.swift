@@ -1,6 +1,8 @@
 import Vapor
 import AuthProvider
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 extension Droplet {
 
   func setupSamples() throws {
@@ -10,11 +12,18 @@ extension Droplet {
     }
 
     try truncateTables()
+
     let userSample = UserSample(drop: self)
-    try userSample.createSample()
+    try! userSample.createSample()
 
     let creatorSample = CreatorSample(drop: self)
-    try creatorSample.createSample()
+    try! creatorSample.createSample()
+
+    let eventSample = EventSample(drop: self)
+    try! eventSample.createSample()
+
+    let speakerSample = SpeakerSample()
+    try! speakerSample.createSample()
 
   }
 

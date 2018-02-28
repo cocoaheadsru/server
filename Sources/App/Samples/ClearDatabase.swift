@@ -1,20 +1,22 @@
 import Foundation
 
+//swiftlint:disable superfluous_disable_command
+//swiftlint:disable force_try
 extension Droplet {
 
-  internal func truncateTables() throws {
+   public func truncateTables() throws {
 
-     var _tableList: [String]?
+    var _tableList: [String]?
 
-     var tableForTruncate: [String] {
+    var tableForTruncate: [String] {
 
       if _tableList != nil {
         return _tableList!
       }
 
-      let db = try? self.assertDatabase()
+      let db = try! self.assertDatabase()
       // swiftlint:disable force_try
-      guard let nodes = try! db?.driver.makeConnection(.read).raw("SHOW TABLES;").array else {
+      guard let nodes = try! db.driver.makeConnection(.read).raw("SHOW TABLES;").array else {
         return []
       }
 
@@ -28,17 +30,18 @@ extension Droplet {
           json["Tables_in_\(dbName)"]?.string ?? ""
         }
         .filter({ (table) -> Bool in
-          table != "social"
+          table != "social" &&
+          table != "fluent"
         })
 
       return _tableList!
     }
 
-    guard  self.config.environment == .development else {
+    guard self.config.environment == .development else {
       return
     }
 
-    let db = try self.assertDatabase()
+    let db = try! self.assertDatabase()
 
     defer {
       // swiftlint:disable force_try
@@ -46,13 +49,13 @@ extension Droplet {
       print("Foreign key checks ON\n")
     }
 
-    try db.raw("SET FOREIGN_KEY_CHECKS = 0;")
+    try! db.raw("SET FOREIGN_KEY_CHECKS = 0;")
     print("\nForeign key checks OFF")
 
     var truncatedTableCount = 0
 
-    try tableForTruncate.forEach { (table) in
-      try db.raw("TRUNCATE \(table)")
+    tableForTruncate.forEach { (table) in
+      try! db.raw("TRUNCATE \(table)")
       truncatedTableCount += 1
     }
 
