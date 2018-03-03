@@ -41,7 +41,7 @@ class UserPhotoTest: TestCase {
 
   func testThatUserPhotoisUpdatedUsingFormDataContent() throws {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 
@@ -100,7 +100,7 @@ class UserPhotoTest: TestCase {
 
   func testThatUserPhotoIsUpdatedUsingPhotoAtURL() throws {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 
@@ -170,6 +170,14 @@ class UserPhotoTest: TestCase {
 
 extension UserPhotoTest {
 
+  @discardableResult
+  func storeUser() throws -> User {
+    let user = User()
+    try! user.save()
+    user.createSession()
+    return user
+  }
+
   func postUserPhoto(body: JSON) throws -> Response {
     return try! drop
       .userAuthorizedTestResponse(
@@ -181,7 +189,7 @@ extension UserPhotoTest {
 
   func postUserPhotoFromFileByBase64EncodedString(from fileName: String) throws -> Response {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 

@@ -92,6 +92,7 @@ extension Responder {
     } else {
       let user = User()
       try! user.save()
+      user.createSession()
       bearerToken += user.token!
     }
 

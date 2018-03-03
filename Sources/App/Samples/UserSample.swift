@@ -29,6 +29,7 @@ final class UserSample {
 
       let photoURL = "\(randomPhotoURL)\(Int.random(min: 0, max: 200))"
       try! user.save()
+      user.createSession()
       user.token = "test\(index)"
       user.photo = try! photoController.downloadAndSavePhoto(for: user, with: photoURL)
       try! user.save()

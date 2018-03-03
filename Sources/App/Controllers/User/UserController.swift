@@ -26,12 +26,13 @@ final class UserController {
       user.photo = photo
     }
     try user.save()
+    try updateSessionToken(for: user)
     return user
   }
   
   func updateSessionToken(for user: User) throws {
     do {
-      try user.session()?.updateToken()
+      try user.updateSessionToken()
     } catch {
       throw Abort.badRequest
     }

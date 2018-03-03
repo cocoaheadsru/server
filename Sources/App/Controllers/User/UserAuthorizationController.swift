@@ -28,23 +28,29 @@ final class UserAuthorizationController {
       throw Abort(.badRequest, reason: "Can't get 'social' from request")
     }
 
+    var user: User
     switch social {
     case Social.Nets.fb:
-      return try fb.createOrUpdateUserProfile(with: token)
+      user = try fb.createOrUpdateUserProfile(with: token)
     case Social.Nets.vk:
       guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
-      return try vk.createOrUpdateUserProfile(use: token, secret: secret)
+      user = try vk.createOrUpdateUserProfile(use: token, secret: secret)
     case Social.Nets.github:
       guard let secret = request.json?[RequestKeys.secret]?.string else {
         throw Abort(.badRequest, reason: "Can't get 'secret' from request")
       }
-      return try git.createOrUpdateUserProfile(with: token, secret: secret)
+      user = try git.createOrUpdateUserProfile(with: token, secret: secret)
     default:
       throw Abort(.badRequest, reason: "Wrong social id: \(social)")
     }
-
+    if user.token == nil {
+      user.createSession()
+    } else {
+      try user.updateSessionToken()
+    }
+    return user
   }
 
 }

@@ -14,6 +14,7 @@ final class UserSessionHelper {
       
       let user = User()
       try! user.save()
+      user.createSession()
 
     }
   }

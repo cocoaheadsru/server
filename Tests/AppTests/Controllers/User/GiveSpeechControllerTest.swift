@@ -24,6 +24,7 @@ class GiveSeechControllerTest: TestCase {
 
     let user = User()
     try! user.save()
+    user.createSession()
 
     let title = String.randomValue
     let description = String.randomValue + "\n" + String.randomValue + "\n" + String.randomValue

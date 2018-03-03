@@ -21,16 +21,13 @@ class UserAuthByTokenTest: TestCase {
   }
 
   func testThatGotUnauthorizedWithEmptyAccessToken() throws {
-    let user = User()
-    try! user.save()
-
+    try! createUser()
     let res = try! drop.clientAuthorizedTestResponse(to: .get, at: "user/1")
     res.assertStatus(is: .unauthorized)
   }
 
   func testThatGotUnauthorizedWithIncorrectAccessToken() throws {
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
     let token = user.token!
     let bearer = "Bearer " + token
@@ -58,8 +55,7 @@ class UserAuthByTokenTest: TestCase {
   }
 
   func testThatGotAccessWithCorrectAccessToken() throws {
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
     let token = user.token!
     let bearer = "Bearer " + token
@@ -96,4 +92,14 @@ class UserAuthByTokenTest: TestCase {
     XCTAssertEqual(returned, try! user.makeJSON())
   }
 
+}
+
+extension UserAuthByTokenTest {
+  @discardableResult
+  func createUser() throws -> User {
+    let user = User()
+    try user.save()
+    user.createSession()
+    return user
+  }
 }

@@ -25,6 +25,9 @@ extension Droplet {
     let speakerSample = SpeakerSample()
     try! speakerSample.createSample()
 
+    let regFormSample = RegFormSample()
+    try! regFormSample.createSample()
+
   }
 
 }

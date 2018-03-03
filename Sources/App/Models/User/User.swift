@@ -122,6 +122,16 @@ extension User {
     }
     try session?.updateToken()
   }
+
+  func createSession() {
+    do {
+      let session = try Session(user: self)
+      try session.save()
+    } catch {
+      try? self.delete()
+    }
+  }
+
 }
 
 // MARK: Relations
@@ -138,24 +148,7 @@ extension User {
   func session() throws -> Session? {
     return try sessions.first()
   }
-
-}
-
-// MARK: Lifecycle
-extension User {
-  func didCreate() {
-    do {
-      let session = try Session(user: self)
-      try session.save()
-    } catch {
-      try? self.delete()
-    }
-  }
-
-  func didUpdate() {
-    try? updateSessionToken()
-  }
-
+  
 }
 
 // MARK: TokenAuthenticationMiddleware

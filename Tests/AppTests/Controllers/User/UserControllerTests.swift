@@ -137,6 +137,7 @@ extension UserControllerTests {
   func storeUser() throws -> User {
     let user = User()
     try! user.save()
+    user.createSession()
     return user
   }
 

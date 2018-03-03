@@ -49,7 +49,7 @@ extension Speaker: JSONRepresentable {
       throw Abort(.internalServerError, reason: "Speaker doesn't have associated User")
     }
     var json = JSON(json: userJSON)
-    try json.set(Keys.id, id)
+    json.removeKey(Session.Keys.token)
     return json
   }
 }
