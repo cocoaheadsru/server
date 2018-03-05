@@ -178,19 +178,19 @@ class EventSpeechControllerTests: TestCase {
     try! storeSpeech(for: eventId)
     
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(id)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(id)/speech")
       .assertStatus(is: .ok)
   }
   
   func testThatGetSpeechesRouteFailsForEmptyTable() throws {
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(Int.randomValue)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(Int.randomValue)/speech")
       .assertStatus(is: .notFound)
   }
   
   func testThatGetSpeechesRouteFailsWithNonIntParameterValue() throws {
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(EventSpeechHelper.invalidParameterValue)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(EventSpeechHelper.invalidParameterValue)/speech")
       .assertStatus(is: .badRequest)
   }
 }

@@ -106,7 +106,7 @@ extension PushNotificationControllerTest {
   func subscribeNotification(for user: User, with body: JSON) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .post,
-      at: "user/notification",
+      at: "api/user/notification",
       body: body,
       bearer: user.token!)
   }
@@ -120,7 +120,7 @@ extension PushNotificationControllerTest {
 
     return try! drop.userAuthorizedTestResponse(
       to: .delete,
-      at: "user/notification/\(userId)",
+      at: "api/user/notification/\(userId)",
       bearer: user.token!)
   }
   

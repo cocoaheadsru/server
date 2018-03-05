@@ -129,26 +129,26 @@ class EventControllerTests: TestCase {
     
   func testThatGetEventsBeforeTimestampRouteReturnsOkStatus() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: "before=\(Date.randomValue.mysqlString)")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event", query: "before=\(Date.randomValue.mysqlString)")
       .assertStatus(is: .ok)
   }
   
   func testThatGetEventsAfterTimestampRouteReturnsOkStatus() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: "after=\(Date.randomValue.mysqlString)")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event", query: "after=\(Date.randomValue.mysqlString)")
       .assertStatus(is: .ok)
   }
   
   func testThatGetEventsRouteFailsForEmptyQueryParameters() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event")
       .assertStatus(is: .badRequest)
   }
   
   func testThatGetEventsRouteFailsWithWrongQueryParameterKey() throws {
     let query = "\(EventHelper.invalidQueryKeyParameter)=\(Date.randomValue.mysqlString)"
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: query)
+      .clientAuthorizedTestResponse(to: .get, at: "api/event", query: query)
       .assertStatus(is: .badRequest)
   }
   
@@ -156,7 +156,7 @@ class EventControllerTests: TestCase {
     let validKey = Bool.randomValue ? "after" : "before"
     let query = "\(validKey)=\(EventHelper.invalidQueryValueParameter)"
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "event", query: query)
+      .clientAuthorizedTestResponse(to: .get, at: "api/event", query: query)
       .assertStatus(is: .badRequest)
   }
 }

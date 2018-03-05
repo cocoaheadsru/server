@@ -93,7 +93,7 @@ class UserControllerTests: TestCase {
     let response = try! drop
       .userAuthorizedTestResponse(
         to: .patch,
-        at: "/user/\((user.id?.int)!)",
+        at: "api/user/\((user.id?.int)!)",
         body: json)
 
     try! response.assertJSON("name", equals: newName)
@@ -145,7 +145,7 @@ extension UserControllerTests {
   func sendGetRequest(for user: User) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .get,
-      at: "/user/\(user.id!.int!)",
+      at: "api/user/\(user.id!.int!)",
       bearer: user.token!
     )
   }
@@ -154,7 +154,7 @@ extension UserControllerTests {
   func sendPatchRequest(for id: Identifier, with json: JSON) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .patch,
-      at: "/user/\(id.int!)",
+      at: "api/user/\(id.int!)",
       body: json)
   }
 }

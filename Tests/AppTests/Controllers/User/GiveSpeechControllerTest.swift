@@ -56,7 +56,7 @@ extension GiveSeechControllerTest {
   func postSpeech(for user: User, with body: JSON) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .post,
-      at: "user/give-speech",
+      at: "api/user/give-speech",
       body: body,
       bearer: user.token!)
   }

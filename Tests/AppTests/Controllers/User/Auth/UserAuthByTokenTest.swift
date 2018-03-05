@@ -22,7 +22,7 @@ class UserAuthByTokenTest: TestCase {
 
   func testThatGotUnauthorizedWithEmptyAccessToken() throws {
     try! createUser()
-    let res = try! drop.clientAuthorizedTestResponse(to: .get, at: "user/1")
+    let res = try! drop.clientAuthorizedTestResponse(to: .get, at: "api/user/1")
     res.assertStatus(is: .unauthorized)
   }
 
@@ -49,7 +49,7 @@ class UserAuthByTokenTest: TestCase {
 
    try! drop.clientAuthorizedTestResponse(
       to: .get,
-      at: "user/1",
+      at: "api/user/1",
       headers: headers)
     .assertStatus(is: .unauthorized)
   }
@@ -70,7 +70,7 @@ class UserAuthByTokenTest: TestCase {
 
     let res = try! drop.clientAuthorizedTestResponse(
       to: .get,
-      at: "user/1",
+      at: "api/user/1",
       headers: headers)
 
     res.assertStatus(is: .ok)

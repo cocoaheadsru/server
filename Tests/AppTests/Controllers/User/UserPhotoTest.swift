@@ -59,7 +59,7 @@ class UserPhotoTest: TestCase {
 
     headers[HeaderKey.authorization] = "Bearer \(user.token!)"
 
-    let request = Request(method: .patch, uri: "http://0.0.0.0:8080/user/1", headers: headers)
+    let request = Request(method: .patch, uri: "http://0.0.0.0:8080/api/user/1", headers: headers)
     request.formData = ["photo": photo]
     
     let response = try drop.respond(to: request)
@@ -182,7 +182,7 @@ extension UserPhotoTest {
     return try! drop
       .userAuthorizedTestResponse(
         to: .patch,
-        at: "user/1",
+        at: "api/user/1",
         body: body,
         bearer: body["token"]?.string)
   }

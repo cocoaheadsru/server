@@ -23,7 +23,7 @@ class GetRegFormTests: TestCase {
   func testThatRegFormGetNotFoundForWrongEventId() throws {
     let wrongEventId = -1
     try drop
-      .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
+      .userAuthorizedTestResponse(to: .get, at: "api/event/\(wrongEventId)/form")
       .assertStatus(is: .internalServerError)
       .assertJSON("reason", contains: "Can't find RegForm by event_id:")
   }
@@ -31,7 +31,7 @@ class GetRegFormTests: TestCase {
   func testThatRegFormGetBadReguestForBadEventId() throws {
     let wrongEventId = "1,3"
     try drop
-      .userAuthorizedTestResponse(to: .get, at: "event/\(wrongEventId)/form")
+      .userAuthorizedTestResponse(to: .get, at: "api/event/\(wrongEventId)/form")
       .assertStatus(is: .badRequest)
       .assertJSON("reason", contains: "EventId parameters is missing in URL request")
   }
@@ -104,7 +104,7 @@ class GetRegFormTests: TestCase {
     
     try! drop
       //act
-      .userAuthorizedTestResponse(to: .get, at: "event/\(eventId)/form")
+      .userAuthorizedTestResponse(to: .get, at: "api/event/\(eventId)/form")
       //assert
       .assertStatus(is: .ok)
       .assertJSON("", equals: expected)

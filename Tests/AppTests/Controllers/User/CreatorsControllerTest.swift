@@ -50,7 +50,7 @@ extension CreatorsControllerTest {
   func getCreators() throws -> Response {
     return try! drop.clientAuthorizedTestResponse(
       to: .get,
-      at: "user/creators"
+      at: "api/user/creators"
     )
   }
 
