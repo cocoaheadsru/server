@@ -28,18 +28,6 @@ final class FrontendAPICollection: RouteCollection {
       try PhotoURLMiddleware(config: config)
     ])
 
-    // MARK: BaseTest
-    clientMiddlewareGroup.get("hello") { _ in
-      var json = JSON()
-      try json.set("hello", "world")
-      return json
-    }
-
-    clientMiddlewareGroup.get("plaintext") { _ in
-      return "Hello, world!"
-    }
-
-
     // MARK: Event
     try clientMiddlewareGroup.resource("event", EventController.self)
     try clientMiddlewareGroup.resource("event/:id/speech", EventSpeechController.self)
@@ -56,6 +44,10 @@ final class FrontendAPICollection: RouteCollection {
 
     try userMiddlewareGroup.resource("user/notification", PushNotificationController.self)
     try userMiddlewareGroup.resource("user/give-speech", GiveSpeechController.self)
+
+    // MARK: Creators
+    try clientMiddlewareGroup.resource("user/creators", CreatorsController.self)
+
   }
   
 }

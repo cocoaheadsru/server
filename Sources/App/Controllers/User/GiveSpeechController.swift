@@ -5,7 +5,7 @@ import Multipart
 
 final class GiveSpeechController {
 
-  func subscribe(_ request: Request) throws -> ResponseRepresentable {
+  func storeRequest(_ request: Request) throws -> ResponseRepresentable {
 
     guard
       let json = request.json,
@@ -31,7 +31,7 @@ extension GiveSpeechController: ResourceRepresentable {
 
   func makeResource() -> Resource<GiveSpeech> {
     return Resource(
-      store: subscribe
+      store: storeRequest
     )
   }
 }

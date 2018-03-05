@@ -24,7 +24,7 @@ final class RegFormSample {
 
       try! regForm.save()
 
-      for _ in 1...Int.random(min: 2, max: 5) {
+      for _ in 1...Int.random(min: 2, max: 3) {
 
         let type = ["checkbox", "radio", "string"].randomValue
 
@@ -38,7 +38,7 @@ final class RegFormSample {
 
         try! regField.save()
 
-        for _ in 1...Int.random(min: 2, max: 5) {
+        for _ in 1...Int.random(min: 2, max: 3) {
           let regFiedlAnswers = RegFieldAnswer(
             value: String.randomValue,
             regFieldId: regField.id!)

@@ -20,7 +20,7 @@ extension RegistrationController {
   
   func checkRequired(fieldId: Identifier, answerCount: Int) throws -> Bool {
     guard let fieldRequired = try RegField.find(fieldId)?.required else {
-      throw Abort.serverError
+      throw Abort(.internalServerError, reason: "Can't get fieldId")
     }
     
     if fieldRequired {

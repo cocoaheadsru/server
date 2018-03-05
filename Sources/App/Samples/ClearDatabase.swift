@@ -29,10 +29,10 @@ extension Droplet {
         .map { (json) -> String in
           json["Tables_in_\(dbName)"]?.string ?? ""
         }
-        .filter({ (table) -> Bool in
+        .filter { (table) -> Bool in
           table != "social" &&
           table != "fluent"
-        })
+        }
 
       return _tableList!
     }

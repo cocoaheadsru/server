@@ -61,7 +61,7 @@ final class EventSample {
       events.append(event)
     }
 
-    for _ in 1...Int.random(min: 2, max: pastCount) {
+    for _ in 1...Int.random(min: 2, max: comingCount) {
       let event = try! storeComingEvent()
       events.append(event)
     }

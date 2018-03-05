@@ -13,10 +13,15 @@ final class  RegistrationController {
       throw Abort(.internalServerError, reason: "Can't get user.id")
     }
     
-    guard let regFormId = try request.json?.get(Keys.regFormId) as Identifier! else {
-      throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
+    guard
+      let json = request.json,
+      let regFormIdInt  = json[Keys.regFormId]?.int
+    else {
+      throw Abort(.internalServerError, reason: "Can't get 'reg_form_Id' from request")
     }
-  
+
+    let regFormId = Identifier(.int(regFormIdInt))
+
     guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
       throw Abort(
         .internalServerError,
