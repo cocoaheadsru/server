@@ -5,7 +5,12 @@ import Fluent
 final class  RegistrationController {
   
   let autoapprove = try? AutoapproveController()
-  
+  let drop: Droplet
+
+  init(drop: Droplet) {
+    self.drop = drop
+  }
+
   func store(_ request: Request) throws -> ResponseRepresentable {
 
     let user = try request.user()
@@ -34,15 +39,17 @@ final class  RegistrationController {
     else {
       throw Abort(.internalServerError, reason: "Can't check autoapprove status")
     }
-    
+
     let eventReg = EventReg(
       regFormId: regFormId,
       userId: userId,
       status: grandApprove ? EventReg.RegistrationStatus.approved : EventReg.RegistrationStatus.waiting)
-    try eventReg.save()
 
-    try storeEventRegAnswers(request, eventReg: eventReg)
-    
+    try drop.mysql().transaction { (connection)  in
+      try eventReg.makeQuery(connection).save()
+      try storeEventRegAnswers(request, eventReg: eventReg, connection: connection)
+    }
+
     return eventReg
   }
 
@@ -73,5 +80,3 @@ extension RegistrationController: ResourceRepresentable {
     )
   }
 }
-
-extension RegistrationController: EmptyInitializable { }

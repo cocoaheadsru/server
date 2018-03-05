@@ -33,7 +33,9 @@ final class FrontendAPICollection: RouteCollection {
     try clientMiddlewareGroup.resource("event/:id/speech", EventSpeechController.self)
 
     try userMiddlewareGroup.resource("event/:id/form", RegistrationFormController.self)
-    try userMiddlewareGroup.resource("event/register", RegistrationController.self)
+
+    let registrationController = RegistrationController(drop: drop)
+    userMiddlewareGroup.resource("event/register", registrationController)
 
     // MARK: User
     let userAuthorizationController = UserAuthorizationController(drop: drop)
