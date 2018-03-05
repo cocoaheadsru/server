@@ -75,11 +75,7 @@ struct PhotoController {
     let fileManager = FileManager.default
 
     if fileManager.fileExists(atPath: userDir.path) {
-      let filenames = try fileManager.contentsOfDirectory(atPath: userDir.path)
-      for name in filenames {
-        let fileURL = userDir.appendingPathComponent(name)
-        try fileManager.removeItem(at: fileURL)
-      }
+      try fileManager.removeAllFiles(at: userDir)
     } else {
       try fileManager.createDirectory(at: userDir, withIntermediateDirectories: true, attributes: nil)
     }
