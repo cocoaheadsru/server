@@ -40,9 +40,11 @@ extension Social {
     static let accessToken = "access_token"
     static let sig = "sig"
     static let secret = "secret"
+    static let version = "v"
+    static let versionValue = "5.73"
     struct Profile {
       static let response = "response"
-      static let socialUserId = "uid"
+      static let socialUserId = "id"
       static let name = "first_name"
       static let lastname = "last_name"
       static let photo = "photo_max"

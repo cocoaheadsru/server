@@ -39,7 +39,8 @@ struct VkontakteConfig {
   }
 
   func getSignatureBased(on token: String, and secret: String)throws -> String {
-    let urlForSignature = "\(method)?\(vk.fields)=\(fields)&\(vk.accessToken)=\(token + secret)"
+    let urlForSignature = "\(method)?\(vk.fields)=\(fields)&\(vk.version)=\(vk.versionValue)&\(vk.accessToken)=\(token + secret)"
+    print(urlForSignature)
     return try CryptoHasher.makeMD5(from: urlForSignature)
   }
 

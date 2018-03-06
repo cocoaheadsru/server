@@ -57,7 +57,7 @@ class EventSpeechControllerTests: TestCase {
     
     let speakersJSON = speechJSON?["speakers"]?.array
     let speakerJSON = speakersJSON?.first
-    XCTAssertNotNil(speakerJSON?["id"])
+    XCTAssertNotNil(speakerJSON?["user_id"])
     XCTAssertNotNil(speakerJSON?["name"])
     XCTAssertNotNil(speakerJSON?["lastname"])
     XCTAssertNotNil(speakerJSON?["photo_url"])
@@ -103,7 +103,7 @@ class EventSpeechControllerTests: TestCase {
     XCTAssertEqual(speechJSON?["description"]?.string, speech.description)
     
     let speakerJSON = speechJSON?["speakers"]?.array?.first
-    XCTAssertEqual(speakerJSON?["id"]?.int, speaker.id?.int)
+    XCTAssertEqual(speakerJSON?["user_id"]?.int, user.id?.int)
     XCTAssertEqual(speakerJSON?["name"]?.string, user.name)
     XCTAssertEqual(speakerJSON?["lastname"]?.string, user.lastname)
     XCTAssertEqual(speakerJSON?["photo_url"]?.string, photoPath)

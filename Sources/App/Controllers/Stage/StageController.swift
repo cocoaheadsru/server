@@ -3,16 +3,15 @@ import HTTP
 
 final class StageController {
 
-  private let drop: Droplet
+  private let sample: Samples
 
   init(drop: Droplet) {
-    self.drop = drop
-
+    self.sample = Samples(drop: drop)
   }
 
   func store(request: Request) throws -> ResponseRepresentable {
-    try drop.setupSamples()
-    return try Response( .ok, message: "Stage was (re)created")
+    try sample.create()
+    return try Response( .ok, message: "Stage was recreated")
   }
 }
 

@@ -2,7 +2,9 @@ import Vapor
 import HTTP
 
 final class PhotoURLMiddleware: Middleware {
+
   let domain: String
+
   init(_ domain: String) {
     self.domain = domain
   }
@@ -11,7 +13,8 @@ final class PhotoURLMiddleware: Middleware {
     let response = try next.respond(to: request)
 
     if let array = response.json?.array {
-
+      // this is Event
+      
       let arrayWithPhotoURL = try array.map { (element) -> StructuredData in
         var result = element
 

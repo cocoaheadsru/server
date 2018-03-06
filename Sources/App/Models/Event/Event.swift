@@ -69,7 +69,7 @@ extension Event {
         try json.set(Keys.id, id)
         try json.set(Keys.title, title)
         try json.set(Keys.description, description)
-        try json.set(Keys.photoURL, photoURL())
+        try? json.set(Keys.photoURL, photoURL())
         try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
         try json.set(Keys.startDate, startDate.mysqlString)
         try json.set(Keys.endDate, endDate.mysqlString)

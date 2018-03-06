@@ -4,18 +4,14 @@ import Fluent
 
 final class UserAuthorizationController {
 
-  private let drop: Droplet
-  private let config: Config
   private let fb: FacebookController
   private let vk: VkontakteController
   private let git: GithubController
   
   init(drop: Droplet) {
-    self.drop = drop
-    self.config = drop.config
-    fb = FacebookController(drop: self.drop)
-    vk = VkontakteController(drop: self.drop)
-    git = GithubController(drop: self.drop)
+    fb = FacebookController(drop: drop)
+    vk = VkontakteController(drop: drop)
+    git = GithubController(drop: drop)
   }
 
   func store(_ request: Request) throws -> ResponseRepresentable {
@@ -29,6 +25,7 @@ final class UserAuthorizationController {
     }
 
     var user: User
+
     switch social {
     case Social.Nets.fb:
       user = try fb.createOrUpdateUserProfile(with: token)
@@ -45,11 +42,13 @@ final class UserAuthorizationController {
     default:
       throw Abort(.badRequest, reason: "Wrong social id: \(social)")
     }
+
     if user.token == nil {
       user.createSession()
     } else {
       try user.updateSessionToken()
     }
+
     return user
   }
 
