@@ -2,7 +2,7 @@
   "api_url": "https://api.vk.com/",
   "method": "/method/users.get",
   "fields": "photo_max,city,verified",
-  "//": "For tests",
-  "secret": "c5f95b290abdefb7fb",
-  "access_token": "40304fc324619460dfb8e2b39d80ead4ecbca2129f3d0e06e20ce155c6506744218bacdae41681ac83553"
+  "//": "For tests", 
+  "secret": "7a24164e7bdb225b5f",
+  "access_token": "0dfb80d566999b0aa844cb15ce87909115d431a294bf5d835f2c8d78e5544e5822ed5d5359af812491355"
 }

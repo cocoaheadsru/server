@@ -42,16 +42,18 @@ final class VkontakteController {
 
   fileprivate func getUserProfile(with token: String, secret: String) throws -> (user: User, socialUserId: String) {
 
-    let signature = try config.getSignatureBased(on: token, and: secret) //try CryptoHasher.makeMD5(from: urlForSignature)
+    let signature = try config.getSignatureBased(on: token, and: secret)
     let userInfo = try drop.client.get(config.userInfoURL, query: [
       vk.fields: config.fields,
       vk.accessToken: token,
-      vk.sig: signature
+      vk.sig: signature,
+      vk.version: vk.versionValue
     ])
 
     let profile = vk.Profile.self
     guard
-      let response = userInfo.json?[profile.response]?.array?.first,
+      let json =  userInfo.json,
+      let response = json[profile.response]?.array?.first,
       let socialUserId = response[profile.socialUserId]?.string,
       let name = response[profile.name]?.string,
       let lastname = response[profile.lastname]?.string,
