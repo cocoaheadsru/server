@@ -2,19 +2,9 @@ import Vapor
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-final class CreatorSample {
+extension Samples {
 
-  private let photoController: PhotoController
-  private let drop: Droplet
-  private let userSample: UserSample
-
-  init(drop: Droplet) {
-    self.drop = drop
-    photoController = PhotoController(drop: self.drop)
-    userSample = UserSample(drop: drop)
-  }
-
-  func createSample() throws {
+  func createCreatorSample() throws {
 
     func createCreator(user: User) throws {
 
@@ -27,10 +17,9 @@ final class CreatorSample {
       )
 
       try creator.save()
-
     }
 
-    try userSample.createSample(count: 10).forEach { (user) in
+    try createUserSample(count: 10).forEach { (user) in
       try createCreator(user: user)
     }
 

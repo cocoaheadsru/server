@@ -2,19 +2,13 @@ import Vapor
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-final class EventSample {
-
-  private let photoController: PhotoController
-  private let drop: Droplet
-  private let randomPhotoURL = "https://picsum.photos/200/300?image="
-  
-  init(drop: Droplet) {
-    self.drop = drop
-    photoController = PhotoController(drop: self.drop)
-  }
+extension Samples {
 
   @discardableResult
-  func createSample(pastCount: Int = 30, comingCount: Int = 1) throws -> [Event] {
+  func createEventSample(pastCount: Int = 30, comingCount: Int = 1) throws -> [Event] {
+
+    let photoController = PhotoController(drop: drop)
+    let randomPhotoURL = "https://picsum.photos/200/300?image="
 
     func storePastEvent() throws -> Event {
       return try! storeEvent(date: Date.randomValueInPast, isRegistrationOpen: false)

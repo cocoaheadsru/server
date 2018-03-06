@@ -2,9 +2,9 @@ import Foundation
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-extension Droplet {
+extension Samples {
 
-   public func truncateTables() throws {
+  func truncateTables() throws {
 
     var _tableList: [String]?
 
@@ -14,7 +14,7 @@ extension Droplet {
         return _tableList!
       }
 
-      let db = try! self.assertDatabase()
+      let db = try! drop.assertDatabase()
       // swiftlint:disable force_try
       guard let nodes = try! db.driver.makeConnection(.read).raw("SHOW TABLES;").array else {
         return []
@@ -24,7 +24,7 @@ extension Droplet {
         return JSON(node: node)
       }
 
-      let dbName = self.config["mysql", "database"]?.string ?? ""
+      let dbName = drop.config["mysql", "database"]?.string ?? ""
       _tableList = jsons
         .map { (json) -> String in
           json["Tables_in_\(dbName)"]?.string ?? ""
@@ -37,11 +37,11 @@ extension Droplet {
       return _tableList!
     }
 
-    guard self.config.environment == .development else {
+    guard drop.config.environment == .development else {
       return
     }
 
-    let db = try! self.assertDatabase()
+    let db = try! drop.assertDatabase()
 
     defer {
       // swiftlint:disable force_try

@@ -2,18 +2,13 @@ import Vapor
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-final class UserSample {
+extension Samples {
 
-  private let photoController: PhotoController
-  private let drop: Droplet
-  private let randomPhotoURL = "https://picsum.photos/200/300?image="
-
-  init(drop: Droplet) {
-    self.drop = drop
-    photoController = PhotoController(drop: self.drop)
-  }
   @discardableResult
-  func createSample(count: Int = 5) throws -> [User] {
+  func createUserSample(count: Int = 5) throws -> [User] {
+
+    let photoController = PhotoController(drop: drop)
+    let randomPhotoURL = "https://picsum.photos/200/300?image="
 
     func createUser(index: Int) throws -> User {
 

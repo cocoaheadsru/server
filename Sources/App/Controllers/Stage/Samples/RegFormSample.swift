@@ -2,20 +2,15 @@ import Vapor
 import Foundation
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-final class RegFormSample {
+extension Samples {
 
-  private let events: [Event]
+  func createRegFormSample() throws {
 
-  init() {
-    self.events = try! Event
+    try! Event
       .makeQuery()
       .filter(Event.Keys.endDate, .greaterThanOrEquals, Date())
       .all()
-  }
-
-  func createSample() throws {
-
-    events.forEach { (event)  in
+      .forEach { (event)  in
 
       let regForm = RegForm(
         eventId: event.id!,

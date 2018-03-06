@@ -2,21 +2,17 @@ import Vapor
 
 //swiftlint:disable superfluous_disable_command
 //swiftlint:disable force_try
-final class SpeakerSample {
+extension Samples {
 
-  private let users: [User]
-  private let events: [Event]
+  func createSpeakerSample() throws {
 
-  init() {
-    self.users = try! User.all()
-    self.events = try! Event.all()
-  }
-  
-  func createSample() throws {
+    let users: [User] = try! User.all()
+    let events: [Event] =  try! Event.all()
 
     events.forEach { (event)  in
       
       for _ in  1...Int.random(min: 2, max:5) {
+
         //speech
         let speech = Speech(
           eventId: event.id!,
@@ -45,7 +41,8 @@ final class SpeakerSample {
 
         // speaker(s)
         let usersShuffled = users.shuffled()
-        for i in  0...Int.random(min: 1, max: usersShuffled.count - 1 < 2 ? usersShuffled.count - 1 : 2) {
+        let range = 0...Int.random(min: 1, max: usersShuffled.count - 1 < 2 ? usersShuffled.count - 1 : 2)
+        for i in range {
 
           let speaker = Speaker(
             userId: usersShuffled[i].id!,
