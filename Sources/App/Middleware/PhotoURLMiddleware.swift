@@ -15,7 +15,7 @@ final class PhotoURLMiddleware: Middleware {
     if let array = response.json?.array {
       // this is Event
       
-      let arrayWithPhotoURL = try array.map { (element) -> StructuredData in
+      let arrayWithPhotoURL = try array.map { element -> StructuredData in
         var result = element
 
         if let photoWithPath = element[User.Keys.photoURL]?.string {
@@ -25,7 +25,7 @@ final class PhotoURLMiddleware: Middleware {
 
         if let speakersPhoto  = element[Event.Keys.speakersPhotos]?.array {
 
-          let speakersPhotoURL = speakersPhoto.map { (speackerPhoto) -> String? in
+          let speakersPhotoURL = speakersPhoto.map { speackerPhoto -> String? in
             guard let photo = speackerPhoto.string else {
               return nil
             }

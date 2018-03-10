@@ -6,12 +6,12 @@ extension Samples {
 
   func truncateTables() throws {
 
-    var _tableList: [String]?
+    var tableList: [String]?
 
     var tableForTruncate: [String] {
 
-      if _tableList != nil {
-        return _tableList!
+      if tableList != nil {
+        return tableList!
       }
 
       let db = try! drop.assertDatabase()
@@ -20,21 +20,21 @@ extension Samples {
         return []
       }
 
-      let jsons = nodes.map { (node) -> JSON in
+      let jsons = nodes.map { node -> JSON in
         return JSON(node: node)
       }
 
       let dbName = drop.config["mysql", "database"]?.string ?? ""
-      _tableList = jsons
-        .map { (json) -> String in
+      tableList = jsons
+        .map { json -> String in
           json["Tables_in_\(dbName)"]?.string ?? ""
         }
-        .filter { (table) -> Bool in
+        .filter { table -> Bool in
           table != "social" &&
           table != "fluent"
         }
 
-      return _tableList!
+      return tableList!
     }
 
     guard drop.config.environment == .development else {

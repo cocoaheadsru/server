@@ -4,26 +4,26 @@ extension FileManager {
 
   func removeAllFiles(atPath: String) throws {
 
-    guard self.fileExists(atPath: atPath) else {
+    guard fileExists(atPath: atPath) else {
       return
     }
 
-    try self.contentsOfDirectory(atPath: atPath).forEach { (filename) in
-      let fileForRemove = atPath + filename
-      try self.removeItem(atPath: fileForRemove)
+    try contentsOfDirectory(atPath: atPath).forEach { filename in
+      let filePathToRemove = atPath + filename
+      try removeItem(atPath: filePathToRemove)
     }
 
   }
 
   func removeAllFiles(at dir: URL) throws {
 
-    guard self.fileExists(atPath: dir.path) else {
+    guard fileExists(atPath: dir.path) else {
       return
     }
 
-    try self.contentsOfDirectory(atPath: dir.path).forEach { (filename) in
-      let fileForRemove = dir.appendingPathComponent(filename)
-      try self.removeItem(at: fileForRemove)
+    try contentsOfDirectory(atPath: dir.path).forEach { filename in
+      let filePathToRemove = dir.appendingPathComponent(filename)
+      try removeItem(at: filePathToRemove)
     }
 
   }

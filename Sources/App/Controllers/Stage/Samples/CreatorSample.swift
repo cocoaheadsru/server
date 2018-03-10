@@ -19,10 +19,9 @@ extension Samples {
       try creator.save()
     }
 
-    try createUserSample(count: 10).forEach { (user) in
+    try createUserSample(count: 10).forEach { user in
       try createCreator(user: user)
     }
-
   }
 
 }

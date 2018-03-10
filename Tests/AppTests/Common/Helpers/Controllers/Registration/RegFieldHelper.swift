@@ -32,6 +32,9 @@ final class RegFieldHelper {
         try! regField.save()
         regFields.append(regField)
       }
+      let regField = regFields.randomValue
+      regField.required = true
+      try! regField.save()
     }
     return regFields
   }

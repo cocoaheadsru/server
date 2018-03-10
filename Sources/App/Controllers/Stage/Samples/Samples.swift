@@ -17,7 +17,7 @@ extension Samples {
 
   func create() throws {
 
-    guard  drop.config.environment == .development else {
+    guard drop.config.environment == .development else {
       return
     }
 
@@ -27,7 +27,6 @@ extension Samples {
     try createEventSample()
     try createSpeakerSample()
     try createRegFormSample()
-
   }
 
 }
