@@ -5,7 +5,6 @@ import Fluent
 final class GithubController {
 
   private let drop: Droplet
- // private let config: Config
   private let photoController: PhotoController
   private let git = Social.Github.self
   private let config: GithubConfig
@@ -82,12 +81,15 @@ final class GithubController {
     ])
 
     let profile = git.Profile.self
+    guard let response = userInfo.json else {
+       throw Abort(.internalServerError, reason: "Can't get json from github answer")
+    }
+
     guard
-      let response = userInfo.json,
       let login = response[profile.login]?.string,
       let photo = response[profile.photo]?.string
     else {
-        throw Abort(.badRequest, reason: "Can't get user profile from Github")
+        throw Abort(.badRequest, reason: "Can't get user profile from Github \n \(try response.serialize(prettyPrint: true).makeString())")
     }
 
     let fullName = response[profile.name]?.string ?? login

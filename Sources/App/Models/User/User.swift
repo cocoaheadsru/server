@@ -17,6 +17,31 @@ final class User: Model {
   var email: String?
   var phone: String?
 
+  // sourcery: ignoreInJSON
+  var token: String? {
+
+    get {
+      guard let result  = try? session()?.token else {
+       return nil
+      }
+      return result
+    }
+
+    set {
+      guard
+        let newToken = newValue,
+        // swiftlint:disable force_try
+        let session = try! session()
+      else {
+        return
+      }
+      // swiftlint:disable force_try
+      session.token = newToken
+      try! session.save()
+    }
+
+  }
+
   init(name: String,
        lastname: String? = nil,
        company: String? = nil,
@@ -67,35 +92,29 @@ extension User: JSONRepresentable {
     try? json.set(Keys.lastname, lastname)
     try? json.set(Keys.company, company)
     try? json.set(Keys.position, position)
-    try? json.set(Keys.photo, photoURL)
+    try? json.set(Keys.photoURL, photoURL())
     try? json.set(Keys.email, email)
     try? json.set(Keys.phone, phone)
-    try json.set(Session.Keys.token, token())
+    try json.set(Session.Keys.token, token)
     return json
   }
-  
-  var photoURL: String? {
+
+  // sourcery: nestedJSONField
+  func  photoURL() -> String? {
     guard
       let photoPath = self.photo,
-      let config = try? Config(),
-      let domain = config[Constants.Config.app, Constants.Config.domain]?.string,
       let userId = self.id?.string
     else {
       return self.photo
     }
     let photosFolder = Constants.Path.userPhotos
-    return "\(domain)/\(photosFolder)/\(userId)/\(photoPath)"
+    return "\(photosFolder)/\(userId)/\(photoPath)"
   }
+
 }
 
 // MARK: Token
 extension User {
-  func token() throws -> String {
-    guard let token = try session()?.token else {
-      throw Abort(.internalServerError, reason: "User no have token")
-    }
-    return token
-  }
 
   func updateSessionToken() throws {
     guard let session = try? self.session() else {
@@ -103,6 +122,16 @@ extension User {
     }
     try session?.updateToken()
   }
+
+  func createSession() {
+    do {
+      let session = try Session(user: self)
+      try session.save()
+    } catch {
+      try? self.delete()
+    }
+  }
+
 }
 
 // MARK: Relations
@@ -119,25 +148,7 @@ extension User {
   func session() throws -> Session? {
     return try sessions.first()
   }
-
-}
-
-// MARK: Lifecylce triggers
-extension User {
   
-  func didCreate() {
-    do {
-      let session = try Session(user: self)
-      try session.save()
-    } catch {
-      try? self.delete()
-    }
-  }
-
-  func didUpdate() {
-    try? updateSessionToken()
-  }
-
 }
 
 // MARK: TokenAuthenticationMiddleware

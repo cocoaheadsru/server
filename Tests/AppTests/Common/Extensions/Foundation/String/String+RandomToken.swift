@@ -1,4 +1,5 @@
 import Foundation
+@testable import App
 
 extension String {
   static var invalidRandomToken: String {

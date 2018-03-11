@@ -23,11 +23,6 @@ final class VkontakteAuthControllerTestHelper {
 
   static func getUserInfoFromSocial(drop: Droplet) throws -> JSON? {
 
-    func makeMD5(string: String) throws -> String {
-      let md5 =  CryptoHasher(hash: .md5, encoding: .hex)
-      let signature = try md5.make(string.makeBytes())
-      return signature.makeString()
-    }
     let configFile = try! Config(arguments: ["vapor", "--env=test"])
     let config = VkontakteConfig(configFile)
 
@@ -42,7 +37,8 @@ final class VkontakteAuthControllerTestHelper {
     let userInfo = try! drop.client.get(userInfoUrl, query: [
       "fields": fields,
       "access_token": token,
-      "sig": signature
+      "sig": signature,
+      "v": "5.73"
     ])
 
     guard
@@ -60,12 +56,10 @@ final class VkontakteAuthControllerTestHelper {
     try json.set(Keys.lastname, lastname)
     try json.set(Keys.company, JSON.null)
     try json.set(Keys.position, JSON.null)
-    if
-      let url = URL(string: photo),
-      let domen = drop.config["app", "domain"]?.string {
-      try json.set(Keys.photo, "\(domen)/user_photos/1/\(url.lastPathComponent)")
+    if let url = URL(string: photo) {
+      try json.set(Keys.photoURL, "user_photos/1/\(url.lastPathComponent)")
     } else {
-      try json.set(Keys.photo, photo)
+      try json.set(Keys.photoURL, photo)
     }
     try json.set(Keys.email, JSON.null)
     try json.set(Keys.phone, JSON.null)

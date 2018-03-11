@@ -24,6 +24,7 @@ class GiveSeechControllerTest: TestCase {
 
     let user = User()
     try! user.save()
+    user.createSession()
 
     let title = String.randomValue
     let description = String.randomValue + "\n" + String.randomValue + "\n" + String.randomValue
@@ -55,9 +56,9 @@ extension GiveSeechControllerTest {
   func postSpeech(for user: User, with body: JSON) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .post,
-      at: "user/give-speech",
+      at: "api/user/give-speech",
       body: body,
-      bearer: try! user.token())
+      bearer: user.token!)
   }
 
 }

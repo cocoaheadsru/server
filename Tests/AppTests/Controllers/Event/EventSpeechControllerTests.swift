@@ -57,10 +57,10 @@ class EventSpeechControllerTests: TestCase {
     
     let speakersJSON = speechJSON?["speakers"]?.array
     let speakerJSON = speakersJSON?.first
-    XCTAssertNotNil(speakerJSON?["id"])
+    XCTAssertNotNil(speakerJSON?["user_id"])
     XCTAssertNotNil(speakerJSON?["name"])
     XCTAssertNotNil(speakerJSON?["lastname"])
-    XCTAssertNotNil(speakerJSON?["photo"])
+    XCTAssertNotNil(speakerJSON?["photo_url"])
     XCTAssertNotNil(speakerJSON?["phone"])
     XCTAssertNotNil(speakerJSON?["company"])
     XCTAssertNotNil(speakerJSON?["email"])
@@ -103,10 +103,10 @@ class EventSpeechControllerTests: TestCase {
     XCTAssertEqual(speechJSON?["description"]?.string, speech.description)
     
     let speakerJSON = speechJSON?["speakers"]?.array?.first
-    XCTAssertEqual(speakerJSON?["id"]?.int, speaker.id?.int)
+    XCTAssertEqual(speakerJSON?["user_id"]?.int, user.id?.int)
     XCTAssertEqual(speakerJSON?["name"]?.string, user.name)
     XCTAssertEqual(speakerJSON?["lastname"]?.string, user.lastname)
-    XCTAssertEqual(speakerJSON?["photo"]?.string, photoPath)
+    XCTAssertEqual(speakerJSON?["photo_url"]?.string, photoPath)
     XCTAssertEqual(speakerJSON?["phone"]?.string, user.phone)
     XCTAssertEqual(speakerJSON?["company"]?.string, user.company)
     XCTAssertEqual(speakerJSON?["email"]?.string, user.email)
@@ -178,19 +178,19 @@ class EventSpeechControllerTests: TestCase {
     try! storeSpeech(for: eventId)
     
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(id)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(id)/speech")
       .assertStatus(is: .ok)
   }
   
   func testThatGetSpeechesRouteFailsForEmptyTable() throws {
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(Int.randomValue)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(Int.randomValue)/speech")
       .assertStatus(is: .notFound)
   }
   
   func testThatGetSpeechesRouteFailsWithNonIntParameterValue() throws {
     try! drop
-      .clientAuthorizedTestResponse(to: .get, at: "/event/\(EventSpeechHelper.invalidParameterValue)/speech")
+      .clientAuthorizedTestResponse(to: .get, at: "api/event/\(EventSpeechHelper.invalidParameterValue)/speech")
       .assertStatus(is: .badRequest)
   }
 }

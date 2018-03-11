@@ -11,7 +11,7 @@ final class Event: Model {
   var placeId: Identifier
   var title: String
   var description: String
-  var photoUrl: String
+  var photo: String?
   var isRegistrationOpen: Bool = true
   var startDate: Date
   var endDate: Date
@@ -19,7 +19,7 @@ final class Event: Model {
   
   init(title: String,
        description: String,
-       photoUrl: String,
+       photo: String?,
        placeId: Identifier,
        isRegistrationOpen: Bool = true,
        startDate: Date,
@@ -27,7 +27,7 @@ final class Event: Model {
        hide: Bool = false) {
     self.title = title
     self.description = description
-    self.photoUrl = photoUrl
+    self.photo = photo
     self.placeId = placeId
     self.isRegistrationOpen = isRegistrationOpen
     self.startDate = startDate
@@ -40,7 +40,7 @@ final class Event: Model {
     placeId = try row.get(Keys.placeId)
     title = try row.get(Keys.title)
     description = try row.get(Keys.description)
-    photoUrl = try row.get(Keys.photoUrl)
+    photo = try? row.get(Keys.photo)
     isRegistrationOpen = try row.get(Keys.isRegistrationOpen)
     startDate = try row.get(Keys.startDate)
     endDate = try row.get(Keys.endDate)
@@ -52,7 +52,7 @@ final class Event: Model {
     try row.set(Keys.placeId, placeId)
     try row.set(Keys.title, title)
     try row.set(Keys.description, description)
-    try row.set(Keys.photoUrl, photoUrl)
+    try? row.set(Keys.photo, photo)
     try row.set(Keys.isRegistrationOpen, isRegistrationOpen)
     try row.set(Keys.startDate, startDate)
     try row.set(Keys.endDate, endDate)
@@ -69,7 +69,7 @@ extension Event {
         try json.set(Keys.id, id)
         try json.set(Keys.title, title)
         try json.set(Keys.description, description)
-        try json.set(Keys.photoUrl, photoUrl)
+        try? json.set(Keys.photoURL, photoURL())
         try json.set(Keys.isRegistrationOpen, isRegistrationOpen)
         try json.set(Keys.startDate, startDate.mysqlString)
         try json.set(Keys.endDate, endDate.mysqlString)
@@ -79,6 +79,19 @@ extension Event {
         try json.set(Keys.speakersPhotos, speakersPhotos())
         return json
     }
+
+  // sourcery: nestedJSONField
+  func photoURL() -> String? {
+    guard
+      let photoPath = self.photo,
+      let eventId = self.id?.string
+    else {
+        return self.photo
+    }
+    let photosFolder = Constants.Path.eventPhotos
+    return "\(photosFolder)/\(eventId)/\(photoPath)"
+  }
+
 }
 
 extension Event {
@@ -120,7 +133,7 @@ extension Event {
   func speakersPhotos() throws -> [String] {
     return try speeches().flatMap { speech in
         return try speech.speakers().flatMap { speaker in
-            return try speaker.user()?.photoURL
+            return try speaker.user()?.photoURL()
         }
     }
   }

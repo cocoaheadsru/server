@@ -15,11 +15,12 @@ extension Event {
     static let placeId = "place_id"
     static let title = "title"
     static let description = "description"
-    static let photoUrl = "photo_url"
+    static let photo = "photo"
     static let isRegistrationOpen = "is_registration_open"
     static let startDate = "start_date"
     static let endDate = "end_date"
     static let hide = "hide"
+    static let photoURL = "photo_url"
     static let place = "place"
     static let status = "status"
     static let speakersPhotos = "speakers_photos"
@@ -33,7 +34,7 @@ extension Event: Updateable {
       UpdateableKey(Keys.placeId, Identifier.self) { $0.placeId = $1 },
       UpdateableKey(Keys.title, String.self) { $0.title = $1 },
       UpdateableKey(Keys.description, String.self) { $0.description = $1 },
-      UpdateableKey(Keys.photoUrl, String.self) { $0.photoUrl = $1 },
+      UpdateableKey(Keys.photo, String.self) { $0.photo = $1 },
       UpdateableKey(Keys.isRegistrationOpen, Bool.self) { $0.isRegistrationOpen = $1 },
       UpdateableKey(Keys.startDate, Date.self) { $0.startDate = $1 },
       UpdateableKey(Keys.endDate, Date.self) { $0.endDate = $1 },
@@ -50,7 +51,7 @@ extension Event: Preparation {
       builder.foreignId(for: Place.self, optional: false, unique: false, foreignIdKey: Keys.placeId, foreignKeyName: self.entity + "_" + Keys.placeId)
       builder.string(Keys.title)
       builder.string(Keys.description)
-      builder.string(Keys.photoUrl)
+      builder.string(Keys.photo, optional: true)
       builder.bool(Keys.isRegistrationOpen)
       builder.date(Keys.startDate)
       builder.date(Keys.endDate)

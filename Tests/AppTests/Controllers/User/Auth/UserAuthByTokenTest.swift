@@ -21,18 +21,15 @@ class UserAuthByTokenTest: TestCase {
   }
 
   func testThatGotUnauthorizedWithEmptyAccessToken() throws {
-    let user = User()
-    try! user.save()
-
-    let res = try! drop.clientAuthorizedTestResponse(to: .get, at: "user/1")
+    try! createUser()
+    let res = try! drop.clientAuthorizedTestResponse(to: .get, at: "api/user/1")
     res.assertStatus(is: .unauthorized)
   }
 
   func testThatGotUnauthorizedWithIncorrectAccessToken() throws {
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
-    let token = try! user.token()
+    let token = user.token!
     let bearer = "Bearer " + token
 
     let clientToken = drop.config["server", "client-token"]?.string ?? ""
@@ -52,16 +49,15 @@ class UserAuthByTokenTest: TestCase {
 
    try! drop.clientAuthorizedTestResponse(
       to: .get,
-      at: "user/1",
+      at: "api/user/1",
       headers: headers)
     .assertStatus(is: .unauthorized)
   }
 
   func testThatGotAccessWithCorrectAccessToken() throws {
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
-    let token = try! user.token()
+    let token = user.token!
     let bearer = "Bearer " + token
 
     let clientToken = drop.config["server", "client-token"]?.string ?? ""
@@ -74,7 +70,7 @@ class UserAuthByTokenTest: TestCase {
 
     let res = try! drop.clientAuthorizedTestResponse(
       to: .get,
-      at: "user/1",
+      at: "api/user/1",
       headers: headers)
 
     res.assertStatus(is: .ok)
@@ -84,7 +80,26 @@ class UserAuthByTokenTest: TestCase {
       return
     }
 
-    XCTAssertEqual(returnedJSON, try! user.makeJSON())
+    let json = try! user.makeJSON()
+    guard
+      let photoURL = json["photo_url"]?.string else {
+      XCTFail("Can't get JSON for photo_url")
+      return
+    }
+
+    var returned =  returnedJSON
+    try! returned.set("photo_url", photoURL)
+    XCTAssertEqual(returned, try! user.makeJSON())
   }
 
+}
+
+extension UserAuthByTokenTest {
+  @discardableResult
+  func createUser() throws -> User {
+    let user = User()
+    try user.save()
+    user.createSession()
+    return user
+  }
 }

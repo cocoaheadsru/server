@@ -30,12 +30,16 @@ class FacebookSocialControllerTest: TestCase {
     let user = try! postUserAuth(body: body).assertStatus(is: .ok)
 
     guard
-      let returned = user.json,
-      let id = returned["id"]?.int
+      let returnedJSON = user.json,
+      let id = returnedJSON["id"]?.int
     else {
       XCTFail("Can't get user id from response")
       return
     }
+
+    var returned = returnedJSON
+    returned.removeKey("id")
+    returned.removeKey("token")
 
     guard let expected = try! FacebookAuthControllerTestHelper.getUserInfoFromSocial(drop: drop) else {
       XCTFail("Can't get test user info from social")
@@ -47,9 +51,7 @@ class FacebookSocialControllerTest: TestCase {
       return
     }
 
-    var stored = try storedUser.makeJSON()
-    stored.removeKey("id")
-    stored.removeKey("token")
+    let stored = try storedUser.makeJSON()
 
     print("\n\n*** EXPECTED JSON ***\n\n")
     print(try expected.serialize(prettyPrint: true).makeString())
@@ -58,7 +60,7 @@ class FacebookSocialControllerTest: TestCase {
     print("\n\n*** STORED JSON ***\n\n")
     print(try stored.serialize(prettyPrint: true).makeString())
 
-    XCTAssertEqual(expected, stored)
+    XCTAssertEqual(expected, returned)
 
   }
 
@@ -130,7 +132,7 @@ class FacebookSocialControllerTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhotoURL = updatedUser["photo"]?.string,
+      let newPhotoURL = updatedUser["photo_url"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
       else {
         XCTFail("Can't get photo path")
@@ -150,7 +152,7 @@ extension  FacebookSocialControllerTest {
     return try! drop
       .clientAuthorizedTestResponse(
         to: .post,
-        at: "user/auth",
+        at: "api/user/auth",
         body: body)
   }
 

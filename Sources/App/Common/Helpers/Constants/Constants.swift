@@ -7,20 +7,15 @@ struct Constants {
     static let clientToken = "client-token"
     static let domain = "domain"
   }
-  
-  struct Header {
-    struct Value {
-      static let applicationJson = "application/json"
-    }
-  }
 
   struct Middleware {
     static let client = "client-middleware"
+    static let photoURL = "photoURL-middleware"
   }
   
   struct Path {
     static let userPhotos = "user_photos"
-    static let creatorsPhotos = "creator_photos"
+    static let eventPhotos = "event_photos"
   }
 
   struct Status {

@@ -88,7 +88,7 @@ class HeartbeatControllerTests: TestCase {
     // act & assert
     print(try! json.serialize(prettyPrint: true).makeString())
     try! drop
-      .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
+      .clientAuthorizedTestResponse(to: .post, at: "test/heartbeat", body: json)
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -98,7 +98,7 @@ class HeartbeatControllerTests: TestCase {
     try! cleanHeartbeatTable()
     // act & assert
     try! drop
-      .testResponse(to: .get, at: "heartbeat")
+      .testResponse(to: .get, at: "test/heartbeat")
       .assertStatus(is: .noContent)
   }
   
@@ -109,7 +109,7 @@ class HeartbeatControllerTests: TestCase {
     _ = try! setBeat(to: beat)
     // act & assert
     try! drop
-      .testResponse(to: .get, at: "heartbeat")
+      .testResponse(to: .get, at: "test/heartbeat")
       .assertStatus(is: .ok)
       .assertJSON("beat", equals: beat)
   }
@@ -122,11 +122,11 @@ class HeartbeatControllerTests: TestCase {
       let json = try! heartbeat.makeJSON()
       // act & assert
       try! drop
-        .clientAuthorizedTestResponse(to: .post, at: "heartbeat", body: json)
+        .clientAuthorizedTestResponse(to: .post, at: "test/heartbeat", body: json)
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
       try! drop
-        .clientAuthorizedTestResponse(to: .get, at: "heartbeat")
+        .clientAuthorizedTestResponse(to: .get, at: "test/heartbeat")
         .assertStatus(is: .ok)
         .assertJSON("beat", equals: beat)
     }

@@ -153,7 +153,7 @@ import Fluent
 //    return try! drop
 //      .clientAuthorizedTestResponse(
 //        to: .post,
-//        at: "user/auth",
+//        at: "api/user/auth",
 //        body: body)
 //  }
 //

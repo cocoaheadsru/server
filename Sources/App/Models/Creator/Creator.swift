@@ -2,7 +2,7 @@ import Vapor
 import FluentProvider
 
 // sourcery: AutoModelGeneratable
-// sourcery: toJSON, Preparation
+// sourcery: toJSON, Preparation, ResponseRepresentable
 final class Creator: Model {
     
   let storage = Storage()
@@ -57,7 +57,7 @@ extension Creator {
     guard let user = try? user() else {
       return nil
     }
-    return user?.photoURL
+    return user?.photoURL()
   }
 
 }

@@ -157,7 +157,7 @@ extension CancelRegistrationTest {
     return try drop
       .userAuthorizedTestResponse(
         to: .post,
-        at: "event/register",
+        at: "api/event/register",
         body: json,
         bearer: token)
   }
@@ -167,7 +167,7 @@ extension CancelRegistrationTest {
     return try drop
       .userAuthorizedTestResponse(
         to: .delete,
-        at: "event/register/\(eventRegId)",
+        at: "api/event/register/\(eventRegId)",
         bearer: token)
   }
 

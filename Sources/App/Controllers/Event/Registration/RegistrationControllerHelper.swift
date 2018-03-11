@@ -20,7 +20,7 @@ extension RegistrationController {
   
   func checkRequired(fieldId: Identifier, answerCount: Int) throws -> Bool {
     guard let fieldRequired = try RegField.find(fieldId)?.required else {
-      throw Abort.serverError
+      throw Abort(.internalServerError, reason: "Can't get fieldId")
     }
     
     if fieldRequired {
@@ -30,7 +30,7 @@ extension RegistrationController {
     }
   }
   
-  func storeEventRegAnswers(_ request: Request, eventReg: EventReg) throws {
+  func storeEventRegAnswers(_ request: Request, eventReg: EventReg, connection: Connection? = nil) throws {
    
     guard let eventRegId = eventReg.id else {
       throw Abort(.internalServerError, reason: "Can't get eventRegId")
@@ -62,9 +62,13 @@ extension RegistrationController {
           regFieldId: fieldId,
           regFieldAnswerId: answerId,
           answerValue: answerValue)
-        
-        try eventRegAnswer.save()
+        if let conn = connection {
+          try eventRegAnswer.makeQuery(conn).save()
+        } else {
+          try eventRegAnswer.save()
+        }
       }
+      
     }
   }
   

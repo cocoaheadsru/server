@@ -5,7 +5,12 @@ import Fluent
 final class  RegistrationController {
   
   let autoapprove = try? AutoapproveController()
-  
+  let drop: Droplet
+
+  init(drop: Droplet) {
+    self.drop = drop
+  }
+
   func store(_ request: Request) throws -> ResponseRepresentable {
 
     let user = try request.user()
@@ -13,14 +18,19 @@ final class  RegistrationController {
       throw Abort(.internalServerError, reason: "Can't get user.id")
     }
     
-    guard let regFormId = try request.json?.get(Keys.regFormId) as Identifier! else {
-      throw Abort(.internalServerError, reason: "Can't get 'fields' and 'reg_form_Id' from request")
+    guard
+      let json = request.json,
+      let regFormIdInt  = json[Keys.regFormId]?.int
+    else {
+      throw Abort(.internalServerError, reason: "Can't get 'reg_form_Id' from request")
     }
-  
+
+    let regFormId = Identifier(.int(regFormIdInt))
+
     guard try EventReg.duplicationCheck(regFormId: regFormId, userId: userId) else {
       throw Abort(
         .internalServerError,
-        reason: "User with token '\(try user.token())' has alredy registered to this event")
+        reason: "User with token '\(user.token ?? "")' has alredy registered to this event")
     }
   
     guard
@@ -29,15 +39,17 @@ final class  RegistrationController {
     else {
       throw Abort(.internalServerError, reason: "Can't check autoapprove status")
     }
-    
+
     let eventReg = EventReg(
       regFormId: regFormId,
       userId: userId,
       status: grandApprove ? EventReg.RegistrationStatus.approved : EventReg.RegistrationStatus.waiting)
-    try eventReg.save()
 
-    try storeEventRegAnswers(request, eventReg: eventReg)
-    
+    try drop.mysql().transaction { (connection)  in
+      try eventReg.makeQuery(connection).save()
+      try storeEventRegAnswers(request, eventReg: eventReg, connection: connection)
+    }
+
     return eventReg
   }
 
@@ -68,5 +80,3 @@ extension RegistrationController: ResourceRepresentable {
     )
   }
 }
-
-extension RegistrationController: EmptyInitializable { }

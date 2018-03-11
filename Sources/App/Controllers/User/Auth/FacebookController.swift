@@ -5,7 +5,6 @@ import Fluent
 final class FacebookController {
 
   private let drop: Droplet
-  //private let config: Config
   private let photoController: PhotoController
   private let fb = Social.FB.self
   private let config: FacebookConfig

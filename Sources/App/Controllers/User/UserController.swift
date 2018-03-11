@@ -5,12 +5,10 @@ import Multipart
 
 final class UserController {
   
-  let drop: Droplet!
-  let photoConroller: PhotoController
+  let photoController: PhotoController
   
   init(drop: Droplet) {
-    self.drop = drop
-    self.photoConroller = PhotoController(drop: self.drop)
+    photoController = PhotoController(drop: drop)
   }
 
   func show(_ request: Request, user: User) throws -> ResponseRepresentable {
@@ -26,12 +24,13 @@ final class UserController {
       user.photo = photo
     }
     try user.save()
+    try updateSessionToken(for: user)
     return user
   }
   
   func updateSessionToken(for user: User) throws {
     do {
-      try user.session()?.updateToken()
+      try user.updateSessionToken()
     } catch {
       throw Abort.badRequest
     }
@@ -66,18 +65,18 @@ extension UserController {
     if
       let bytes = request.formData?[RequestKeys.photo]?.bytes,
       let filename = request.formData?[RequestKeys.photo]?.filename {
-      try photoConroller.savePhoto(for: userId, photoBytes: bytes, filename: filename)
+      try photoController.savePhoto(for: userId, photoBytes: bytes, filename: filename)
       return filename
     }
 
     // get photo from body as base64EncodedString
     if let photoString = request.json?[RequestKeys.photo]?.string {
-      return try photoConroller.savePhoto(for: userId, photoAsString: photoString)
+      return try photoController.savePhoto(for: userId, photoAsString: photoString)
     }
 
     // get photo by url download
     if let photoURL = request.json?[RequestKeys.photoURL]?.string {
-      return try photoConroller.downloadAndSavePhoto(for: userId, by: photoURL)
+      return try photoController.downloadAndSavePhoto(for: userId, with: photoURL)
     }
 
     return nil

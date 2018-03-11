@@ -41,7 +41,7 @@ class UserPhotoTest: TestCase {
 
   func testThatUserPhotoisUpdatedUsingFormDataContent() throws {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 
@@ -57,9 +57,9 @@ class UserPhotoTest: TestCase {
     let partPhoto = Part(headers: [:], body: filePhoto)
     let photo = Field(name: "photo", filename: fileName, part: partPhoto)
 
-    headers[HeaderKey.authorization] = "Bearer \(try user.token())"
+    headers[HeaderKey.authorization] = "Bearer \(user.token!)"
 
-    let request = Request(method: .patch, uri: "http://0.0.0.0:8080/user/1", headers: headers)
+    let request = Request(method: .patch, uri: "http://0.0.0.0:8080/api/user/1", headers: headers)
     request.formData = ["photo": photo]
     
     let response = try drop.respond(to: request)
@@ -67,7 +67,7 @@ class UserPhotoTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhoto = updatedUser["photo"]?.string
+      let newPhoto = updatedUser["photo_url"]?.string
     else {
       XCTFail("Can't get updatedUser")
       return
@@ -86,7 +86,7 @@ class UserPhotoTest: TestCase {
 
     guard
       let updatedUser = response.json,
-      let newPhotoURL = updatedUser["photo"]?.string,
+      let newPhotoURL = updatedUser["photo_url"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
     else {
         XCTFail("Can't get photo path")
@@ -100,7 +100,7 @@ class UserPhotoTest: TestCase {
 
   func testThatUserPhotoIsUpdatedUsingPhotoAtURL() throws {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 
@@ -111,14 +111,14 @@ class UserPhotoTest: TestCase {
     
     let body = try! Body(node: [
       "photoURL": url,
-      "token": try! user.token()
+      "token": user.token!
     ])
 
     let response = try! postUserPhoto(body:  body).assertStatus(is: .ok)
 
     guard
       let updatedUser = response.json,
-      let newPhotoURL = updatedUser["photo"]?.string,
+      let newPhotoURL = updatedUser["photo_url"]?.string,
       let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
       else {
         XCTFail("Can't get photo path")
@@ -129,7 +129,7 @@ class UserPhotoTest: TestCase {
     XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
 
   }
-//  Need ask Vapor's devteam how to get file from Public  from tests
+//  Need change the drop call to drop.foreground
 //  func testThatUserPhotoIsDownloadedFromServer() throws {
 //
 //    let fileName = "robot-1469114466kSY.jpg"
@@ -170,18 +170,26 @@ class UserPhotoTest: TestCase {
 
 extension UserPhotoTest {
 
+  @discardableResult
+  func storeUser() throws -> User {
+    let user = User()
+    try! user.save()
+    user.createSession()
+    return user
+  }
+
   func postUserPhoto(body: JSON) throws -> Response {
     return try! drop
       .userAuthorizedTestResponse(
         to: .patch,
-        at: "user/1",
+        at: "api/user/1",
         body: body,
         bearer: body["token"]?.string)
   }
 
   func postUserPhotoFromFileByBase64EncodedString(from fileName: String) throws -> Response {
 
-    let user = User()
+    let user = try! storeUser()
     user.photo = nil
     try! user.save()
 
@@ -197,7 +205,7 @@ extension UserPhotoTest {
 
     let body = try! Body(node: [
       "photo": stringPhoto,
-      "token": try! user.token()
+      "token": user.token!
     ])
     return try! postUserPhoto(body:  body)
 

@@ -50,9 +50,9 @@ final class FacebookAuthControllerTestHelper {
     if
       let url = URL(string: photo),
       let domen = drop.config["app", "domain"]?.string {
-      try json.set(Keys.photo, "\(domen)/user_photos/1/\(url.lastPathComponent)")
+      try json.set(Keys.photoURL, "\(domen)/user_photos/1/\(url.lastPathComponent)")
     } else {
-      try json.set(Keys.photo, photo)
+      try json.set(Keys.photoURL, photo)
     }
     try json.set(Keys.email, email)
     try json.set(Keys.phone, JSON.null)

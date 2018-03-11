@@ -19,33 +19,33 @@ class RouteTests: TestCase {
   
   func testThatRequestWithNoClientTokenFails() throws {
     try drop
-      .unauthorizedTestResponse(to: .get, at: "hello")
+      .unauthorizedTestResponse(to: .get, at: "test/hello")
       .assertStatus(is: .unauthorized)
   }
 
   func testThatAuthorizedRequestPasses() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "hello")
+      .clientAuthorizedTestResponse(to: .get, at: "test/hello")
       .assertStatus(is: .ok)
   }
 
   func testThatRequestWithInvalidClientTokenFails() throws {
     let randomToken = String.invalidRandomToken
     try drop
-      .unauthorizedTestResponse(to: .get, at: "hello", headers: ["client-token": randomToken])
+      .unauthorizedTestResponse(to: .get, at: "test/hello", headers: ["client-token": randomToken])
       .assertStatus(is: .unauthorized)
   }
 
   func testThatRequestToHelloReturnsProperData() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "hello")
+      .clientAuthorizedTestResponse(to: .get, at: "test/hello")
       .assertStatus(is: .ok)
       .assertJSON("hello", equals: "world")
   }
 
   func testThatRequestToPlainTextReturnsProperData() throws {
     try drop
-      .clientAuthorizedTestResponse(to: .get, at: "plaintext")
+      .clientAuthorizedTestResponse(to: .get, at: "test/plaintext")
       .assertStatus(is: .ok)
       .assertBody(contains: "Hello, world!")
   }

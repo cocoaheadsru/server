@@ -22,8 +22,7 @@ class PushNotificationControllerTest: TestCase {
 
   func testThatPushTokenIsRegistered() throws {
 
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
     let pushToken = String.randomValue
 
@@ -40,8 +39,7 @@ class PushNotificationControllerTest: TestCase {
 
   func testThatPushTokenIsRegisteredOnlyOnceForCertainUser() throws {
 
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
     // create
     let pushToken = String.randomValue
@@ -71,8 +69,7 @@ class PushNotificationControllerTest: TestCase {
 
   func testThatPushNotificationIsCanceled() throws {
 
-    let user = User()
-    try! user.save()
+    let user = try! createUser()
 
     let pushToken = String.randomValue
 
@@ -99,12 +96,19 @@ class PushNotificationControllerTest: TestCase {
 
 extension PushNotificationControllerTest {
 
+  func createUser() throws -> User {
+    let user = User()
+    try user.save()
+    user.createSession()
+    return user
+  }
+
   func subscribeNotification(for user: User, with body: JSON) throws -> Response {
     return try! drop.userAuthorizedTestResponse(
       to: .post,
-      at: "user/notification",
+      at: "api/user/notification",
       body: body,
-      bearer: try! user.token())
+      bearer: user.token!)
   }
 
   func cancelNotification(for user: User) throws -> Response {
@@ -116,8 +120,8 @@ extension PushNotificationControllerTest {
 
     return try! drop.userAuthorizedTestResponse(
       to: .delete,
-      at: "user/notification/\(userId)",
-      bearer: try! user.token())
+      at: "api/user/notification/\(userId)",
+      bearer: user.token!)
   }
   
 }

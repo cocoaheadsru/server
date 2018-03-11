@@ -9,7 +9,7 @@ import Fluent
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable force_try
 
-//test don't work under Jenkins - start tests from console or Xcode
+//test don't work under Jenkins - start testsfrom console or Xcode ONLY
 //class VkontakteAuthControllerTest: TestCase {
 //
 //  override func setUp() {
@@ -114,35 +114,35 @@ import Fluent
 //
 //  }
 //
-//  func testThatUserPhotoFromVkontakteIsSaved() throws {
-//    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
-//      XCTFail("Can't get test request")
-//      return
-//    }
-//
-//    let fileName = "VKcocoaheadsdev.jpg"
-//    let photoPath = "user_photos/1/"
-//    let filePath = drop.config.workDir + "Tests/Resources/" + fileName
-//    let fileManager = Foundation.FileManager()
-//    let storedDir = drop.config.publicDir + photoPath
-//
-//    try! fileManager.removeAllFiles(atPath: storedDir)
-//
-//    let response = try! postUserAuth(body: body).assertStatus(is: .ok)
-//
-//    guard
-//      let updatedUser = response.json,
-//      let newPhotoURL = updatedUser["photo"]?.string,
-//      let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
-//    else {
-//        XCTFail("Can't get photo path")
-//        return
-//    }
-//
-//    let storedFilePath = storedDir + photoFileName
-//    XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
-//
-//  }
+////  func testThatUserPhotoFromVkontakteIsSaved() throws {
+////    guard let body = try! VkontakteAuthControllerTestHelper.getTestRequest() else {
+////      XCTFail("Can't get test request")
+////      return
+////    }
+////
+////    let fileName = "VKcocoaheadsdev.jpg"
+////    let photoPath = "user_photos/1/"
+////    let filePath = drop.config.workDir + "Tests/Resources/" + fileName
+////    let fileManager = Foundation.FileManager()
+////    let storedDir = drop.config.publicDir + photoPath
+////
+////    try! fileManager.removeAllFiles(atPath: storedDir)
+////
+////    let response = try! postUserAuth(body: body).assertStatus(is: .ok)
+////
+////    guard
+////      let updatedUser = response.json,
+////      let newPhotoURL = updatedUser["photo"]?.string,
+////      let photoFileName = URL(string: newPhotoURL)?.lastPathComponent
+////    else {
+////        XCTFail("Can't get photo path")
+////        return
+////    }
+////
+////    let storedFilePath = storedDir + photoFileName
+////    XCTAssertTrue( try! CryptoHasher.compareFiles(filePath1: filePath, filePath2: storedFilePath))
+////
+////  }
 //
 //}
 //
@@ -152,7 +152,7 @@ import Fluent
 //    return try! drop
 //      .clientAuthorizedTestResponse(
 //        to: .post,
-//        at: "user/auth",
+//        at: "api/user/auth",
 //        body: body)
 //  }
 //

@@ -15,7 +15,7 @@ extension App.Event {
       self.init(
         title: String.randomValue,
         description: String.randomValue,
-        photoUrl: String.randomValue,
+        photo: String.randomValue,
         placeId: placeId,
         isRegistrationOpen: Bool.randomValue,
         startDate: date.fiveHoursAgo,
@@ -26,7 +26,7 @@ extension App.Event {
       self.init(
         title: "",
         description: "",
-        photoUrl: "",
+        photo: "",
         placeId: placeId,
         startDate: date.fiveHoursAgo,
         endDate: date

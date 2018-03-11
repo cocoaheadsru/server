@@ -147,7 +147,6 @@ final class EventRegAnswerHelper {
   }
   
   // MARK: - get stored answer to compare with expected result
-  
   static func getStoredAnswers(by sessionToken: SessionToken, regForm: RegForm) throws -> Body? {
     
     guard
