@@ -50,12 +50,14 @@ extension Samples {
     }
 
     var events: [Event] = []
-    for _ in 1...Int.random(min: 2, max: pastCount) {
+    let rangePastEvent = 1...Int.random(min: 2, max:  pastCount > 3 ? pastCount : 3)
+    for _ in rangePastEvent {
       let event = try! storePastEvent()
       events.append(event)
     }
 
-    for _ in 1...Int.random(min: 2, max: comingCount) {
+    let rangeComingEvent = 1...Int.random(min: 1, max:  comingCount > 2 ? comingCount : 2)
+    for _ in rangeComingEvent {
       let event = try! storeComingEvent()
       events.append(event)
     }
